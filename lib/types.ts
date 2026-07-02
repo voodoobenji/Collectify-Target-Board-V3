@@ -1,5 +1,6 @@
 export type Chance = "High" | "Medium" | "Low" | null;
 export type Status = "pending" | "hit" | "no_hit";
+export type SourceType = "vendor" | "employee_push" | "both" | null;
 
 export interface BoardEntry {
   chance: Chance;
@@ -7,6 +8,7 @@ export interface BoardEntry {
   reason: string;
   vendorNotes: string;
   randomNotes: string;
+  sourceType: SourceType;
   status: Status;
   updatedAt: string | null;
   updatedBy: string | null;
@@ -24,6 +26,7 @@ export const EMPTY_ENTRY: BoardEntry = {
   reason: "",
   vendorNotes: "",
   randomNotes: "",
+  sourceType: null,
   status: "pending",
   updatedAt: null,
   updatedBy: null,
@@ -38,6 +41,7 @@ export interface TemplateEntry {
   reason: string;
   vendorNotes: string;
   randomNotes: string;
+  sourceType: SourceType;
   updatedAt: string | null;
 }
 
@@ -47,6 +51,7 @@ export const EMPTY_TEMPLATE_ENTRY: TemplateEntry = {
   reason: "",
   vendorNotes: "",
   randomNotes: "",
+  sourceType: null,
   updatedAt: null,
 };
 
