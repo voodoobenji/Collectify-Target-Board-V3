@@ -18,6 +18,12 @@ const chanceStyles: Record<string, string> = {
   Low: "border-low text-low bg-low/10",
 };
 
+const chanceBorderLeft: Record<string, string> = {
+  High: "border-l-4 border-l-high",
+  Medium: "border-l-4 border-l-medium",
+  Low: "border-l-4 border-l-low",
+};
+
 const statusStyles: Record<Status, string> = {
   pending: "bg-panel2 text-textmuted border-line",
   hit: "bg-live/15 text-live border-live",
@@ -154,7 +160,9 @@ export default function StoreRow({
   return (
     <button
       onClick={() => onViewWeek?.(store.id)}
-      className="w-full text-left border border-line rounded-lg p-3 bg-panel hover:border-textmuted/40 transition-colors"
+      className={`w-full text-left border border-line rounded-lg p-3 bg-panel hover:border-textmuted/40 transition-colors ${
+        chance ? chanceBorderLeft[chance] : ""
+      }`}
     >
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">

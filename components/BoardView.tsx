@@ -358,8 +358,9 @@ export default function BoardView({
         </button>
       </header>
 
-      <div className="flex gap-1.5 mb-6 overflow-x-auto">
-        {WEEKDAYS.map((day) => {
+      <div className="sticky top-0 z-20 bg-ink pt-1 pb-3 -mt-1">
+        <div className="flex gap-1.5 mb-0 overflow-x-auto">
+          {WEEKDAYS.map((day) => {
           const active = selectedDay === day;
           const isToday = day === todayWeekday;
           return (
@@ -376,7 +377,8 @@ export default function BoardView({
               {isToday && <span className="text-[9px] mt-0.5 opacity-70">Today</span>}
             </button>
           );
-        })}
+          })}
+        </div>
       </div>
 
       {!isLiveView && (
@@ -472,7 +474,14 @@ export default function BoardView({
       )}
 
       <div className="space-y-6">
-        {grouped.map(({ region, items }) => {
+        {!isLiveView && templateLoading ? (
+          <div className="space-y-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-20 rounded-lg bg-panel border border-line animate-pulse" />
+            ))}
+          </div>
+        ) : (
+        grouped.map(({ region, items }) => {
           const label = items[0]?.store.regionLabel ?? region;
           const collapsed = collapsedRegions.has(region);
           return (
@@ -510,8 +519,9 @@ export default function BoardView({
               )}
             </section>
           );
-        })}
-        {grouped.length === 0 && (
+        })
+        )}
+        {!(!isLiveView && templateLoading) && grouped.length === 0 && (
           <p className="text-center text-textmuted text-sm py-12">
             No stores match your filters.
           </p>
