@@ -22,6 +22,17 @@ const DAY_LABELS: Record<string, string> = {
   friday: "Friday",
 };
 
+const REGION_SHORT: Record<string, string> = {
+  SFV: "SFV",
+  "805.0": "805",
+  "SGV/IE": "SGV/IE",
+  LOSANGELES: "LA",
+  CULVERINGSB: "Culver/SB",
+  SOUTHOFLA: "SE LA/LB",
+  OC: "OC",
+  SD: "SD",
+};
+
 function priorityRank(chance: BoardEntry["chance"]) {
   return chance ? PRIORITY_RANK[chance] : 3;
 }
@@ -65,6 +76,7 @@ export default function BoardView({
   const [importing, setImporting] = useState(false);
   const [weekModalStoreId, setWeekModalStoreId] = useState<string | null>(null);
   const boardRef = useRef(board);
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   boardRef.current = board;
 
   const isLiveView = selectedDay === todayWeekday;
@@ -300,6 +312,18 @@ export default function BoardView({
     });
   }
 
+  function jumpToRegion(region: string) {
+    setCollapsedRegions((prev) => {
+      if (!prev.has(region)) return prev;
+      const next = new Set(prev);
+      next.delete(region);
+      return next;
+    });
+    requestAnimationFrame(() => {
+      sectionRefs.current[region]?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
   return (
     <main className="min-h-screen px-4 py-6 sm:px-8 sm:py-10 max-w-4xl mx-auto">
       <header className="flex items-start justify-between gap-4 mb-6">
@@ -315,7 +339,7 @@ export default function BoardView({
               <span className="font-mono text-[11px] uppercase tracking-widest text-live">Live</span>
             </div>
             <h1 className="font-display uppercase tracking-wide text-3xl sm:text-4xl font-semibold leading-none">
-              SoCal Target Board
+              Collectify Target Board
             </h1>
             <p className="text-textmuted text-xs mt-2 font-mono">
               {board.date} &middot; updated {timeAgo(lastUpdated)}
@@ -429,12 +453,31 @@ export default function BoardView({
         showStatusFilter={isLiveView}
       />
 
+      {grouped.length > 1 && (
+        <div className="flex gap-1.5 mb-6 overflow-x-auto pb-1">
+          {grouped.map(({ region, items }) => (
+            <button
+              key={region}
+              onClick={() => jumpToRegion(region)}
+              className="shrink-0 text-[11px] font-mono uppercase tracking-wide px-2.5 py-1 rounded-full border border-line text-textmuted hover:text-live hover:border-live transition-colors"
+            >
+              {REGION_SHORT[region] ?? region} <span className="text-textmuted/60">({items.length})</span>
+            </button>
+          ))}
+        </div>
+      )}
+
       <div className="space-y-6">
         {grouped.map(({ region, items }) => {
           const label = items[0]?.store.regionLabel ?? region;
           const collapsed = collapsedRegions.has(region);
           return (
-            <section key={region}>
+            <section
+              key={region}
+              ref={(el) => {
+                sectionRefs.current[region] = el;
+              }}
+            >
               <button
                 onClick={() => toggleRegion(region)}
                 className="w-full flex items-center justify-between mb-2 group"
