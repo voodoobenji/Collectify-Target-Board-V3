@@ -3,7 +3,7 @@ import "./globals.css";
 import Providers from "@/components/Providers";
 
 export const metadata: Metadata = {
-  title: "SoCal Target Board",
+  title: "Collectify Target Board",
   description: "Live daily target guide",
 };
 
