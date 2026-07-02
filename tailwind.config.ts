@@ -14,7 +14,8 @@ const config: Config = {
         high: "#FF5A4E",
         medium: "#FFB238",
         low: "#5B8DEF",
-        live: "#3DDC97",
+        gold: "#C9A876",
+        live: "#2FBE8F",
       },
       fontFamily: {
         display: ["var(--font-display)"],
