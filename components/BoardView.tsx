@@ -7,6 +7,7 @@ import type { Board, BoardEntry, WeekdayTemplate } from "@/lib/types";
 import { WEEKDAYS } from "@/lib/types";
 import StoreRow from "./StoreRow";
 import Filters from "./Filters";
+import StoreWeekModal from "./StoreWeekModal";
 import { SEED_TEMPLATES } from "@/lib/seed-templates";
 
 type ChanceFilter = "all" | "High" | "Medium" | "Low";
@@ -62,6 +63,7 @@ export default function BoardView({
   const [collapsedRegions, setCollapsedRegions] = useState<Set<string>>(new Set());
   const [startingNewDay, setStartingNewDay] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [weekModalStoreId, setWeekModalStoreId] = useState<string | null>(null);
   const boardRef = useRef(board);
   boardRef.current = board;
 
@@ -136,6 +138,48 @@ export default function BoardView({
       }
     } catch {
       // optimistic update stays; next poll will reconcile
+    }
+  }
+
+  async function handleTemplatePatch(storeId: string, patch: Partial<BoardEntry>) {
+    setTemplate((prev) => {
+      const prevEntries = prev?.entries ?? {};
+      const current = prevEntries[storeId] ?? {
+        chance: null,
+        window: "",
+        reason: "",
+        vendorNotes: "",
+        randomNotes: "",
+        updatedAt: null,
+      };
+      return {
+        weekday: selectedDay,
+        updatedAt: new Date().toISOString(),
+        entries: {
+          ...prevEntries,
+          [storeId]: { ...current, ...patch, updatedAt: new Date().toISOString() },
+        },
+      };
+    });
+    try {
+      const res = await fetch(`/api/template/${selectedDay}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ storeId, patch }),
+      });
+      if (res.ok) {
+        const fresh = await res.json();
+        setTemplate(fresh);
+      }
+    } catch {
+    }
+  }
+
+  function handleEntryPatch(storeId: string, patch: Partial<BoardEntry>) {
+    if (isLiveView) {
+      handlePatch(storeId, patch);
+    } else {
+      handleTemplatePatch(storeId, patch);
     }
   }
 
@@ -345,7 +389,7 @@ export default function BoardView({
         </div>
       </div>
 
-      {isAdmin && isLiveView && (
+      {isAdmin && (
         <div className="flex items-center justify-between gap-3 mb-6 bg-panel2 border border-line rounded-lg px-4 py-3">
           <label className="flex items-center gap-2 text-sm cursor-pointer">
             <input
@@ -354,7 +398,7 @@ export default function BoardView({
               onChange={(e) => setEditMode(e.target.checked)}
               className="accent-live"
             />
-            Edit mode
+            Edit mode {!isLiveView && <span className="text-textmuted">({DAY_LABELS[selectedDay]})</span>}
           </label>
           <div className="flex gap-2">
             <button
@@ -409,9 +453,10 @@ export default function BoardView({
                       key={store.id}
                       store={store}
                       entry={entry}
-                      editMode={isLiveView && isAdmin && editMode}
-                      onPatch={handlePatch}
+                      editMode={isAdmin && editMode}
+                      onPatch={handleEntryPatch}
                       showStatus={isLiveView}
+                      onViewWeek={(id) => setWeekModalStoreId(id)}
                     />
                   ))}
                 </div>
@@ -425,6 +470,30 @@ export default function BoardView({
           </p>
         )}
       </div>
+
+      {weekModalStoreId && (() => {
+        const s = STORES.find((st) => st.id === weekModalStoreId);
+        if (!s) return null;
+        return (
+          <StoreWeekModal
+            store={s}
+            todayWeekday={todayWeekday}
+            todayEntry={
+              board.entries[s.id] ?? {
+                chance: null,
+                window: "",
+                reason: "",
+                vendorNotes: "",
+                randomNotes: "",
+                status: "pending",
+                updatedAt: null,
+                updatedBy: null,
+              }
+            }
+            onClose={() => setWeekModalStoreId(null)}
+          />
+        );
+      })()}
     </main>
   );
 }
