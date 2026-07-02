@@ -10,5 +10,11 @@ export default async function HomePage() {
     redirect("/login");
   }
   const board = await getBoard();
-  return <BoardView initialBoard={board} isAdmin={Boolean(session.isAdmin)} />;
+  return (
+    <BoardView
+      initialBoard={board}
+      isAdmin={Boolean(session.isAdmin)}
+      username={session.username ?? "member"}
+    />
+  );
 }
