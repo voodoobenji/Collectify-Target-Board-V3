@@ -5,6 +5,7 @@ export interface StoreRef {
   regionLabel: string;
   vendorId: string | null;
   vendorNickname: string | null;
+  stockingMethod: "vendor" | "employee" | "both";
 }
 
 export const REGION_ORDER = [
@@ -25,7 +26,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": "V001",
-    "vendorNickname": "GALE"
+    "vendorNickname": "GALE",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T002",
@@ -33,7 +35,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": "V002",
-    "vendorNickname": "MARIA"
+    "vendorNickname": "MARIA",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T003",
@@ -41,7 +44,8 @@ export const STORES: StoreRef[] = [
     "region": "LOSANGELES",
     "regionLabel": "Los Angeles Central",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T004",
@@ -49,7 +53,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": "V001",
-    "vendorNickname": "GALE"
+    "vendorNickname": "GALE",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T005",
@@ -57,7 +62,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": "V001",
-    "vendorNickname": "GALE"
+    "vendorNickname": "GALE",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T006",
@@ -65,7 +71,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": "V002",
-    "vendorNickname": "MARIA"
+    "vendorNickname": "MARIA",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T007",
@@ -73,7 +80,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": "V002",
-    "vendorNickname": "MARIA"
+    "vendorNickname": "MARIA",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T008",
@@ -81,7 +89,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": "V002",
-    "vendorNickname": "MARIA"
+    "vendorNickname": "MARIA",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T009",
@@ -89,7 +98,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": "V001",
-    "vendorNickname": "GALE"
+    "vendorNickname": "GALE",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T010",
@@ -97,7 +107,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": "V004",
-    "vendorNickname": "Whittier/Diamond/Brea"
+    "vendorNickname": "Whittier/Diamond/Brea",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T011",
@@ -105,7 +116,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": "V002",
-    "vendorNickname": "MARIA"
+    "vendorNickname": "MARIA",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T012",
@@ -113,7 +125,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": "V002",
-    "vendorNickname": "MARIA"
+    "vendorNickname": "MARIA",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T013",
@@ -121,7 +134,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": "V001",
-    "vendorNickname": "GALE"
+    "vendorNickname": "GALE",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T014",
@@ -129,7 +143,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": "V003",
-    "vendorNickname": "CHRISTINE"
+    "vendorNickname": "CHRISTINE",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T015",
@@ -137,7 +152,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": "V001",
-    "vendorNickname": "GALE"
+    "vendorNickname": "GALE",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T016",
@@ -145,7 +161,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": "V003",
-    "vendorNickname": "CHRISTINE"
+    "vendorNickname": "CHRISTINE",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T017",
@@ -153,7 +170,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": "V001",
-    "vendorNickname": "GALE"
+    "vendorNickname": "GALE",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T018",
@@ -161,7 +179,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": "V002",
-    "vendorNickname": "MARIA"
+    "vendorNickname": "MARIA",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T019",
@@ -169,7 +188,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T020",
@@ -177,7 +197,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T021",
@@ -185,7 +206,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T022",
@@ -193,7 +215,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T023",
@@ -201,7 +224,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T024",
@@ -209,7 +233,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T025",
@@ -217,7 +242,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T026",
@@ -225,7 +251,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T027",
@@ -233,7 +260,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T028",
@@ -241,7 +269,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T029",
@@ -249,7 +278,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T030",
@@ -257,7 +287,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": "V006",
-    "vendorNickname": "Lakewood/Bellflower/Bloomfield"
+    "vendorNickname": "Lakewood/Bellflower/Bloomfield",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T031",
@@ -265,7 +296,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T032",
@@ -273,7 +305,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T033",
@@ -281,7 +314,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": "V009",
-    "vendorNickname": "Carson/Seal/Signal"
+    "vendorNickname": "Carson/Seal/Signal",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T034",
@@ -289,7 +323,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": "V009",
-    "vendorNickname": "Carson/Seal/Signal"
+    "vendorNickname": "Carson/Seal/Signal",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T035",
@@ -297,7 +332,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T036",
@@ -305,7 +341,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T037",
@@ -313,7 +350,8 @@ export const STORES: StoreRef[] = [
     "region": "SOUTHOFLA",
     "regionLabel": "Southeast LA / Long Beach",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T038",
@@ -321,7 +359,8 @@ export const STORES: StoreRef[] = [
     "region": "SOUTHOFLA",
     "regionLabel": "Southeast LA / Long Beach",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T039",
@@ -329,7 +368,8 @@ export const STORES: StoreRef[] = [
     "region": "SOUTHOFLA",
     "regionLabel": "Southeast LA / Long Beach",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T040",
@@ -337,7 +377,8 @@ export const STORES: StoreRef[] = [
     "region": "SOUTHOFLA",
     "regionLabel": "Southeast LA / Long Beach",
     "vendorId": "V003",
-    "vendorNickname": "CHRISTINE"
+    "vendorNickname": "CHRISTINE",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T041",
@@ -345,7 +386,8 @@ export const STORES: StoreRef[] = [
     "region": "SOUTHOFLA",
     "regionLabel": "Southeast LA / Long Beach",
     "vendorId": "V003",
-    "vendorNickname": "CHRISTINE"
+    "vendorNickname": "CHRISTINE",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T042",
@@ -353,7 +395,8 @@ export const STORES: StoreRef[] = [
     "region": "SOUTHOFLA",
     "regionLabel": "Southeast LA / Long Beach",
     "vendorId": "V004",
-    "vendorNickname": "Whittier/Diamond/Brea"
+    "vendorNickname": "Whittier/Diamond/Brea",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T043",
@@ -361,7 +404,8 @@ export const STORES: StoreRef[] = [
     "region": "SOUTHOFLA",
     "regionLabel": "Southeast LA / Long Beach",
     "vendorId": "V006",
-    "vendorNickname": "Lakewood/Bellflower/Bloomfield"
+    "vendorNickname": "Lakewood/Bellflower/Bloomfield",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T044",
@@ -369,7 +413,8 @@ export const STORES: StoreRef[] = [
     "region": "SOUTHOFLA",
     "regionLabel": "Southeast LA / Long Beach",
     "vendorId": "V006",
-    "vendorNickname": "Lakewood/Bellflower/Bloomfield"
+    "vendorNickname": "Lakewood/Bellflower/Bloomfield",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T045",
@@ -377,7 +422,8 @@ export const STORES: StoreRef[] = [
     "region": "SOUTHOFLA",
     "regionLabel": "Southeast LA / Long Beach",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T046",
@@ -385,7 +431,8 @@ export const STORES: StoreRef[] = [
     "region": "SOUTHOFLA",
     "regionLabel": "Southeast LA / Long Beach",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T047",
@@ -393,7 +440,8 @@ export const STORES: StoreRef[] = [
     "region": "SOUTHOFLA",
     "regionLabel": "Southeast LA / Long Beach",
     "vendorId": "V009",
-    "vendorNickname": "Carson/Seal/Signal"
+    "vendorNickname": "Carson/Seal/Signal",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T048",
@@ -401,7 +449,8 @@ export const STORES: StoreRef[] = [
     "region": "SOUTHOFLA",
     "regionLabel": "Southeast LA / Long Beach",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T049",
@@ -409,7 +458,8 @@ export const STORES: StoreRef[] = [
     "region": "SOUTHOFLA",
     "regionLabel": "Southeast LA / Long Beach",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T050",
@@ -417,7 +467,8 @@ export const STORES: StoreRef[] = [
     "region": "SOUTHOFLA",
     "regionLabel": "Southeast LA / Long Beach",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T051",
@@ -425,7 +476,8 @@ export const STORES: StoreRef[] = [
     "region": "SOUTHOFLA",
     "regionLabel": "Southeast LA / Long Beach",
     "vendorId": "v006",
-    "vendorNickname": "Lakewood/Bellflower/Bloomfield"
+    "vendorNickname": "Lakewood/Bellflower/Bloomfield",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T164",
@@ -433,7 +485,8 @@ export const STORES: StoreRef[] = [
     "region": "SOUTHOFLA",
     "regionLabel": "Southeast LA / Long Beach",
     "vendorId": "V001",
-    "vendorNickname": "GALE"
+    "vendorNickname": "GALE",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T052",
@@ -441,7 +494,8 @@ export const STORES: StoreRef[] = [
     "region": "LOSANGELES",
     "regionLabel": "Los Angeles Central",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T053",
@@ -449,7 +503,8 @@ export const STORES: StoreRef[] = [
     "region": "LOSANGELES",
     "regionLabel": "Los Angeles Central",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T054",
@@ -457,7 +512,8 @@ export const STORES: StoreRef[] = [
     "region": "LOSANGELES",
     "regionLabel": "Los Angeles Central",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T055",
@@ -465,7 +521,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T056",
@@ -473,7 +530,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T057",
@@ -481,7 +539,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T058",
@@ -489,7 +548,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T059",
@@ -497,7 +557,8 @@ export const STORES: StoreRef[] = [
     "region": "CULVERINGSB",
     "regionLabel": "Culver City / South Bay",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T060",
@@ -505,7 +566,8 @@ export const STORES: StoreRef[] = [
     "region": "LOSANGELES",
     "regionLabel": "Los Angeles Central",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T061",
@@ -513,7 +575,8 @@ export const STORES: StoreRef[] = [
     "region": "LOSANGELES",
     "regionLabel": "Los Angeles Central",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T062",
@@ -521,7 +584,8 @@ export const STORES: StoreRef[] = [
     "region": "SFV",
     "regionLabel": "San Fernando Valley",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T063",
@@ -529,7 +593,8 @@ export const STORES: StoreRef[] = [
     "region": "SFV",
     "regionLabel": "San Fernando Valley",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T064",
@@ -537,7 +602,8 @@ export const STORES: StoreRef[] = [
     "region": "SFV",
     "regionLabel": "San Fernando Valley",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T065",
@@ -545,7 +611,8 @@ export const STORES: StoreRef[] = [
     "region": "SFV",
     "regionLabel": "San Fernando Valley",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T066",
@@ -553,7 +620,8 @@ export const STORES: StoreRef[] = [
     "region": "SFV",
     "regionLabel": "San Fernando Valley",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T067",
@@ -561,7 +629,8 @@ export const STORES: StoreRef[] = [
     "region": "SFV",
     "regionLabel": "San Fernando Valley",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T068",
@@ -569,7 +638,8 @@ export const STORES: StoreRef[] = [
     "region": "SFV",
     "regionLabel": "San Fernando Valley",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T069",
@@ -577,7 +647,8 @@ export const STORES: StoreRef[] = [
     "region": "SFV",
     "regionLabel": "San Fernando Valley",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T070",
@@ -585,7 +656,8 @@ export const STORES: StoreRef[] = [
     "region": "SFV",
     "regionLabel": "San Fernando Valley",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T071",
@@ -593,7 +665,8 @@ export const STORES: StoreRef[] = [
     "region": "SFV",
     "regionLabel": "San Fernando Valley",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T072",
@@ -601,7 +674,8 @@ export const STORES: StoreRef[] = [
     "region": "SFV",
     "regionLabel": "San Fernando Valley",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T073",
@@ -609,7 +683,8 @@ export const STORES: StoreRef[] = [
     "region": "SFV",
     "regionLabel": "San Fernando Valley",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T074",
@@ -617,7 +692,8 @@ export const STORES: StoreRef[] = [
     "region": "SFV",
     "regionLabel": "San Fernando Valley",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T075",
@@ -625,7 +701,8 @@ export const STORES: StoreRef[] = [
     "region": "805.0",
     "regionLabel": "805 (Ventura / Santa Clarita)",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T076",
@@ -633,7 +710,8 @@ export const STORES: StoreRef[] = [
     "region": "805.0",
     "regionLabel": "805 (Ventura / Santa Clarita)",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T077",
@@ -641,7 +719,8 @@ export const STORES: StoreRef[] = [
     "region": "805.0",
     "regionLabel": "805 (Ventura / Santa Clarita)",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T078",
@@ -649,7 +728,8 @@ export const STORES: StoreRef[] = [
     "region": "805.0",
     "regionLabel": "805 (Ventura / Santa Clarita)",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T079",
@@ -657,7 +737,8 @@ export const STORES: StoreRef[] = [
     "region": "805.0",
     "regionLabel": "805 (Ventura / Santa Clarita)",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T080",
@@ -665,7 +746,8 @@ export const STORES: StoreRef[] = [
     "region": "805.0",
     "regionLabel": "805 (Ventura / Santa Clarita)",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T081",
@@ -673,7 +755,8 @@ export const STORES: StoreRef[] = [
     "region": "805.0",
     "regionLabel": "805 (Ventura / Santa Clarita)",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T082",
@@ -681,7 +764,8 @@ export const STORES: StoreRef[] = [
     "region": "805.0",
     "regionLabel": "805 (Ventura / Santa Clarita)",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T083",
@@ -689,7 +773,8 @@ export const STORES: StoreRef[] = [
     "region": "SFV",
     "regionLabel": "San Fernando Valley",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T084",
@@ -697,7 +782,8 @@ export const STORES: StoreRef[] = [
     "region": "SFV",
     "regionLabel": "San Fernando Valley",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T085",
@@ -705,7 +791,8 @@ export const STORES: StoreRef[] = [
     "region": "SFV",
     "regionLabel": "San Fernando Valley",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T086",
@@ -713,7 +800,8 @@ export const STORES: StoreRef[] = [
     "region": "SFV",
     "regionLabel": "San Fernando Valley",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T087",
@@ -721,7 +809,8 @@ export const STORES: StoreRef[] = [
     "region": "805.0",
     "regionLabel": "805 (Ventura / Santa Clarita)",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T088",
@@ -729,7 +818,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": "V007",
-    "vendorNickname": "Michelle"
+    "vendorNickname": "Michelle",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T089",
@@ -737,7 +827,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T090",
@@ -745,7 +836,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": "V007",
-    "vendorNickname": "Michelle"
+    "vendorNickname": "Michelle",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T091",
@@ -753,7 +845,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T092",
@@ -761,7 +854,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": "V007",
-    "vendorNickname": "Michelle"
+    "vendorNickname": "Michelle",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T093",
@@ -769,7 +863,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T094",
@@ -777,7 +872,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": "V007",
-    "vendorNickname": "Michelle"
+    "vendorNickname": "Michelle",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T095",
@@ -785,7 +881,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": "V007",
-    "vendorNickname": "Michelle"
+    "vendorNickname": "Michelle",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T096",
@@ -793,7 +890,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T097",
@@ -801,7 +899,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T166",
@@ -809,7 +908,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": "V006",
-    "vendorNickname": "Lakewood/Bellflower/Bloomfield"
+    "vendorNickname": "Lakewood/Bellflower/Bloomfield",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T098",
@@ -817,7 +917,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T099",
@@ -825,7 +926,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T165",
@@ -833,7 +935,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": "V004",
-    "vendorNickname": "Whittier/Diamond/Brea"
+    "vendorNickname": "Whittier/Diamond/Brea",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T100",
@@ -841,7 +944,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": "V007",
-    "vendorNickname": "Michelle"
+    "vendorNickname": "Michelle",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T101",
@@ -849,7 +953,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": "V007",
-    "vendorNickname": "Michelle"
+    "vendorNickname": "Michelle",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T102",
@@ -857,7 +962,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T103",
@@ -865,7 +971,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T104",
@@ -873,7 +980,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T105",
@@ -881,7 +989,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T106",
@@ -889,7 +998,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": "V008",
-    "vendorNickname": "Blond Girl"
+    "vendorNickname": "Blond Girl",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T107",
@@ -897,7 +1007,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": "V005",
-    "vendorNickname": "Sang"
+    "vendorNickname": "Sang",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T108",
@@ -905,7 +1016,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": "V005",
-    "vendorNickname": "Sang"
+    "vendorNickname": "Sang",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T109",
@@ -913,7 +1025,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T110",
@@ -921,7 +1034,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": "V007",
-    "vendorNickname": "Michelle"
+    "vendorNickname": "Michelle",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T111",
@@ -929,7 +1043,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T112",
@@ -937,7 +1052,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T113",
@@ -945,7 +1061,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T114",
@@ -953,7 +1070,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T115",
@@ -961,7 +1079,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T116",
@@ -969,7 +1088,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": "V009",
-    "vendorNickname": "Carson/Seal/Signal"
+    "vendorNickname": "Carson/Seal/Signal",
+    "stockingMethod": "vendor"
   },
   {
     "id": "T117",
@@ -977,7 +1097,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T118",
@@ -985,7 +1106,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T119",
@@ -993,7 +1115,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T120",
@@ -1001,7 +1124,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T167",
@@ -1009,7 +1133,8 @@ export const STORES: StoreRef[] = [
     "region": "OC",
     "regionLabel": "Orange County",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T121",
@@ -1017,7 +1142,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T122",
@@ -1025,7 +1151,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T123",
@@ -1033,7 +1160,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T124",
@@ -1041,7 +1169,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T125",
@@ -1049,7 +1178,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T126",
@@ -1057,7 +1187,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T127",
@@ -1065,7 +1196,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T128",
@@ -1073,7 +1205,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T129",
@@ -1081,7 +1214,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T130",
@@ -1089,7 +1223,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T131",
@@ -1097,7 +1232,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T132",
@@ -1105,7 +1241,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T133",
@@ -1113,7 +1250,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T134",
@@ -1121,7 +1259,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T135",
@@ -1129,7 +1268,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T136",
@@ -1137,7 +1277,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T137",
@@ -1145,7 +1286,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T138",
@@ -1153,7 +1295,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T139",
@@ -1161,7 +1304,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T140",
@@ -1169,7 +1313,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T141",
@@ -1177,7 +1322,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T142",
@@ -1185,7 +1331,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T143",
@@ -1193,7 +1340,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T144",
@@ -1201,7 +1349,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T145",
@@ -1209,7 +1358,8 @@ export const STORES: StoreRef[] = [
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T146",
@@ -1217,7 +1367,8 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T147",
@@ -1225,7 +1376,8 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T148",
@@ -1233,7 +1385,8 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T149",
@@ -1241,7 +1394,8 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T150",
@@ -1249,7 +1403,8 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T151",
@@ -1257,7 +1412,8 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T152",
@@ -1265,7 +1421,8 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T153",
@@ -1273,7 +1430,8 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T154",
@@ -1281,7 +1439,8 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T155",
@@ -1289,7 +1448,8 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T156",
@@ -1297,7 +1457,8 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T157",
@@ -1305,7 +1466,8 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T158",
@@ -1313,7 +1475,8 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T159",
@@ -1321,7 +1484,8 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T160",
@@ -1329,7 +1493,8 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T161",
@@ -1337,7 +1502,8 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T162",
@@ -1345,7 +1511,8 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   },
   {
     "id": "T163",
@@ -1353,6 +1520,7 @@ export const STORES: StoreRef[] = [
     "region": "SD",
     "regionLabel": "San Diego",
     "vendorId": null,
-    "vendorNickname": null
+    "vendorNickname": null,
+    "stockingMethod": "employee"
   }
 ];
