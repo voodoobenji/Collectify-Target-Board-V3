@@ -67,6 +67,7 @@ export default function BoardView({
 
   const isLiveView = selectedDay === todayWeekday;
 
+  // Poll for live updates from other viewers/admin (only matters on today's tab)
   useEffect(() => {
     const id = setInterval(async () => {
       try {
@@ -77,11 +78,13 @@ export default function BoardView({
           setBoard(fresh);
         }
       } catch {
+        // silent - will retry next interval
       }
     }, 12000);
     return () => clearInterval(id);
   }, []);
 
+  // Fetch the typical pattern whenever a non-today weekday tab is selected
   useEffect(() => {
     if (isLiveView) {
       setTemplate(null);
@@ -132,6 +135,7 @@ export default function BoardView({
         setBoard(fresh);
       }
     } catch {
+      // optimistic update stays; next poll will reconcile
     }
   }
 
@@ -182,6 +186,7 @@ export default function BoardView({
     }
   }
 
+  // Unified entry map: live board entries, or read-only entries derived from the template
   const activeEntries: Record<string, BoardEntry> = useMemo(() => {
     if (isLiveView) return board.entries;
     const map: Record<string, BoardEntry> = {};
@@ -337,4 +342,85 @@ export default function BoardView({
       </div>
 
       {isAdmin && isLiveView && (
-        <div className="flex items-center justify-between gap-3 mb-6
+        <div className="flex items-center justify-between gap-3 mb-6 bg-panel2 border border-line rounded-lg px-4 py-3">
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              checked={editMode}
+              onChange={(e) => setEditMode(e.target.checked)}
+              className="accent-live"
+            />
+            Edit mode
+          </label>
+          <div className="flex gap-2">
+            <button
+              onClick={handleImportSeed}
+              disabled={importing}
+              className="text-xs font-mono uppercase tracking-wide px-3 py-1.5 rounded-full border border-line text-textmuted hover:text-textprimary transition-colors disabled:opacity-50"
+            >
+              {importing ? "Importing..." : "Import historical patterns"}
+            </button>
+            <button
+              onClick={handleNewDay}
+              disabled={startingNewDay}
+              className="text-xs font-mono uppercase tracking-wide px-3 py-1.5 rounded-full border border-gold/50 text-gold hover:bg-gold/10 transition-colors disabled:opacity-50"
+            >
+              {startingNewDay ? "Starting..." : "Start New Day"}
+            </button>
+          </div>
+        </div>
+      )}
+
+      <Filters
+        search={search}
+        onSearch={setSearch}
+        chanceFilter={chanceFilter}
+        onChanceFilter={setChanceFilter}
+        statusFilter={statusFilter}
+        onStatusFilter={setStatusFilter}
+        showStatusFilter={isLiveView}
+      />
+
+      <div className="space-y-6">
+        {grouped.map(({ region, items }) => {
+          const label = items[0]?.store.regionLabel ?? region;
+          const collapsed = collapsedRegions.has(region);
+          return (
+            <section key={region}>
+              <button
+                onClick={() => toggleRegion(region)}
+                className="w-full flex items-center justify-between mb-2 group"
+              >
+                <h2 className="font-display uppercase tracking-wide text-sm text-textmuted group-hover:text-textprimary transition-colors">
+                  {label}
+                </h2>
+                <span className="font-mono text-[11px] text-textmuted">
+                  {items.length} {collapsed ? "\u25b8" : "\u25be"}
+                </span>
+              </button>
+              {!collapsed && (
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {items.map(({ store, entry }) => (
+                    <StoreRow
+                      key={store.id}
+                      store={store}
+                      entry={entry}
+                      editMode={isLiveView && isAdmin && editMode}
+                      onPatch={handlePatch}
+                      showStatus={isLiveView}
+                    />
+                  ))}
+                </div>
+              )}
+            </section>
+          );
+        })}
+        {grouped.length === 0 && (
+          <p className="text-center text-textmuted text-sm py-12">
+            No stores match your filters.
+          </p>
+        )}
+      </div>
+    </main>
+  );
+}
