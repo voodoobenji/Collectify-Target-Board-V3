@@ -2,6 +2,7 @@
 
 import type { StoreRef } from "@/lib/stores";
 import type { BoardEntry, Chance, SourceType, Status } from "@/lib/types";
+import { appleMapsUrl, googleMapsUrl } from "@/lib/maps";
 
 interface Props {
   store: StoreRef;
@@ -42,6 +43,33 @@ const sourceLabels: Record<string, string> = {
   both: "Vendor + Push",
 };
 
+function MapLink({ store, small }: { store: StoreRef; small?: boolean }) {
+  const size = small ? "text-[10px]" : "text-[11px]";
+  return (
+    <span className={`flex items-center gap-1.5 shrink-0 ${size}`}>
+      <a
+        href={appleMapsUrl(store)}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(e) => e.stopPropagation()}
+        className="text-textmuted hover:text-live font-mono"
+      >
+        Apple
+      </a>
+      <span className="text-line">/</span>
+      <a
+        href={googleMapsUrl(store)}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(e) => e.stopPropagation()}
+        className="text-textmuted hover:text-live font-mono"
+      >
+        Google
+      </a>
+    </span>
+  );
+}
+
 export default function StoreRow({
   store,
   entry,
@@ -57,7 +85,10 @@ export default function StoreRow({
       <div className="border border-line rounded-lg p-3 bg-panel">
         <div className="flex items-start justify-between gap-2 mb-2">
           <div>
-            <div className="font-medium text-sm">{store.name}</div>
+            <div className="flex items-center gap-1.5">
+              <span className="font-medium text-sm">{store.name}</span>
+              <MapLink store={store} />
+            </div>
             {store.vendorNickname && (
               <div className="font-mono text-[10px] text-textmuted">[{store.vendorNickname}]</div>
             )}
@@ -158,9 +189,14 @@ export default function StoreRow({
   }
 
   return (
-    <button
+    <div
       onClick={() => onViewWeek?.(store.id)}
-      className={`w-full text-left border border-line rounded-lg p-3 bg-panel hover:border-textmuted/40 transition-colors ${
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") onViewWeek?.(store.id);
+      }}
+      className={`w-full text-left border border-line rounded-lg p-3 bg-panel hover:border-textmuted/40 transition-colors cursor-pointer ${
         chance ? chanceBorderLeft[chance] : ""
       }`}
     >
@@ -174,6 +210,7 @@ export default function StoreRow({
             {chance ?? "\u2014"}
           </span>
           <span className="font-medium text-sm truncate">{store.name}</span>
+          <MapLink store={store} small />
         </div>
         {showStatus && (
           <span
@@ -202,6 +239,6 @@ export default function StoreRow({
       {entry.reason && (
         <p className="text-xs text-textmuted mt-1 truncate">{entry.reason}</p>
       )}
-    </button>
+    </div>
   );
 }
