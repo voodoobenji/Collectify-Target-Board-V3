@@ -65,7 +65,6 @@ export default function BoardView({
 
   const isLiveView = selectedDay === todayWeekday;
 
-  // Poll for live updates from other viewers/admin (only matters on today's tab)
   useEffect(() => {
     const id = setInterval(async () => {
       try {
@@ -76,13 +75,11 @@ export default function BoardView({
           setBoard(fresh);
         }
       } catch {
-        // silent - will retry next interval
       }
     }, 12000);
     return () => clearInterval(id);
   }, []);
 
-  // Fetch the typical pattern whenever a non-today weekday tab is selected
   useEffect(() => {
     if (isLiveView) {
       setTemplate(null);
@@ -133,7 +130,6 @@ export default function BoardView({
         setBoard(fresh);
       }
     } catch {
-      // optimistic update stays; next poll will reconcile
     }
   }
 
@@ -158,7 +154,6 @@ export default function BoardView({
     }
   }
 
-  // Unified entry map: live board entries, or read-only entries derived from the template
   const activeEntries: Record<string, BoardEntry> = useMemo(() => {
     if (isLiveView) return board.entries;
     const map: Record<string, BoardEntry> = {};
@@ -227,17 +222,24 @@ export default function BoardView({
   return (
     <main className="min-h-screen px-4 py-6 sm:px-8 sm:py-10 max-w-4xl mx-auto">
       <header className="flex items-start justify-between gap-4 mb-6">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-live pulse" />
-            <span className="font-mono text-[11px] uppercase tracking-widest text-live">Live</span>
+        <div className="flex items-start gap-3">
+          <img
+            src="/COLLECTIFY_LOGO.png"
+            alt="Collectify"
+            className="h-11 w-11 rounded-full border border-gold/50 shrink-0"
+          />
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-live pulse" />
+              <span className="font-mono text-[11px] uppercase tracking-widest text-live">Live</span>
+            </div>
+            <h1 className="font-display uppercase tracking-wide text-3xl sm:text-4xl font-semibold leading-none">
+              SoCal Target Board
+            </h1>
+            <p className="text-textmuted text-xs mt-2 font-mono">
+              {board.date} &middot; updated {timeAgo(lastUpdated)}
+            </p>
           </div>
-          <h1 className="font-display uppercase tracking-wide text-3xl sm:text-4xl font-semibold leading-none">
-            SoCal Target Board
-          </h1>
-          <p className="text-textmuted text-xs mt-2 font-mono">
-            {board.date} &middot; updated {timeAgo(lastUpdated)}
-          </p>
         </div>
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
@@ -320,7 +322,7 @@ export default function BoardView({
           <button
             onClick={handleNewDay}
             disabled={startingNewDay}
-            className="text-xs font-mono uppercase tracking-wide px-3 py-1.5 rounded-full border border-line text-textmuted hover:text-textprimary hover:border-textmuted/50 transition-colors disabled:opacity-50"
+            className="text-xs font-mono uppercase tracking-wide px-3 py-1.5 rounded-full border border-gold/50 text-gold hover:bg-gold/10 transition-colors disabled:opacity-50"
           >
             {startingNewDay ? "Starting..." : "Start New Day"}
           </button>
