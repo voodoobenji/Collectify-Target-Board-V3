@@ -65,7 +65,18 @@ export default function BoardView({
   username: string;
 }) {
   const [board, setBoard] = useState<Board>(initialBoard);
-  const todayWeekday = useMemo(() => weekdayFromDateStr(board.date), [board.date]);
+  const [actualToday, setActualToday] = useState<string>(() =>
+    new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" })
+  );
+  useEffect(() => {
+    const id = setInterval(() => {
+      setActualToday(new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" }));
+    }, 60000);
+    return () => clearInterval(id);
+  }, []);
+  const todayWeekday = useMemo(() => weekdayFromDateStr(actualToday), [actualToday]);
+  const boardWeekday = useMemo(() => weekdayFromDateStr(board.date), [board.date]);
+  const boardIsStale = board.date !== actualToday;
   const [selectedDay, setSelectedDay] = useState<string>(todayWeekday);
   const [template, setTemplate] = useState<WeekdayTemplate | null>(null);
   const [templateLoading, setTemplateLoading] = useState(false);
@@ -357,6 +368,13 @@ export default function BoardView({
           Sign out
         </button>
       </header>
+
+      {boardIsStale && isAdmin && (
+        <div className="bg-high/10 border border-high/50 rounded-lg px-4 py-3 mb-4 text-xs text-high">
+          This board is still showing {DAY_LABELS[boardWeekday] ?? board.date} ({board.date}), but today is{" "}
+          {DAY_LABELS[todayWeekday] ?? actualToday}. Click <strong>Start New Day</strong> below to roll it forward.
+        </div>
+      )}
 
       <div className="sticky top-0 z-20 bg-ink pt-1 pb-3 -mt-1">
         <div className="flex gap-1.5 mb-0 overflow-x-auto">
