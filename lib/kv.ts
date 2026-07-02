@@ -132,3 +132,22 @@ export async function importTemplate(
   await kv.set(templateKey(weekday), tpl);
   return tpl;
 }
+export async function applyTemplateToBoard(weekday: string, updatedBy: string): Promise<Board> {
+  const board = await getBoard();
+  const tpl = await getTemplate(weekday);
+  if (!tpl) return board;
+  for (const [sid, info] of Object.entries(tpl.entries)) {
+    const current = board.entries[sid] ?? { ...EMPTY_ENTRY };
+    board.entries[sid] = {
+      ...current,
+      chance: info.chance,
+      window: info.window,
+      reason: info.reason,
+      updatedAt: new Date().toISOString(),
+      updatedBy,
+    };
+  }
+  board.version += 1;
+  await kv.set(BOARD_KEY, board);
+  return board;
+}
