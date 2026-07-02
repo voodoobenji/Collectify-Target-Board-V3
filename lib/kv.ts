@@ -70,6 +70,7 @@ async function saveTemplateFromBoard(board: Board): Promise<void> {
       reason: e.reason,
       vendorNotes: e.vendorNotes,
       randomNotes: e.randomNotes,
+      sourceType: e.sourceType,
       updatedAt: e.updatedAt,
     };
   }
@@ -139,6 +140,7 @@ export async function startNewDay(updatedBy: string): Promise<Board> {
       reason: fromTpl?.reason ?? prev?.reason ?? "",
       vendorNotes: fromTpl?.vendorNotes ?? prev?.vendorNotes ?? "",
       randomNotes: fromTpl?.randomNotes ?? prev?.randomNotes ?? "",
+      sourceType: fromTpl?.sourceType ?? prev?.sourceType ?? null,
       status: "pending",
       updatedAt: new Date().toISOString(),
       updatedBy,
@@ -184,6 +186,7 @@ export async function applyTemplateToBoard(weekday: string, updatedBy: string): 
       reason: info.reason,
       vendorNotes: info.vendorNotes ?? "",
       randomNotes: info.randomNotes ?? "",
+      sourceType: info.sourceType ?? null,
       updatedAt: new Date().toISOString(),
       updatedBy,
     };
