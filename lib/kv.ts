@@ -119,3 +119,16 @@ export async function startNewDay(updatedBy: string): Promise<Board> {
   await kv.set(BOARD_KEY, fresh);
   return fresh;
 }
+
+export async function importTemplate(
+  weekday: string,
+  entries: Record<string, { chance: string | null; window: string; reason: string }>
+): Promise<WeekdayTemplate> {
+  const tpl: WeekdayTemplate = {
+    weekday,
+    updatedAt: new Date().toISOString(),
+    entries: entries as WeekdayTemplate["entries"],
+  };
+  await kv.set(templateKey(weekday), tpl);
+  return tpl;
+}
