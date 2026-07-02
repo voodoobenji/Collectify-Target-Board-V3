@@ -7,6 +7,7 @@ import type { Board, BoardEntry, WeekdayTemplate } from "@/lib/types";
 import { WEEKDAYS } from "@/lib/types";
 import StoreRow from "./StoreRow";
 import Filters from "./Filters";
+import { SEED_TEMPLATES } from "@/lib/seed-templates";
 
 type ChanceFilter = "all" | "High" | "Medium" | "Low";
 type StatusFilter = "all" | "pending" | "hit" | "no_hit";
@@ -60,6 +61,7 @@ export default function BoardView({
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [collapsedRegions, setCollapsedRegions] = useState<Set<string>>(new Set());
   const [startingNewDay, setStartingNewDay] = useState(false);
+  const [importing, setImporting] = useState(false);
   const boardRef = useRef(board);
   boardRef.current = board;
 
@@ -130,6 +132,32 @@ export default function BoardView({
         setBoard(fresh);
       }
     } catch {
+    }
+  }
+
+  async function handleImportSeed() {
+    if (
+      !confirm(
+        "Import historical patterns from your past guides? This fills in the typical pattern for each weekday. Your own guides take priority over any filled-in partner data."
+      )
+    ) {
+      return;
+    }
+    setImporting(true);
+    try {
+      await fetch("/api/admin/import-templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(SEED_TEMPLATES),
+      });
+      if (!isLiveView) {
+        const res = await fetch(`/api/template/${selectedDay}`, { cache: "no-store" });
+        const data = res.ok ? await res.json() : null;
+        setTemplate(data?.template ?? null);
+      }
+      alert("Historical patterns imported.");
+    } finally {
+      setImporting(false);
     }
   }
 
@@ -309,76 +337,4 @@ export default function BoardView({
       </div>
 
       {isAdmin && isLiveView && (
-        <div className="flex items-center justify-between gap-3 mb-6 bg-panel2 border border-line rounded-lg px-4 py-3">
-          <label className="flex items-center gap-2 text-sm cursor-pointer">
-            <input
-              type="checkbox"
-              checked={editMode}
-              onChange={(e) => setEditMode(e.target.checked)}
-              className="accent-live"
-            />
-            Edit mode
-          </label>
-          <button
-            onClick={handleNewDay}
-            disabled={startingNewDay}
-            className="text-xs font-mono uppercase tracking-wide px-3 py-1.5 rounded-full border border-gold/50 text-gold hover:bg-gold/10 transition-colors disabled:opacity-50"
-          >
-            {startingNewDay ? "Starting..." : "Start New Day"}
-          </button>
-        </div>
-      )}
-
-      <Filters
-        search={search}
-        onSearch={setSearch}
-        chanceFilter={chanceFilter}
-        onChanceFilter={setChanceFilter}
-        statusFilter={statusFilter}
-        onStatusFilter={setStatusFilter}
-        showStatusFilter={isLiveView}
-      />
-
-      <div className="space-y-6">
-        {grouped.map(({ region, items }) => {
-          const label = items[0]?.store.regionLabel ?? region;
-          const collapsed = collapsedRegions.has(region);
-          return (
-            <section key={region}>
-              <button
-                onClick={() => toggleRegion(region)}
-                className="w-full flex items-center justify-between mb-2 group"
-              >
-                <h2 className="font-display uppercase tracking-wide text-sm text-textmuted group-hover:text-textprimary transition-colors">
-                  {label}
-                </h2>
-                <span className="font-mono text-[11px] text-textmuted">
-                  {items.length} {collapsed ? "\u25b8" : "\u25be"}
-                </span>
-              </button>
-              {!collapsed && (
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {items.map(({ store, entry }) => (
-                    <StoreRow
-                      key={store.id}
-                      store={store}
-                      entry={entry}
-                      editMode={isLiveView && isAdmin && editMode}
-                      onPatch={handlePatch}
-                      showStatus={isLiveView}
-                    />
-                  ))}
-                </div>
-              )}
-            </section>
-          );
-        })}
-        {grouped.length === 0 && (
-          <p className="text-center text-textmuted text-sm py-12">
-            No stores match your filters.
-          </p>
-        )}
-      </div>
-    </main>
-  );
-}
+        <div className="flex items-center justify-between gap-3 mb-6
