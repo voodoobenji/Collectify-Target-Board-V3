@@ -40,10 +40,9 @@ export default function StoreRow({ store, entry, editMode, onPatch, showStatus =
         <div className="flex items-start justify-between gap-2 mb-2">
           <div>
             <div className="font-medium text-sm">{store.name}</div>
-            <div className="font-mono text-[10px] text-textmuted">
-              {store.id}
-              {store.vendorNickname ? ` \u00b7 [${store.vendorNickname}]` : ""}
-            </div>
+            {store.vendorNickname && (
+              <div className="font-mono text-[10px] text-textmuted">[{store.vendorNickname}]</div>
+            )}
           </div>
           <select
             value={chance ?? ""}
@@ -114,8 +113,6 @@ export default function StoreRow({ store, entry, editMode, onPatch, showStatus =
         )}
       </div>
       <div className="flex items-center gap-2 mt-1.5 text-[11px] font-mono text-textmuted">
-        <span>{store.id}</span>
-        {store.vendorNickname && <span>[{store.vendorNickname}]</span>}
         {entry.window && <span className="text-textprimary">{entry.window}</span>}
       </div>
       {entry.reason && (
