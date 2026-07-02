@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { importTemplate } from "@/lib/kv";
+import { importTemplate, applyTemplateToBoard, getBoard } from "@/lib/kv";
 import { WEEKDAYS } from "@/lib/types";
+
+function todayWeekday(): string {
+  return new Date()
+    .toLocaleDateString("en-US", { weekday: "long", timeZone: "America/Los_Angeles" })
+    .toLowerCase();
+}
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -18,5 +24,12 @@ export async function POST(req: NextRequest) {
       results.push(day);
     }
   }
-  return NextResponse.json({ imported: results });
+
+  const wd = todayWeekday();
+  let board = await getBoard();
+  if ((WEEKDAYS as readonly string[]).includes(wd) && results.includes(wd)) {
+    board = await applyTemplateToBoard(wd, session.discordId ?? "unknown");
+  }
+
+  return NextResponse.json({ imported: results, board });
 }
