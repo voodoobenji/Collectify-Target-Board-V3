@@ -1,0 +1,18 @@
+import "next-auth";
+import "next-auth/jwt";
+
+declare module "next-auth" {
+  interface Session {
+    discordId?: string;
+    isAdmin?: boolean;
+    isMember?: boolean;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    discordId?: string;
+    isAdmin?: boolean;
+    isMember?: boolean;
+  }
+}
