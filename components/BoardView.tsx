@@ -149,15 +149,19 @@ export default function BoardView({
     }
     setImporting(true);
     try {
-      await fetch("/api/admin/import-templates", {
+      const res = await fetch("/api/admin/import-templates", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(SEED_TEMPLATES),
       });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.board) setBoard(data.board);
+      }
       if (!isLiveView) {
-        const res = await fetch(`/api/template/${selectedDay}`, { cache: "no-store" });
-        const data = res.ok ? await res.json() : null;
-        setTemplate(data?.template ?? null);
+        const tRes = await fetch(`/api/template/${selectedDay}`, { cache: "no-store" });
+        const tData = tRes.ok ? await tRes.json() : null;
+        setTemplate(tData?.template ?? null);
       }
       alert("Historical patterns imported.");
     } finally {
