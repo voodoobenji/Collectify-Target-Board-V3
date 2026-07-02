@@ -8,6 +8,7 @@ import { WEEKDAYS } from "@/lib/types";
 import StoreRow from "./StoreRow";
 import Filters from "./Filters";
 import StoreWeekModal from "./StoreWeekModal";
+import Watermark from "./Watermark";
 import { SEED_TEMPLATES } from "@/lib/seed-templates";
 
 type ChanceFilter = "all" | "High" | "Medium" | "Low";
@@ -57,9 +58,11 @@ function weekdayFromDateStr(dateStr: string): string {
 export default function BoardView({
   initialBoard,
   isAdmin,
+  username,
 }: {
   initialBoard: Board;
   isAdmin: boolean;
+  username: string;
 }) {
   const [board, setBoard] = useState<Board>(initialBoard);
   const todayWeekday = useMemo(() => weekdayFromDateStr(board.date), [board.date]);
@@ -326,6 +329,7 @@ export default function BoardView({
 
   return (
     <main className="min-h-screen px-4 py-6 sm:px-8 sm:py-10 max-w-4xl mx-auto">
+      <Watermark username={username} date={board.date} />
       <header className="flex items-start justify-between gap-4 mb-6">
         <div className="flex items-start gap-3">
           <img
