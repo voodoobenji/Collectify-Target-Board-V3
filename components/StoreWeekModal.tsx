@@ -19,12 +19,19 @@ const chanceStyles: Record<string, string> = {
   Low: "border-low text-low bg-low/10",
 };
 
+const sourceLabels: Record<string, string> = {
+  vendor: "Vendor",
+  employee_push: "Employee Push",
+  both: "Vendor + Push",
+};
+
 interface DayInfo {
   chance: string | null;
   window: string;
   reason: string;
   vendorNotes: string;
   randomNotes: string;
+  sourceType: string | null;
 }
 
 export default function StoreWeekModal({
@@ -51,6 +58,7 @@ export default function StoreWeekModal({
         reason: todayEntry.reason,
         vendorNotes: todayEntry.vendorNotes,
         randomNotes: todayEntry.randomNotes,
+        sourceType: todayEntry.sourceType,
       },
     };
     const others = WEEKDAYS.filter((d) => d !== todayWeekday);
@@ -112,13 +120,20 @@ export default function StoreWeekModal({
                       {DAY_LABELS[day]}
                       {isToday && <span className="text-live text-[10px] ml-2">Today</span>}
                     </span>
-                    {info?.chance && (
-                      <span
-                        className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border ${chanceStyles[info.chance] ?? ""}`}
-                      >
-                        {info.chance}
-                      </span>
-                    )}
+                    <div className="flex items-center gap-1.5">
+                      {info?.sourceType && (
+                        <span className="text-[10px] font-mono uppercase text-gold">
+                          {sourceLabels[info.sourceType]}
+                        </span>
+                      )}
+                      {info?.chance && (
+                        <span
+                          className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border ${chanceStyles[info.chance] ?? ""}`}
+                        >
+                          {info.chance}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   {!info || (!info.chance && !info.window && !info.reason && !info.vendorNotes && !info.randomNotes) ? (
                     <p className="text-textmuted text-xs">No data for this day.</p>

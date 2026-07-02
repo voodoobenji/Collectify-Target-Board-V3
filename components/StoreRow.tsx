@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import type { StoreRef } from "@/lib/stores";
-import type { BoardEntry, Chance, Status } from "@/lib/types";
+import type { BoardEntry, Chance, SourceType, Status } from "@/lib/types";
 
 interface Props {
   store: StoreRef;
@@ -10,6 +9,7 @@ interface Props {
   editMode: boolean;
   onPatch: (storeId: string, patch: Partial<BoardEntry>) => void;
   showStatus?: boolean;
+  onViewWeek?: (storeId: string) => void;
 }
 
 const chanceStyles: Record<string, string> = {
@@ -30,8 +30,20 @@ const statusLabels: Record<Status, string> = {
   no_hit: "No Hit",
 };
 
-export default function StoreRow({ store, entry, editMode, onPatch, showStatus = true }: Props) {
-  const [expanded, setExpanded] = useState(false);
+const sourceLabels: Record<string, string> = {
+  vendor: "Vendor",
+  employee_push: "Employee Push",
+  both: "Vendor + Push",
+};
+
+export default function StoreRow({
+  store,
+  entry,
+  editMode,
+  onPatch,
+  showStatus = true,
+  onViewWeek,
+}: Props) {
   const chance = entry.chance;
 
   if (editMode) {
@@ -44,19 +56,54 @@ export default function StoreRow({ store, entry, editMode, onPatch, showStatus =
               <div className="font-mono text-[10px] text-textmuted">[{store.vendorNickname}]</div>
             )}
           </div>
-          <select
-            value={chance ?? ""}
-            onChange={(e) =>
-              onPatch(store.id, { chance: (e.target.value || null) as Chance })
-            }
-            className="bg-panel2 border border-line rounded px-2 py-1 text-xs"
-          >
-            <option value="">Unset</option>
-            <option value="High">High</option>
-            <option value="Medium">Medium</option>
-            <option value="Low">Low</option>
-          </select>
+          <div className="flex items-center gap-2 shrink-0">
+            {onViewWeek && (
+              <button
+                onClick={() => onViewWeek(store.id)}
+                className="text-[10px] font-mono uppercase tracking-wide text-textmuted hover:text-live transition-colors"
+              >
+                Week &rsaquo;
+              </button>
+            )}
+            <select
+              value={chance ?? ""}
+              onChange={(e) =>
+                onPatch(store.id, { chance: (e.target.value || null) as Chance })
+              }
+              className="bg-panel2 border border-line rounded px-2 py-1 text-xs"
+            >
+              <option value="">Unset</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
         </div>
+
+        <div className="flex gap-1.5 mb-2">
+          {(
+            [
+              ["vendor", "Vendor"],
+              ["employee_push", "Employee Push"],
+              ["both", "Both"],
+            ] as [SourceType, string][]
+          ).map(([val, label]) => (
+            <button
+              key={val}
+              onClick={() =>
+                onPatch(store.id, { sourceType: entry.sourceType === val ? null : val })
+              }
+              className={`text-[10px] font-mono uppercase px-2 py-1 rounded border flex-1 transition-colors ${
+                entry.sourceType === val
+                  ? "border-gold text-gold bg-gold/10"
+                  : "border-line text-textmuted"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
         <input
           type="text"
           value={entry.window}
@@ -65,32 +112,48 @@ export default function StoreRow({ store, entry, editMode, onPatch, showStatus =
           className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 font-mono placeholder:text-textmuted"
         />
         <textarea
-          value={entry.reason}
-          onChange={(e) => onPatch(store.id, { reason: e.target.value })}
-          placeholder="Reason / vendor notes..."
+          value={entry.vendorNotes}
+          onChange={(e) => onPatch(store.id, { vendorNotes: e.target.value })}
+          placeholder="Vendor pattern (scheduled delivery)..."
           rows={2}
           className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
         />
-        <div className="flex gap-1.5">
-          {(["pending", "hit", "no_hit"] as Status[]).map((s) => (
-            <button
-              key={s}
-              onClick={() => onPatch(store.id, { status: s })}
-              className={`text-[11px] font-mono uppercase px-2 py-1 rounded border flex-1 transition-colors ${
-                entry.status === s ? statusStyles[s] : "border-line text-textmuted"
-              }`}
-            >
-              {statusLabels[s]}
-            </button>
-          ))}
-        </div>
+        <textarea
+          value={entry.randomNotes}
+          onChange={(e) => onPatch(store.id, { randomNotes: e.target.value })}
+          placeholder="Random / employee-push pattern..."
+          rows={2}
+          className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
+        />
+        <textarea
+          value={entry.reason}
+          onChange={(e) => onPatch(store.id, { reason: e.target.value })}
+          placeholder="General notes..."
+          rows={2}
+          className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
+        />
+        {showStatus && (
+          <div className="flex gap-1.5">
+            {(["pending", "hit", "no_hit"] as Status[]).map((s) => (
+              <button
+                key={s}
+                onClick={() => onPatch(store.id, { status: s })}
+                className={`text-[11px] font-mono uppercase px-2 py-1 rounded border flex-1 transition-colors ${
+                  entry.status === s ? statusStyles[s] : "border-line text-textmuted"
+                }`}
+              >
+                {statusLabels[s]}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     );
   }
 
   return (
     <button
-      onClick={() => setExpanded((e) => !e)}
+      onClick={() => onViewWeek?.(store.id)}
       className="w-full text-left border border-line rounded-lg p-3 bg-panel hover:border-textmuted/40 transition-colors"
     >
       <div className="flex items-center justify-between gap-2">
@@ -114,11 +177,22 @@ export default function StoreRow({ store, entry, editMode, onPatch, showStatus =
       </div>
       <div className="flex items-center gap-2 mt-1.5 text-[11px] font-mono text-textmuted">
         {entry.window && <span className="text-textprimary">{entry.window}</span>}
+        {entry.sourceType && (
+          <span className="text-gold">{sourceLabels[entry.sourceType]}</span>
+        )}
       </div>
-      {entry.reason && (
-        <p className={`text-xs text-textmuted mt-2 ${expanded ? "" : "truncate"}`}>
-          {entry.reason}
+      {entry.vendorNotes && (
+        <p className="text-xs text-textmuted mt-2 truncate">
+          <span className="text-gold">Vendor:</span> {entry.vendorNotes}
         </p>
+      )}
+      {entry.randomNotes && (
+        <p className="text-xs text-textmuted mt-1 truncate">
+          <span className="text-low">Random:</span> {entry.randomNotes}
+        </p>
+      )}
+      {entry.reason && (
+        <p className="text-xs text-textmuted mt-1 truncate">{entry.reason}</p>
       )}
     </button>
   );
