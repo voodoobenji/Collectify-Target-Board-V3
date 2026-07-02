@@ -6,7 +6,12 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen flex items-center justify-center px-4">
       <div className="max-w-sm w-full text-center">
-        <div className="inline-flex h-2 w-2 rounded-full bg-live pulse mb-6" />
+        <img
+          src="/COLLECTIFY_LOGO.png"
+          alt="Collectify"
+          className="h-16 w-16 rounded-full border border-gold/50 mx-auto mb-6"
+        />
+        <div className="inline-flex h-2 w-2 rounded-full bg-live pulse mb-4" />
         <h1 className="font-display uppercase tracking-wide text-3xl font-semibold mb-2">
           SoCal Target Board
         </h1>
