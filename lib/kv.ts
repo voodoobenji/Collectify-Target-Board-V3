@@ -1,6 +1,15 @@
 import { kv } from "@vercel/kv";
 import { STORES } from "./stores";
-import { Board, BoardEntry, EMPTY_ENTRY, WeekdayTemplate, Weekday, WEEKDAYS } from "./types";
+import {
+  Board,
+  BoardEntry,
+  EMPTY_ENTRY,
+  WeekdayTemplate,
+  TemplateEntry,
+  EMPTY_TEMPLATE_ENTRY,
+  Weekday,
+  WEEKDAYS,
+} from "./types";
 
 const BOARD_KEY = "board";
 
@@ -59,6 +68,8 @@ async function saveTemplateFromBoard(board: Board): Promise<void> {
       chance: e.chance,
       window: e.window,
       reason: e.reason,
+      vendorNotes: e.vendorNotes,
+      randomNotes: e.randomNotes,
       updatedAt: e.updatedAt,
     };
   }
@@ -88,6 +99,27 @@ export async function patchEntry(
   return board;
 }
 
+export async function patchTemplateEntry(
+  weekday: string,
+  storeId: string,
+  patch: Partial<TemplateEntry>
+): Promise<WeekdayTemplate> {
+  const existing = (await getTemplate(weekday)) ?? {
+    weekday,
+    updatedAt: null,
+    entries: {} as WeekdayTemplate["entries"],
+  };
+  const current = existing.entries[storeId] ?? { ...EMPTY_TEMPLATE_ENTRY };
+  existing.entries[storeId] = {
+    ...current,
+    ...patch,
+    updatedAt: new Date().toISOString(),
+  };
+  existing.updatedAt = new Date().toISOString();
+  await kv.set(templateKey(weekday), existing);
+  return existing;
+}
+
 export async function startNewDay(updatedBy: string): Promise<Board> {
   const board = await getBoard();
   await kv.set(`history:${board.date}`, board);
@@ -105,6 +137,8 @@ export async function startNewDay(updatedBy: string): Promise<Board> {
       chance: fromTpl?.chance ?? prev?.chance ?? null,
       window: fromTpl?.window ?? prev?.window ?? "",
       reason: fromTpl?.reason ?? prev?.reason ?? "",
+      vendorNotes: fromTpl?.vendorNotes ?? prev?.vendorNotes ?? "",
+      randomNotes: fromTpl?.randomNotes ?? prev?.randomNotes ?? "",
       status: "pending",
       updatedAt: new Date().toISOString(),
       updatedBy,
@@ -122,16 +156,21 @@ export async function startNewDay(updatedBy: string): Promise<Board> {
 
 export async function importTemplate(
   weekday: string,
-  entries: Record<string, { chance: string | null; window: string; reason: string }>
+  entries: Record<string, Partial<TemplateEntry>>
 ): Promise<WeekdayTemplate> {
+  const full: WeekdayTemplate["entries"] = {};
+  for (const [sid, e] of Object.entries(entries)) {
+    full[sid] = { ...EMPTY_TEMPLATE_ENTRY, ...e };
+  }
   const tpl: WeekdayTemplate = {
     weekday,
     updatedAt: new Date().toISOString(),
-    entries: entries as WeekdayTemplate["entries"],
+    entries: full,
   };
   await kv.set(templateKey(weekday), tpl);
   return tpl;
 }
+
 export async function applyTemplateToBoard(weekday: string, updatedBy: string): Promise<Board> {
   const board = await getBoard();
   const tpl = await getTemplate(weekday);
@@ -143,6 +182,8 @@ export async function applyTemplateToBoard(weekday: string, updatedBy: string): 
       chance: info.chance,
       window: info.window,
       reason: info.reason,
+      vendorNotes: info.vendorNotes ?? "",
+      randomNotes: info.randomNotes ?? "",
       updatedAt: new Date().toISOString(),
       updatedBy,
     };
