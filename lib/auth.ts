@@ -23,10 +23,11 @@ export const authOptions: AuthOptions = {
   ],
   callbacks: {
     async jwt({ token, account, profile }) {
-      // Runs on initial sign-in only (account is present)
       if (account && profile) {
-        token.discordId = (profile as { id: string }).id;
-        token.isAdmin = ADMIN_IDS.includes((profile as { id: string }).id);
+        const p = profile as { id: string; username?: string; global_name?: string };
+        token.discordId = p.id;
+        token.username = p.username ?? p.global_name ?? "member";
+        token.isAdmin = ADMIN_IDS.includes(p.id);
 
         try {
           const res = await fetch("https://discord.com/api/users/@me/guilds", {
@@ -46,6 +47,7 @@ export const authOptions: AuthOptions = {
     },
     async session({ session, token }) {
       session.discordId = token.discordId as string | undefined;
+      session.username = token.username as string | undefined;
       session.isAdmin = Boolean(token.isAdmin);
       session.isMember = Boolean(token.isMember);
       return session;
