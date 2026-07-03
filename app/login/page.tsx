@@ -20,3 +20,18 @@ export default async function LoginPage() {
         />
         <div className="flex items-center justify-center gap-2 mb-1">
           <span className="font-brand uppercase text-4xl sm:text-5xl font-extrabold tracking-wide text-textprimary">
+            Collectify
+          </span>
+          <span className="inline-flex h-2 w-2 rounded-full bg-live pulse" />
+        </div>
+        <span className="block font-mono text-xs uppercase tracking-[0.35em] text-gold mb-6">
+          Target Guide
+        </span>
+        <p className="text-textmuted text-sm mb-8">
+          Sign in with Discord to view today&apos;s guide. Access is limited to members of the server.
+        </p>
+        <LoginButton />
+      </div>
+    </main>
+  );
+}
