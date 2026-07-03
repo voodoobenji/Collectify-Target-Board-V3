@@ -10,7 +10,7 @@ const config: Config = {
         panel2: "#16223A",
         line: "#22314D",
         textprimary: "#E8ECF4",
-        textmuted: "#8493AF",
+        textmuted: "#A3B1CC",
         high: "#FF5A4E",
         medium: "#FFB238",
         low: "#5B8DEF",
