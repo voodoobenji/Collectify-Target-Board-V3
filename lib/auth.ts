@@ -14,6 +14,10 @@ interface DiscordGuild {
 }
 
 export const authOptions: AuthOptions = {
+  session: {
+    strategy: "jwt",
+    maxAge: 60 * 60 * 2, // 2 hours - re-verify Discord role/membership often
+  },
   providers: [
     DiscordProvider({
       clientId: process.env.DISCORD_CLIENT_ID as string,
@@ -23,6 +27,7 @@ export const authOptions: AuthOptions = {
   ],
   callbacks: {
     async jwt({ token, account, profile }) {
+      // Runs on initial sign-in only (account is present)
       if (account && profile) {
         const p = profile as { id: string; username?: string; global_name?: string };
         token.discordId = p.id;
