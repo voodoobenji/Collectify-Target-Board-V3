@@ -511,7 +511,7 @@ export default function BoardView({
             >
               <button
                 onClick={() => toggleRegion(region)}
-                className="w-full flex items-center justify-between mb-2 group"
+                className="w-full flex items-center justify-between mb-2 group sticky top-16 z-10 bg-ink py-2 -mx-1 px-1"
               >
                 <h2 className="font-display uppercase tracking-wide text-sm text-textmuted group-hover:text-textprimary transition-colors">
                   {label}
