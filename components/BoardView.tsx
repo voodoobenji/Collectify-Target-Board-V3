@@ -59,10 +59,12 @@ export default function BoardView({
   initialBoard,
   isAdmin,
   username,
+  vendorMap,
 }: {
   initialBoard: Board;
   isAdmin: boolean;
   username: string;
+  vendorMap: Record<string, string>;
 }) {
   const [board, setBoard] = useState<Board>(initialBoard);
   const [actualToday, setActualToday] = useState<string>(() =>
@@ -593,6 +595,7 @@ export default function BoardView({
                       onPatch={handleEntryPatch}
                       showStatus={isLiveView}
                       onViewWeek={(id) => setWeekModalStoreId(id)}
+                      vendorNickname={vendorMap[store.id]}
                     />
                   ))}
                 </div>

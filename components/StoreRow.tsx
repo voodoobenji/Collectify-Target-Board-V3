@@ -11,6 +11,7 @@ interface Props {
   onPatch: (storeId: string, patch: Partial<BoardEntry>) => void;
   showStatus?: boolean;
   onViewWeek?: (storeId: string) => void;
+  vendorNickname?: string;
 }
 
 const chanceStyles: Record<string, string> = {
@@ -77,6 +78,7 @@ export default function StoreRow({
   onPatch,
   showStatus = true,
   onViewWeek,
+  vendorNickname,
 }: Props) {
   const chance = entry.chance;
 
@@ -89,8 +91,8 @@ export default function StoreRow({
               <span className="font-medium text-sm">{store.name}</span>
               <MapLink store={store} />
             </div>
-            {store.vendorNickname && (
-              <div className="font-mono text-[10px] text-textmuted">[{store.vendorNickname}]</div>
+            {vendorNickname && (
+              <div className="font-mono text-[10px] text-textmuted">[{vendorNickname}]</div>
             )}
           </div>
           <div className="flex items-center gap-2 shrink-0">
