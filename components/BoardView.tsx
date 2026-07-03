@@ -315,7 +315,7 @@ export default function BoardView({
       if (scrollTickingRef.current) return;
       scrollTickingRef.current = true;
       requestAnimationFrame(() => {
-        const threshold = 130;
+        const threshold = 190;
         let active: string | null = null;
         for (const [region, el] of Object.entries(sectionRefs.current)) {
           if (!el) continue;
@@ -401,27 +401,55 @@ export default function BoardView({
         </div>
       )}
 
-      <div className="sticky top-0 z-20 bg-ink pt-1 pb-3 -mt-1">
-        <div className="flex gap-1.5 mb-0 overflow-x-auto">
+      <div className="sticky top-0 z-20 bg-ink pt-1 pb-3 -mt-1 -mx-4 px-4 sm:-mx-8 sm:px-8 border-b border-line">
+        <div className="flex gap-1.5 mb-3 overflow-x-auto">
           {WEEKDAYS.map((day) => {
-          const active = selectedDay === day;
-          const isToday = day === todayWeekday;
-          return (
-            <button
-              key={day}
-              onClick={() => setSelectedDay(day)}
-              className={`shrink-0 flex flex-col items-center px-3 py-2 rounded-lg border text-xs font-mono uppercase tracking-wide transition-colors ${
-                active
-                  ? "bg-live/15 border-live text-live"
-                  : "bg-panel border-line text-textmuted hover:text-textprimary"
-              }`}
-            >
-              {DAY_LABELS[day].slice(0, 3)}
-              {isToday && <span className="text-[9px] mt-0.5 opacity-70">Today</span>}
-            </button>
-          );
+            const active = selectedDay === day;
+            const isToday = day === todayWeekday;
+            return (
+              <button
+                key={day}
+                onClick={() => setSelectedDay(day)}
+                className={`shrink-0 flex flex-col items-center px-3 py-2 rounded-lg border text-xs font-mono uppercase tracking-wide transition-colors ${
+                  active
+                    ? "bg-live/15 border-live text-live"
+                    : "bg-panel border-line text-textmuted hover:text-textprimary"
+                }`}
+              >
+                {DAY_LABELS[day].slice(0, 3)}
+                {isToday && <span className="text-[9px] mt-0.5 opacity-70">Today</span>}
+              </button>
+            );
           })}
         </div>
+
+        <Filters
+          search={search}
+          onSearch={setSearch}
+          chanceFilter={chanceFilter}
+          onChanceFilter={setChanceFilter}
+          statusFilter={statusFilter}
+          onStatusFilter={setStatusFilter}
+          showStatusFilter={isLiveView}
+        />
+
+        {grouped.length > 1 && (
+          <div className="flex gap-1.5 mt-3 overflow-x-auto pb-1">
+            {grouped.map(({ region, items }) => (
+              <button
+                key={region}
+                onClick={() => jumpToRegion(region)}
+                className={`shrink-0 text-[11px] font-mono uppercase tracking-wide px-2.5 py-1 rounded-full border transition-colors ${
+                  currentRegion === region
+                    ? "border-live text-live bg-live/10"
+                    : "border-line text-textmuted hover:text-live hover:border-live"
+                }`}
+              >
+                {REGION_SHORT[region] ?? region} <span className="text-textmuted/60">({items.length})</span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {!isLiveView && (
@@ -492,42 +520,7 @@ export default function BoardView({
         </div>
       )}
 
-      <Filters
-        search={search}
-        onSearch={setSearch}
-        chanceFilter={chanceFilter}
-        onChanceFilter={setChanceFilter}
-        statusFilter={statusFilter}
-        onStatusFilter={setStatusFilter}
-        showStatusFilter={isLiveView}
-      />
-
-      {currentRegion && grouped.length > 1 && (
-        <div className="sticky top-16 z-10 bg-ink py-2 mb-4 -mx-4 px-4 sm:-mx-8 sm:px-8 border-b border-line">
-          <span className="font-display uppercase tracking-wide text-sm text-live">
-            {REGION_SHORT[currentRegion] ?? currentRegion}
-          </span>
-          <span className="text-textmuted text-xs font-mono ml-2">
-            {grouped.find((g) => g.region === currentRegion)?.items.length ?? 0} stores
-          </span>
-        </div>
-      )}
-
-      {grouped.length > 1 && (
-        <div className="flex gap-1.5 mb-6 overflow-x-auto pb-1">
-          {grouped.map(({ region, items }) => (
-            <button
-              key={region}
-              onClick={() => jumpToRegion(region)}
-              className="shrink-0 text-[11px] font-mono uppercase tracking-wide px-2.5 py-1 rounded-full border border-line text-textmuted hover:text-live hover:border-live transition-colors"
-            >
-              {REGION_SHORT[region] ?? region} <span className="text-textmuted/60">({items.length})</span>
-            </button>
-          ))}
-        </div>
-      )}
-
-      <div className="space-y-6">
+      <div className="space-y-6 mt-6">
         {!isLiveView && templateLoading ? (
           <div className="space-y-3">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -544,6 +537,7 @@ export default function BoardView({
               ref={(el) => {
                 sectionRefs.current[region] = el;
               }}
+              className="scroll-mt-[190px]"
             >
               <button
                 onClick={() => toggleRegion(region)}
