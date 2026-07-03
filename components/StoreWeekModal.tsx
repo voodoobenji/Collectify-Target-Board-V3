@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { StoreRef } from "@/lib/stores";
 import type { BoardEntry } from "@/lib/types";
 import { WEEKDAYS } from "@/lib/types";
+import { appleMapsUrl, googleMapsUrl } from "@/lib/maps";
 
 const DAY_LABELS: Record<string, string> = {
   monday: "Monday",
@@ -84,11 +85,11 @@ export default function StoreWeekModal({
 
   return (
     <div
-      className="fixed inset-0 bg-ink/80 flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 bg-ink/80 flex items-center justify-center p-3 sm:p-4 z-50"
       onClick={onClose}
     >
       <div
-        className="bg-panel border border-line rounded-lg max-w-lg w-full max-h-[80vh] overflow-y-auto p-5"
+        className="bg-panel border border-line rounded-lg max-w-lg w-full max-h-[85vh] overflow-y-auto p-4 sm:p-5"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-3 mb-4">
@@ -96,7 +97,25 @@ export default function StoreWeekModal({
             <h2 className="font-display uppercase tracking-wide text-xl font-semibold">
               {store.name}
             </h2>
-            <p className="text-textmuted text-xs font-mono mt-1">{store.regionLabel}</p>
+            <div className="flex items-center gap-2 mt-1">
+              <p className="text-textmuted text-xs font-mono">{store.regionLabel}</p>
+              <a
+                href={appleMapsUrl(store)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-live text-xs font-mono hover:underline"
+              >
+                Apple Maps
+              </a>
+              <a
+                href={googleMapsUrl(store)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-live text-xs font-mono hover:underline"
+              >
+                Google Maps
+              </a>
+            </div>
           </div>
           <button
             onClick={onClose}
