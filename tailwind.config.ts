@@ -18,6 +18,7 @@ const config: Config = {
         live: "#2FBE8F",
       },
       fontFamily: {
+        serif: ["var(--font-serif)"],
         display: ["var(--font-display)"],
         body: ["var(--font-body)"],
         mono: ["var(--font-mono)"],
