@@ -379,7 +379,7 @@ export default function BoardView({
               <span className="font-mono text-[11px] uppercase tracking-widest text-live">Live</span>
             </div>
             <h1 className="font-display uppercase tracking-wide text-2xl sm:text-4xl font-semibold leading-tight">
-              Collectify Target Board
+              Collectify Target Guide
             </h1>
             <p className="text-textmuted text-xs mt-2 font-mono">
               {board.date} &middot; updated {timeAgo(lastUpdated)}
