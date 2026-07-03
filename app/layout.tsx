@@ -10,7 +10,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Collectify Target Board",
+  title: "Collectify Target Guide",
   description: "Live daily target guide",
   icons: {
     icon: "/COLLECTIFY_LOGO.png",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     apple: "/COLLECTIFY_LOGO.png",
   },
   openGraph: {
-    title: "Collectify Target Board",
+    title: "Collectify Target Guide",
     description: "Live daily target guide",
     images: ["/COLLECTIFY_LOGO.png"],
   },
