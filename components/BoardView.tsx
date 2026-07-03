@@ -315,7 +315,7 @@ export default function BoardView({
       if (scrollTickingRef.current) return;
       scrollTickingRef.current = true;
       requestAnimationFrame(() => {
-        const threshold = 225;
+        const threshold = 250;
         let active: string | null = null;
         for (const [region, el] of Object.entries(sectionRefs.current)) {
           if (!el) continue;
@@ -375,32 +375,31 @@ export default function BoardView({
       )}
 
       <div className="sticky top-0 z-20 bg-ink pt-3 pb-3 -mt-1 -mx-4 px-4 sm:-mx-8 sm:px-8 border-b border-line">
-        <div className="flex items-center justify-between gap-3 mb-4">
-          <div className="flex items-center gap-3">
-            <img
-              src="/COLLECTIFY_LOGO.png"
-              alt="Collectify"
-              className="h-10 w-10 rounded-full border border-gold/60 shrink-0"
-              style={{ boxShadow: "0 0 14px rgba(201,168,118,0.35)" }}
-            />
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-serif text-lg sm:text-xl font-semibold text-textprimary leading-none">
-                  Collectify Target Guide
-                </span>
-                <span className="h-1.5 w-1.5 rounded-full bg-live pulse shrink-0" />
-              </div>
-              <p className="text-textmuted text-[11px] mt-1 font-mono">
-                {board.date} &middot; updated {timeAgo(lastUpdated)}
-              </p>
-            </div>
-          </div>
+        <div className="relative flex flex-col items-center text-center mb-4">
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="text-xs text-textmuted hover:text-textprimary shrink-0"
+            className="absolute right-0 top-1 text-xs text-textmuted hover:text-textprimary"
           >
             Sign out
           </button>
+          <div className="flex items-center gap-2.5">
+            <img
+              src="/COLLECTIFY_LOGO.png"
+              alt="Collectify"
+              className="h-10 w-10 sm:h-12 sm:w-12 rounded-full border border-gold/60 shrink-0"
+              style={{ boxShadow: "0 0 16px rgba(201,168,118,0.4)" }}
+            />
+            <span className="font-brand uppercase text-2xl sm:text-3xl font-extrabold tracking-wide text-textprimary leading-none">
+              Collectify
+            </span>
+            <span className="h-1.5 w-1.5 rounded-full bg-live pulse shrink-0" />
+          </div>
+          <span className="font-mono text-[10px] uppercase tracking-[0.35em] text-gold mt-1.5">
+            Target Guide
+          </span>
+          <p className="text-textmuted text-[11px] mt-1 font-mono">
+            {board.date} &middot; updated {timeAgo(lastUpdated)}
+          </p>
         </div>
 
         <div className="flex gap-1.5 mb-3 overflow-x-auto">
@@ -544,7 +543,7 @@ export default function BoardView({
               ref={(el) => {
                 sectionRefs.current[region] = el;
               }}
-              className="scroll-mt-[225px]"
+              className="scroll-mt-[250px]"
             >
               <button
                 onClick={() => toggleRegion(region)}
