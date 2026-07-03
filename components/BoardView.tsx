@@ -91,6 +91,8 @@ export default function BoardView({
   const [weekModalStoreId, setWeekModalStoreId] = useState<string | null>(null);
   const boardRef = useRef(board);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [currentRegion, setCurrentRegion] = useState<string | null>(null);
+  const scrollTickingRef = useRef(false);
   boardRef.current = board;
 
   const isLiveView = selectedDay === todayWeekday;
@@ -308,6 +310,29 @@ export default function BoardView({
       .map((r) => ({ region: r, items: byRegion.get(r)! }));
   }, [activeEntries, search, chanceFilter, statusFilter, isLiveView]);
 
+  useEffect(() => {
+    function handleScroll() {
+      if (scrollTickingRef.current) return;
+      scrollTickingRef.current = true;
+      requestAnimationFrame(() => {
+        const threshold = 130;
+        let active: string | null = null;
+        for (const [region, el] of Object.entries(sectionRefs.current)) {
+          if (!el) continue;
+          const top = el.getBoundingClientRect().top;
+          if (top <= threshold) {
+            active = region;
+          }
+        }
+        setCurrentRegion(active);
+        scrollTickingRef.current = false;
+      });
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [grouped]);
+
   const stats = useMemo(() => {
     const entries = Object.values(activeEntries);
     return {
@@ -477,6 +502,17 @@ export default function BoardView({
         showStatusFilter={isLiveView}
       />
 
+      {currentRegion && grouped.length > 1 && (
+        <div className="sticky top-16 z-10 bg-ink py-2 mb-4 -mx-4 px-4 sm:-mx-8 sm:px-8 border-b border-line">
+          <span className="font-display uppercase tracking-wide text-sm text-live">
+            {REGION_SHORT[currentRegion] ?? currentRegion}
+          </span>
+          <span className="text-textmuted text-xs font-mono ml-2">
+            {grouped.find((g) => g.region === currentRegion)?.items.length ?? 0} stores
+          </span>
+        </div>
+      )}
+
       {grouped.length > 1 && (
         <div className="flex gap-1.5 mb-6 overflow-x-auto pb-1">
           {grouped.map(({ region, items }) => (
@@ -511,7 +547,7 @@ export default function BoardView({
             >
               <button
                 onClick={() => toggleRegion(region)}
-                className="w-full flex items-center justify-between mb-2 group sticky top-16 z-10 bg-ink py-2 -mx-1 px-1"
+                className="w-full flex items-center justify-between mb-2 group"
               >
                 <h2 className="font-display uppercase tracking-wide text-sm text-textmuted group-hover:text-textprimary transition-colors">
                   {label}
