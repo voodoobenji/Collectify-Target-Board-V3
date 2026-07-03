@@ -89,12 +89,12 @@ export default function StoreWeekModal({
       onClick={onClose}
     >
       <div
-        className="bg-panel border border-line rounded-lg max-w-lg w-full max-h-[85vh] overflow-y-auto p-4 sm:p-5"
+        className="bg-panel card-fill border border-line rounded-lg max-w-lg w-full max-h-[85vh] overflow-y-auto p-4 sm:p-5"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-3 mb-4">
           <div>
-            <h2 className="font-display uppercase tracking-wide text-xl font-semibold">
+            <h2 className="font-serif text-xl sm:text-2xl font-semibold text-textprimary">
               {store.name}
             </h2>
             <div className="flex items-center gap-2 mt-1">
@@ -133,9 +133,9 @@ export default function StoreWeekModal({
               const info = data[day];
               const isToday = day === todayWeekday;
               return (
-                <div key={day} className="border border-line rounded-lg p-3">
+                <div key={day} className="border border-line rounded-lg p-3 card-fill">
                   <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <span className="font-display uppercase tracking-wide text-sm">
+                    <span className="font-serif text-base">
                       {DAY_LABELS[day]}
                       {isToday && <span className="text-live text-[10px] ml-2">Today</span>}
                     </span>

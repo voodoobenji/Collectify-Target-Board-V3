@@ -82,7 +82,7 @@ export default function StoreRow({
 
   if (editMode) {
     return (
-      <div className="border border-line rounded-lg p-3 bg-panel">
+      <div className="border border-line rounded-lg p-3 bg-panel card-fill">
         <div className="flex items-start justify-between gap-2 mb-2">
           <div>
             <div className="flex items-center gap-1.5">
@@ -190,7 +190,7 @@ export default function StoreRow({
 
   return (
     <div
-      className={`w-full border border-line rounded-lg p-4 bg-panel ${
+      className={`w-full border border-line rounded-lg p-4 bg-panel card-fill ${
         chance ? chanceBorderLeft[chance] : ""
       }`}
     >
@@ -203,7 +203,7 @@ export default function StoreRow({
           >
             {chance ?? "\u2014"}
           </span>
-          <span className="font-medium text-base truncate">{store.name}</span>
+          <span className="font-serif text-base sm:text-lg text-textprimary truncate">{store.name}</span>
           <MapLink store={store} small />
         </div>
         {showStatus && (

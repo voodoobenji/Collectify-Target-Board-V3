@@ -366,33 +366,6 @@ export default function BoardView({
   return (
     <main className="min-h-screen px-3 py-4 sm:px-8 sm:py-10 max-w-4xl mx-auto">
       <Watermark username={username} date={board.date} />
-      <header className="flex items-start justify-between gap-3 mb-4">
-        <div className="flex items-start gap-2.5">
-          <img
-            src="/COLLECTIFY_LOGO.png"
-            alt="Collectify"
-            className="h-9 w-9 sm:h-11 sm:w-11 rounded-full border border-gold/50 shrink-0"
-          />
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-live pulse" />
-              <span className="font-mono text-[11px] uppercase tracking-widest text-live">Live</span>
-            </div>
-            <h1 className="font-display uppercase tracking-wide text-2xl sm:text-4xl font-semibold leading-tight">
-              Collectify Target Guide
-            </h1>
-            <p className="text-textmuted text-xs mt-2 font-mono">
-              {board.date} &middot; updated {timeAgo(lastUpdated)}
-            </p>
-          </div>
-        </div>
-        <button
-          onClick={() => signOut({ callbackUrl: "/login" })}
-          className="text-xs text-textmuted hover:text-textprimary shrink-0 mt-1"
-        >
-          Sign out
-        </button>
-      </header>
 
       {boardIsStale && isAdmin && (
         <div className="bg-high/10 border border-high/50 rounded-lg px-4 py-3 mb-4 text-xs text-high">
@@ -401,17 +374,33 @@ export default function BoardView({
         </div>
       )}
 
-      <div className="sticky top-0 z-20 bg-ink pt-1 pb-3 -mt-1 -mx-4 px-4 sm:-mx-8 sm:px-8 border-b border-line">
-        <div className="flex items-center gap-2 mb-3">
-          <img
-            src="/COLLECTIFY_LOGO.png"
-            alt="Collectify"
-            className="h-6 w-6 rounded-full border border-gold/50 shrink-0"
-          />
-          <span className="font-display uppercase tracking-wide text-sm font-semibold text-textprimary">
-            Collectify Target Guide
-          </span>
-          <span className="h-1.5 w-1.5 rounded-full bg-live pulse ml-1" />
+      <div className="sticky top-0 z-20 bg-ink pt-3 pb-3 -mt-1 -mx-4 px-4 sm:-mx-8 sm:px-8 border-b border-line">
+        <div className="flex items-center justify-between gap-3 mb-4">
+          <div className="flex items-center gap-3">
+            <img
+              src="/COLLECTIFY_LOGO.png"
+              alt="Collectify"
+              className="h-10 w-10 rounded-full border border-gold/60 shrink-0"
+              style={{ boxShadow: "0 0 14px rgba(201,168,118,0.35)" }}
+            />
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-serif text-lg sm:text-xl font-semibold text-textprimary leading-none">
+                  Collectify Target Guide
+                </span>
+                <span className="h-1.5 w-1.5 rounded-full bg-live pulse shrink-0" />
+              </div>
+              <p className="text-textmuted text-[11px] mt-1 font-mono">
+                {board.date} &middot; updated {timeAgo(lastUpdated)}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => signOut({ callbackUrl: "/login" })}
+            className="text-xs text-textmuted hover:text-textprimary shrink-0"
+          >
+            Sign out
+          </button>
         </div>
 
         <div className="flex gap-1.5 mb-3 overflow-x-auto">
@@ -483,22 +472,28 @@ export default function BoardView({
         </div>
       )}
 
-      <div className="grid grid-cols-3 gap-2 mb-6">
-        <div className="bg-panel border border-line rounded-lg px-3 py-2.5 text-center">
-          <div className="font-display text-2xl leading-none text-high">{stats.high}</div>
-          <div className="text-[10px] uppercase tracking-wide text-textmuted mt-1">High Priority</div>
-        </div>
-        <div className="bg-panel border border-line rounded-lg px-3 py-2.5 text-center">
-          <div className="font-display text-2xl leading-none text-live">
-            {isLiveView ? stats.hit : "\u2014"}
+      <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="flex flex-col items-center">
+          <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full border-2 border-high/70 flex items-center justify-center bg-panel card-fill">
+            <span className="font-serif text-xl sm:text-2xl font-semibold text-high">{stats.high}</span>
           </div>
-          <div className="text-[10px] uppercase tracking-wide text-textmuted mt-1">Confirmed Hit</div>
+          <div className="text-[10px] uppercase tracking-wide text-textmuted mt-2 text-center">High Priority</div>
         </div>
-        <div className="bg-panel border border-line rounded-lg px-3 py-2.5 text-center">
-          <div className="font-display text-2xl leading-none text-textmuted">
-            {isLiveView ? stats.pending : "\u2014"}
+        <div className="flex flex-col items-center">
+          <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full border-2 border-live/70 flex items-center justify-center bg-panel card-fill">
+            <span className="font-serif text-xl sm:text-2xl font-semibold text-live">
+              {isLiveView ? stats.hit : "\u2014"}
+            </span>
           </div>
-          <div className="text-[10px] uppercase tracking-wide text-textmuted mt-1">Pending</div>
+          <div className="text-[10px] uppercase tracking-wide text-textmuted mt-2 text-center">Confirmed Hit</div>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full border-2 border-gold/50 flex items-center justify-center bg-panel card-fill">
+            <span className="font-serif text-xl sm:text-2xl font-semibold text-textmuted">
+              {isLiveView ? stats.pending : "\u2014"}
+            </span>
+          </div>
+          <div className="text-[10px] uppercase tracking-wide text-textmuted mt-2 text-center">Pending</div>
         </div>
       </div>
 
@@ -553,15 +548,16 @@ export default function BoardView({
             >
               <button
                 onClick={() => toggleRegion(region)}
-                className="w-full flex items-center justify-between mb-2 group"
+                className="w-full flex items-center justify-between mb-3 group"
               >
-                <h2 className="font-display uppercase tracking-wide text-sm text-textmuted group-hover:text-textprimary transition-colors">
+                <h2 className="font-serif text-base sm:text-lg text-textprimary/90 group-hover:text-textprimary transition-colors">
                   {label}
                 </h2>
                 <span className="font-mono text-[11px] text-textmuted">
                   {items.length} {collapsed ? "\u25b8" : "\u25be"}
                 </span>
               </button>
+              <div className="h-px gold-rule mb-3 -mt-2" />
               {!collapsed && (
                 <div className="grid gap-2 sm:grid-cols-2">
                   {items.map(({ store, entry }) => (
