@@ -209,7 +209,7 @@ export default function StoreRow({
           >
             {chance ?? "\u2014"}
           </span>
-          <span className="font-medium text-sm truncate">{store.name}</span>
+          <span className="font-medium text-base truncate">{store.name}</span>
           <MapLink store={store} small />
         </div>
         {showStatus && (
@@ -220,24 +220,24 @@ export default function StoreRow({
           </span>
         )}
       </div>
-      <div className="flex items-center gap-2 mt-1.5 text-[11px] font-mono text-textmuted">
+      <div className="flex items-center gap-2 mt-1.5 text-xs font-mono text-textmuted">
         {entry.window && <span className="text-textprimary">{entry.window}</span>}
         {entry.sourceType && (
           <span className="text-gold">{sourceLabels[entry.sourceType]}</span>
         )}
       </div>
       {entry.vendorNotes && (
-        <p className="text-xs text-textmuted mt-2 truncate">
+        <p className="text-sm text-textmuted mt-2 truncate">
           <span className="text-gold">Vendor:</span> {entry.vendorNotes}
         </p>
       )}
       {entry.randomNotes && (
-        <p className="text-xs text-textmuted mt-1 truncate">
+        <p className="text-sm text-textmuted mt-1 truncate">
           <span className="text-low">Random:</span> {entry.randomNotes}
         </p>
       )}
       {entry.reason && (
-        <p className="text-xs text-textmuted mt-1 truncate">{entry.reason}</p>
+        <p className="text-sm text-textmuted mt-1 truncate">{entry.reason}</p>
       )}
     </div>
   );
