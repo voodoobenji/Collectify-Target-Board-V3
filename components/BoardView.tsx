@@ -315,7 +315,7 @@ export default function BoardView({
       if (scrollTickingRef.current) return;
       scrollTickingRef.current = true;
       requestAnimationFrame(() => {
-        const threshold = 190;
+        const threshold = 225;
         let active: string | null = null;
         for (const [region, el] of Object.entries(sectionRefs.current)) {
           if (!el) continue;
@@ -402,6 +402,18 @@ export default function BoardView({
       )}
 
       <div className="sticky top-0 z-20 bg-ink pt-1 pb-3 -mt-1 -mx-4 px-4 sm:-mx-8 sm:px-8 border-b border-line">
+        <div className="flex items-center gap-2 mb-3">
+          <img
+            src="/COLLECTIFY_LOGO.png"
+            alt="Collectify"
+            className="h-6 w-6 rounded-full border border-gold/50 shrink-0"
+          />
+          <span className="font-display uppercase tracking-wide text-sm font-semibold text-textprimary">
+            Collectify Target Guide
+          </span>
+          <span className="h-1.5 w-1.5 rounded-full bg-live pulse ml-1" />
+        </div>
+
         <div className="flex gap-1.5 mb-3 overflow-x-auto">
           {WEEKDAYS.map((day) => {
             const active = selectedDay === day;
@@ -537,7 +549,7 @@ export default function BoardView({
               ref={(el) => {
                 sectionRefs.current[region] = el;
               }}
-              className="scroll-mt-[190px]"
+              className="scroll-mt-[225px]"
             >
               <button
                 onClick={() => toggleRegion(region)}
