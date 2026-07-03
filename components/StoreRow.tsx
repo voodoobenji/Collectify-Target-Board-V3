@@ -190,13 +190,7 @@ export default function StoreRow({
 
   return (
     <div
-      onClick={() => onViewWeek?.(store.id)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") onViewWeek?.(store.id);
-      }}
-      className={`w-full text-left border border-line rounded-lg p-3 bg-panel hover:border-textmuted/40 transition-colors cursor-pointer ${
+      className={`w-full border border-line rounded-lg p-4 bg-panel ${
         chance ? chanceBorderLeft[chance] : ""
       }`}
     >
@@ -220,24 +214,32 @@ export default function StoreRow({
           </span>
         )}
       </div>
-      <div className="flex items-center gap-2 mt-1.5 text-xs font-mono text-textmuted">
+      <div className="flex items-center gap-2 mt-2 text-sm font-mono text-textmuted">
         {entry.window && <span className="text-textprimary">{entry.window}</span>}
         {entry.sourceType && (
           <span className="text-gold">{sourceLabels[entry.sourceType]}</span>
         )}
       </div>
       {entry.vendorNotes && (
-        <p className="text-sm text-textmuted mt-2 truncate">
-          <span className="text-gold">Vendor:</span> {entry.vendorNotes}
+        <p className="text-base text-textmuted leading-relaxed mt-2.5">
+          <span className="text-gold font-medium">Vendor:</span> {entry.vendorNotes}
         </p>
       )}
       {entry.randomNotes && (
-        <p className="text-sm text-textmuted mt-1 truncate">
-          <span className="text-low">Random:</span> {entry.randomNotes}
+        <p className="text-base text-textmuted leading-relaxed mt-2">
+          <span className="text-low font-medium">Random:</span> {entry.randomNotes}
         </p>
       )}
       {entry.reason && (
-        <p className="text-sm text-textmuted mt-1 truncate">{entry.reason}</p>
+        <p className="text-base text-textmuted leading-relaxed mt-2">{entry.reason}</p>
+      )}
+      {onViewWeek && (
+        <button
+          onClick={() => onViewWeek(store.id)}
+          className="mt-2 text-[11px] font-mono uppercase tracking-wide text-textmuted hover:text-live transition-colors"
+        >
+          View full week &rsaquo;
+        </button>
       )}
     </div>
   );
