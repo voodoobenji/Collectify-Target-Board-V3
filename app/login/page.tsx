@@ -9,10 +9,11 @@ export default function LoginPage() {
         <img
           src="/COLLECTIFY_LOGO.png"
           alt="Collectify"
-          className="h-16 w-16 rounded-full border border-gold/50 mx-auto mb-6"
+          className="h-20 w-20 rounded-full border border-gold/60 mx-auto mb-6"
+          style={{ boxShadow: "0 0 20px rgba(201,168,118,0.35)" }}
         />
         <div className="inline-flex h-2 w-2 rounded-full bg-live pulse mb-4" />
-        <h1 className="font-display uppercase tracking-wide text-3xl font-semibold mb-2">
+        <h1 className="font-serif text-3xl sm:text-4xl font-semibold mb-2 text-textprimary">
           Collectify Target Guide
         </h1>
         <p className="text-textmuted text-sm mb-8">
