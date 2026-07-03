@@ -13,7 +13,7 @@ export default function LoginPage() {
         />
         <div className="inline-flex h-2 w-2 rounded-full bg-live pulse mb-4" />
         <h1 className="font-display uppercase tracking-wide text-3xl font-semibold mb-2">
-          Collectify Target Board
+          Collectify Target Guide
         </h1>
         <p className="text-textmuted text-sm mb-8">
           Sign in with Discord to view today&apos;s guide. Access is limited to members of the server.
