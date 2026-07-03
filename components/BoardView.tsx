@@ -75,6 +75,29 @@ export default function BoardView({
     return () => clearInterval(id);
   }, []);
   const todayWeekday = useMemo(() => weekdayFromDateStr(actualToday), [actualToday]);
+
+  const weekdayDateLabels = useMemo(() => {
+    const [y, m, d] = actualToday.split("-").map(Number);
+    const anchor = new Date(y, m - 1, d, 12);
+    const dow = anchor.getDay(); // 0=Sun..6=Sat
+    const mondayOffset = (dow + 6) % 7;
+    const monday = new Date(anchor);
+    monday.setDate(anchor.getDate() - mondayOffset);
+
+    function ordinal(n: number): string {
+      const s = ["th", "st", "nd", "rd"];
+      const v = n % 100;
+      return `${n}${s[(v - 20) % 10] || s[v] || s[0]}`;
+    }
+
+    const labels: Record<string, string> = {};
+    WEEKDAYS.forEach((day, i) => {
+      const dt = new Date(monday);
+      dt.setDate(monday.getDate() + i);
+      labels[day] = ordinal(dt.getDate());
+    });
+    return labels;
+  }, [actualToday]);
   const boardWeekday = useMemo(() => weekdayFromDateStr(board.date), [board.date]);
   const boardIsStale = board.date !== actualToday;
   const [selectedDay, setSelectedDay] = useState<string>(todayWeekday);
@@ -417,7 +440,9 @@ export default function BoardView({
                 }`}
               >
                 {DAY_LABELS[day].slice(0, 3)}
-                {isToday && <span className="text-[9px] mt-0.5 opacity-70">Today</span>}
+                <span className="text-[9px] mt-0.5 opacity-70">
+                  {isToday ? "Today" : weekdayDateLabels[day]}
+                </span>
               </button>
             );
           })}
