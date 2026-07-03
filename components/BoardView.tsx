@@ -364,21 +364,21 @@ export default function BoardView({
   }
 
   return (
-    <main className="min-h-screen px-4 py-6 sm:px-8 sm:py-10 max-w-4xl mx-auto">
+    <main className="min-h-screen px-3 py-4 sm:px-8 sm:py-10 max-w-4xl mx-auto">
       <Watermark username={username} date={board.date} />
-      <header className="flex items-start justify-between gap-4 mb-6">
-        <div className="flex items-start gap-3">
+      <header className="flex items-start justify-between gap-3 mb-4">
+        <div className="flex items-start gap-2.5">
           <img
             src="/COLLECTIFY_LOGO.png"
             alt="Collectify"
-            className="h-11 w-11 rounded-full border border-gold/50 shrink-0"
+            className="h-9 w-9 sm:h-11 sm:w-11 rounded-full border border-gold/50 shrink-0"
           />
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="h-1.5 w-1.5 rounded-full bg-live pulse" />
               <span className="font-mono text-[11px] uppercase tracking-widest text-live">Live</span>
             </div>
-            <h1 className="font-display uppercase tracking-wide text-3xl sm:text-4xl font-semibold leading-none">
+            <h1 className="font-display uppercase tracking-wide text-2xl sm:text-4xl font-semibold leading-tight">
               Collectify Target Board
             </h1>
             <p className="text-textmuted text-xs mt-2 font-mono">
@@ -491,7 +491,7 @@ export default function BoardView({
       </div>
 
       {isAdmin && (
-        <div className="flex items-center justify-between gap-3 mb-6 bg-panel2 border border-line rounded-lg px-4 py-3">
+        <div className="flex flex-col gap-3 mb-6 bg-panel2 border border-line rounded-lg px-4 py-3">
           <label className="flex items-center gap-2 text-sm cursor-pointer">
             <input
               type="checkbox"
@@ -501,18 +501,18 @@ export default function BoardView({
             />
             Edit mode {!isLiveView && <span className="text-textmuted">({DAY_LABELS[selectedDay]})</span>}
           </label>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <button
               onClick={handleImportSeed}
               disabled={importing}
-              className="text-xs font-mono uppercase tracking-wide px-3 py-1.5 rounded-full border border-line text-textmuted hover:text-textprimary transition-colors disabled:opacity-50"
+              className="flex-1 text-center whitespace-nowrap text-xs font-mono uppercase tracking-wide px-3 py-2 rounded-lg border border-line text-textmuted hover:text-textprimary transition-colors disabled:opacity-50"
             >
-              {importing ? "Importing..." : "Import historical patterns"}
+              {importing ? "Importing..." : "Import Patterns"}
             </button>
             <button
               onClick={handleNewDay}
               disabled={startingNewDay}
-              className="text-xs font-mono uppercase tracking-wide px-3 py-1.5 rounded-full border border-gold/50 text-gold hover:bg-gold/10 transition-colors disabled:opacity-50"
+              className="flex-1 text-center whitespace-nowrap text-xs font-mono uppercase tracking-wide px-3 py-2 rounded-lg border border-gold/50 text-gold hover:bg-gold/10 transition-colors disabled:opacity-50"
             >
               {startingNewDay ? "Starting..." : "Start New Day"}
             </button>
