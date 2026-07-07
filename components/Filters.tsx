@@ -24,7 +24,6 @@ const statusOptions: { value: StatusFilter; label: string }[] = [
   { value: "all", label: "All" },
   { value: "pending", label: "Pending" },
   { value: "hit", label: "Hit" },
-  { value: "no_hit", label: "No hit" },
 ];
 
 export default function Filters({

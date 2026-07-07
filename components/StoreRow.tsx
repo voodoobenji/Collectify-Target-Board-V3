@@ -253,7 +253,7 @@ export default function StoreRow({
               <div className="border border-medium rounded px-2 py-1.5 bg-medium/10">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-[10px] font-mono uppercase text-medium">
-                    &#128681; Flagged by {entry.flagged.flaggedBy}
+                    &#128681; Overdue — flagged by {entry.flagged.flaggedBy}
                   </span>
                   <button
                     onClick={clearFlag}
@@ -272,7 +272,7 @@ export default function StoreRow({
                   value={flagReasonDraft}
                   onChange={(e) => setFlagReasonDraft(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && submitFlag()}
-                  placeholder="Why flag this store? (e.g. no reliable update)"
+                  placeholder="Why is this overdue? (e.g. usually hits Wed, hasn't this week)"
                   className="w-full bg-panel2 border border-line rounded px-2 py-1 text-xs mb-1.5 placeholder:text-textmuted"
                 />
                 <div className="flex gap-1.5">
@@ -298,7 +298,7 @@ export default function StoreRow({
                 onClick={() => setFlagInputOpen(true)}
                 className="text-[10px] font-mono uppercase tracking-wide text-textmuted hover:text-medium transition-colors"
               >
-                &#128681; Flag this store
+                &#128681; Mark Overdue
               </button>
             )}
           </div>
@@ -306,7 +306,7 @@ export default function StoreRow({
 
         {showStatus && (
           <div className="flex gap-1.5">
-            {(["pending", "hit", "no_hit"] as Status[]).map((s) => (
+            {(["pending", "hit"] as Status[]).map((s) => (
               <button
                 key={s}
                 onClick={() => onPatch(store.id, { status: s })}
@@ -332,7 +332,7 @@ export default function StoreRow({
       {entry.flagged && (
         <div className="flex items-start gap-1.5 mb-2 pb-2 border-b border-medium/40">
           <span className="text-[10px] font-mono uppercase text-medium shrink-0 mt-0.5">
-            &#128681; Flagged
+            &#128681; Overdue
           </span>
           <span className="text-xs text-textmuted">{entry.flagged.reason}</span>
         </div>
@@ -366,13 +366,19 @@ export default function StoreRow({
           </span>
         )}
         {entry.confirmedCount > 0 ? (
-          <span className="text-[10px] uppercase px-1.5 py-0.5 rounded border border-live text-live bg-live/10">
-            &#10003; {entry.confirmedCount}x confirmed
+          <span
+            className="text-[10px] uppercase px-1.5 py-0.5 rounded border border-gold text-gold bg-gold/10"
+            title="Based on chat history, not today's status"
+          >
+            &#10003; {entry.confirmedCount}x past hits
           </span>
         ) : (
           entry.chance && (
-            <span className="text-[10px] uppercase px-1.5 py-0.5 rounded border border-line text-textmuted">
-              predicted
+            <span
+              className="text-[10px] uppercase px-1.5 py-0.5 rounded border border-line text-textmuted"
+              title="Based on chat history, not today's status"
+            >
+              guide history
             </span>
           )
         )}
