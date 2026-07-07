@@ -2,6 +2,12 @@ export type Chance = "High" | "Medium" | "Low" | null;
 export type Status = "pending" | "hit" | "no_hit";
 export type SourceType = "vendor" | "employee_push" | "both" | null;
 
+export interface FlaggedInfo {
+  reason: string;
+  flaggedBy: string;
+  flaggedAt: string;
+}
+
 export interface BoardEntry {
   chance: Chance;
   window: string;
@@ -10,13 +16,14 @@ export interface BoardEntry {
   randomNotes: string;
   sourceType: SourceType;
   confirmedCount: number;
+  flagged: FlaggedInfo | null;
   status: Status;
   updatedAt: string | null;
   updatedBy: string | null;
 }
 
 export interface Board {
-  date: string; // YYYY-MM-DD
+  date: string;
   version: number;
   entries: Record<string, BoardEntry>;
 }
@@ -29,6 +36,7 @@ export const EMPTY_ENTRY: BoardEntry = {
   randomNotes: "",
   sourceType: null,
   confirmedCount: 0,
+  flagged: null,
   status: "pending",
   updatedAt: null,
   updatedBy: null,
