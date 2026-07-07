@@ -397,7 +397,7 @@ export default function BoardView({
       if (scrollTickingRef.current) return;
       scrollTickingRef.current = true;
       requestAnimationFrame(() => {
-        const threshold = 250;
+        const threshold = 190;
         let active: string | null = null;
         for (const [region, el] of Object.entries(sectionRefs.current)) {
           if (!el) continue;
@@ -456,34 +456,76 @@ export default function BoardView({
         </div>
       )}
 
-      <div className="sticky top-0 z-20 bg-ink pt-3 pb-3 -mt-1 -mx-4 px-4 sm:-mx-8 sm:px-8 border-b border-line">
-        <div className="relative flex flex-col items-center text-center mb-4 lg:mb-8 lg:pt-2">
-          <button
-            onClick={() => signOut({ callbackUrl: "/login" })}
-            className="absolute right-0 top-1 text-xs lg:text-sm text-textmuted hover:text-textprimary"
-          >
-            Sign out
-          </button>
-          <div className="flex items-center gap-2.5 lg:gap-4">
-            <img
-              src="/COLLECTIFY_LOGO.png"
-              alt="Collectify"
-              className="h-10 w-10 sm:h-12 sm:w-12 lg:h-16 lg:w-16 rounded-full border border-gold/60 shrink-0"
-              style={{ boxShadow: "0 0 16px rgba(201,168,118,0.4)" }}
-            />
-            <span className="font-brand uppercase text-2xl sm:text-3xl lg:text-5xl font-extrabold tracking-wide text-textprimary leading-none">
-              Collectify
-            </span>
-            <span className="h-1.5 w-1.5 lg:h-2 lg:w-2 rounded-full bg-live pulse shrink-0" />
-          </div>
-          <span className="font-mono text-[10px] lg:text-xs uppercase tracking-[0.35em] text-gold mt-1.5 lg:mt-2.5">
-            Target Guide
+      <div className="relative flex flex-col items-center text-center mb-4 lg:mb-8 lg:pt-2">
+        <button
+          onClick={() => signOut({ callbackUrl: "/login" })}
+          className="absolute right-0 top-1 text-xs lg:text-sm text-textmuted hover:text-textprimary"
+        >
+          Sign out
+        </button>
+        <div className="flex items-center gap-2.5 lg:gap-4">
+          <img
+            src="/COLLECTIFY_LOGO.png"
+            alt="Collectify"
+            className="h-10 w-10 sm:h-12 sm:w-12 lg:h-16 lg:w-16 rounded-full border border-gold/60 shrink-0"
+            style={{ boxShadow: "0 0 16px rgba(201,168,118,0.4)" }}
+          />
+          <span className="font-brand uppercase text-2xl sm:text-3xl lg:text-5xl font-extrabold tracking-wide text-textprimary leading-none">
+            Collectify
           </span>
-          <p className="text-textmuted text-[11px] lg:text-xs mt-1 lg:mt-1.5 font-mono">
-            {board.date} &middot; updated {timeAgo(lastUpdated)}
-          </p>
+          <span className="h-1.5 w-1.5 lg:h-2 lg:w-2 rounded-full bg-live pulse shrink-0" />
         </div>
+        <span className="font-mono text-[10px] lg:text-xs uppercase tracking-[0.35em] text-gold mt-1.5 lg:mt-2.5">
+          Target Guide
+        </span>
+        <p className="text-textmuted text-[11px] lg:text-xs mt-1 lg:mt-1.5 font-mono">
+          {board.date} &middot; updated {timeAgo(lastUpdated)}
+        </p>
+      </div>
 
+      <div className="flex items-center gap-2 sm:gap-3 mb-4">
+        <button
+          onClick={() => setFavoritesOnly((v) => !v)}
+          className={`flex-1 text-[11px] sm:text-xs font-mono uppercase tracking-wide px-2.5 py-1.5 sm:py-2 rounded-full border transition-colors ${
+            favoritesOnly
+              ? "border-gold text-gold bg-gold/10"
+              : "border-line text-textmuted hover:text-gold hover:border-gold"
+          }`}
+        >
+          &#9733; Favorites{favorites.size > 0 ? ` (${favorites.size})` : ""}
+        </button>
+        {isLiveView && (
+          <button
+            onClick={() => setRightNowOnly((v) => !v)}
+            className={`flex-1 text-[11px] sm:text-xs font-mono uppercase tracking-wide px-2.5 py-1.5 sm:py-2 rounded-full border transition-colors ${
+              rightNowOnly
+                ? "border-live text-live bg-live/10"
+                : "border-line text-textmuted hover:text-live hover:border-live"
+            }`}
+          >
+            &#128336; Right Now
+          </button>
+        )}
+        <button
+          onClick={() => setShowLegend(true)}
+          className="shrink-0 h-7 w-7 sm:h-9 sm:w-9 rounded-full border border-line text-textmuted hover:text-live hover:border-live transition-colors text-xs sm:text-sm font-mono"
+          aria-label="What do the tags mean?"
+        >
+          ?
+        </button>
+      </div>
+
+      <Filters
+        search={search}
+        onSearch={setSearch}
+        chanceFilter={chanceFilter}
+        onChanceFilter={setChanceFilter}
+        statusFilter={statusFilter}
+        onStatusFilter={setStatusFilter}
+        showStatusFilter={isLiveView}
+      />
+
+      <div className="sticky top-0 z-20 bg-ink pt-3 pb-3 mb-3 -mx-4 px-4 sm:-mx-8 sm:px-8 border-b border-line">
         <div className="flex gap-1.5 sm:gap-2 mb-3">
           {WEEKDAYS.map((day) => {
             const active = selectedDay === day;
@@ -507,50 +549,8 @@ export default function BoardView({
           })}
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3 mb-3">
-          <button
-            onClick={() => setFavoritesOnly((v) => !v)}
-            className={`flex-1 text-[11px] sm:text-xs font-mono uppercase tracking-wide px-2.5 py-1.5 sm:py-2 rounded-full border transition-colors ${
-              favoritesOnly
-                ? "border-gold text-gold bg-gold/10"
-                : "border-line text-textmuted hover:text-gold hover:border-gold"
-            }`}
-          >
-            &#9733; Favorites{favorites.size > 0 ? ` (${favorites.size})` : ""}
-          </button>
-          {isLiveView && (
-            <button
-              onClick={() => setRightNowOnly((v) => !v)}
-              className={`flex-1 text-[11px] sm:text-xs font-mono uppercase tracking-wide px-2.5 py-1.5 sm:py-2 rounded-full border transition-colors ${
-                rightNowOnly
-                  ? "border-live text-live bg-live/10"
-                  : "border-line text-textmuted hover:text-live hover:border-live"
-              }`}
-            >
-              &#128336; Right Now
-            </button>
-          )}
-          <button
-            onClick={() => setShowLegend(true)}
-            className="shrink-0 h-7 w-7 sm:h-9 sm:w-9 rounded-full border border-line text-textmuted hover:text-live hover:border-live transition-colors text-xs sm:text-sm font-mono"
-            aria-label="What do the tags mean?"
-          >
-            ?
-          </button>
-        </div>
-
-        <Filters
-          search={search}
-          onSearch={setSearch}
-          chanceFilter={chanceFilter}
-          onChanceFilter={setChanceFilter}
-          statusFilter={statusFilter}
-          onStatusFilter={setStatusFilter}
-          showStatusFilter={isLiveView}
-        />
-
         {grouped.length > 1 && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mt-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
             {grouped.map(({ region, items }) => (
               <button
                 key={region}
@@ -668,7 +668,7 @@ export default function BoardView({
               ref={(el) => {
                 sectionRefs.current[region] = el;
               }}
-              className="scroll-mt-[250px]"
+              className="scroll-mt-[190px]"
             >
               <button
                 onClick={() => toggleRegion(region)}
