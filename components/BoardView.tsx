@@ -484,7 +484,7 @@ export default function BoardView({
           </p>
         </div>
 
-        <div className="flex gap-1.5 mb-3 overflow-x-auto">
+        <div className="flex gap-1.5 sm:gap-2 mb-3 overflow-x-auto">
           {WEEKDAYS.map((day) => {
             const active = selectedDay === day;
             const isToday = day === todayWeekday;
@@ -492,7 +492,7 @@ export default function BoardView({
               <button
                 key={day}
                 onClick={() => setSelectedDay(day)}
-                className={`shrink-0 flex flex-col items-center px-3 py-2 rounded-lg border text-xs font-mono uppercase tracking-wide transition-colors ${
+                className={`shrink-0 sm:flex-1 sm:shrink flex flex-col items-center px-3 py-2 sm:py-2.5 rounded-lg border text-xs sm:text-sm font-mono uppercase tracking-wide transition-colors ${
                   active
                     ? "bg-live/15 border-live text-live"
                     : "bg-panel border-line text-textmuted hover:text-textprimary"
@@ -507,10 +507,10 @@ export default function BoardView({
           })}
         </div>
 
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex items-center gap-2 sm:gap-3 mb-3">
           <button
             onClick={() => setFavoritesOnly((v) => !v)}
-            className={`shrink-0 text-[11px] font-mono uppercase tracking-wide px-2.5 py-1.5 rounded-full border transition-colors ${
+            className={`shrink-0 sm:flex-1 text-[11px] sm:text-xs font-mono uppercase tracking-wide px-2.5 py-1.5 sm:py-2 rounded-full border transition-colors ${
               favoritesOnly
                 ? "border-gold text-gold bg-gold/10"
                 : "border-line text-textmuted hover:text-gold hover:border-gold"
@@ -521,7 +521,7 @@ export default function BoardView({
           {isLiveView && (
             <button
               onClick={() => setRightNowOnly((v) => !v)}
-              className={`shrink-0 text-[11px] font-mono uppercase tracking-wide px-2.5 py-1.5 rounded-full border transition-colors ${
+              className={`shrink-0 sm:flex-1 text-[11px] sm:text-xs font-mono uppercase tracking-wide px-2.5 py-1.5 sm:py-2 rounded-full border transition-colors ${
                 rightNowOnly
                   ? "border-live text-live bg-live/10"
                   : "border-line text-textmuted hover:text-live hover:border-live"
@@ -532,7 +532,7 @@ export default function BoardView({
           )}
           <button
             onClick={() => setShowLegend(true)}
-            className="shrink-0 h-7 w-7 rounded-full border border-line text-textmuted hover:text-live hover:border-live transition-colors text-xs font-mono"
+            className="shrink-0 h-7 w-7 sm:h-9 sm:w-9 rounded-full border border-line text-textmuted hover:text-live hover:border-live transition-colors text-xs sm:text-sm font-mono"
             aria-label="What do the tags mean?"
           >
             ?
@@ -550,7 +550,7 @@ export default function BoardView({
         />
 
         {grouped.length > 1 && (
-          <div className="flex gap-1.5 mt-3 overflow-x-auto pb-1">
+          <div className="flex flex-wrap gap-1.5 mt-3">
             {grouped.map(({ region, items }) => (
               <button
                 key={region}
