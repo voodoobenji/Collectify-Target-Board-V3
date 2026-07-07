@@ -143,6 +143,10 @@ export async function startNewDay(updatedBy: string): Promise<Board> {
       randomNotes: fromTpl?.randomNotes ?? prev?.randomNotes ?? "",
       sourceType: fromTpl?.sourceType ?? prev?.sourceType ?? null,
       confirmedCount: fromTpl?.confirmedCount ?? prev?.confirmedCount ?? 0,
+      // Flags are live-board-only (not part of the weekday template) and are
+      // explicitly persistent across day rollover until an admin clears them -
+      // carry forward from the previous board entry, nothing else has this data.
+      flagged: prev?.flagged ?? null,
       status: "pending",
       updatedAt: new Date().toISOString(),
       updatedBy,
