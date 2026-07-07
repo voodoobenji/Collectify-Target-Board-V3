@@ -71,6 +71,7 @@ async function saveTemplateFromBoard(board: Board): Promise<void> {
       vendorNotes: e.vendorNotes,
       randomNotes: e.randomNotes,
       sourceType: e.sourceType,
+      confirmedCount: e.confirmedCount,
       updatedAt: e.updatedAt,
     };
   }
@@ -141,6 +142,7 @@ export async function startNewDay(updatedBy: string): Promise<Board> {
       vendorNotes: fromTpl?.vendorNotes ?? prev?.vendorNotes ?? "",
       randomNotes: fromTpl?.randomNotes ?? prev?.randomNotes ?? "",
       sourceType: fromTpl?.sourceType ?? prev?.sourceType ?? null,
+      confirmedCount: fromTpl?.confirmedCount ?? prev?.confirmedCount ?? 0,
       status: "pending",
       updatedAt: new Date().toISOString(),
       updatedBy,
@@ -187,6 +189,7 @@ export async function applyTemplateToBoard(weekday: string, updatedBy: string): 
       vendorNotes: info.vendorNotes ?? "",
       randomNotes: info.randomNotes ?? "",
       sourceType: info.sourceType ?? null,
+      confirmedCount: info.confirmedCount ?? 0,
       updatedAt: new Date().toISOString(),
       updatedBy,
     };
@@ -194,4 +197,25 @@ export async function applyTemplateToBoard(weekday: string, updatedBy: string): 
   board.version += 1;
   await kv.set(BOARD_KEY, board);
   return board;
+}
+
+function favoritesKey(discordId: string): string {
+  return `favorites:${discordId}`;
+}
+
+export async function getFavorites(discordId: string): Promise<string[]> {
+  const favs = await kv.get<string[]>(favoritesKey(discordId));
+  return favs ?? [];
+}
+
+export async function toggleFavorite(discordId: string, storeId: string): Promise<string[]> {
+  const favs = await getFavorites(discordId);
+  const idx = favs.indexOf(storeId);
+  if (idx >= 0) {
+    favs.splice(idx, 1);
+  } else {
+    favs.push(storeId);
+  }
+  await kv.set(favoritesKey(discordId), favs);
+  return favs;
 }

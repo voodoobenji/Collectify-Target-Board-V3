@@ -9,13 +9,14 @@ export interface BoardEntry {
   vendorNotes: string;
   randomNotes: string;
   sourceType: SourceType;
+  confirmedCount: number;
   status: Status;
   updatedAt: string | null;
   updatedBy: string | null;
 }
 
 export interface Board {
-  date: string;
+  date: string; // YYYY-MM-DD
   version: number;
   entries: Record<string, BoardEntry>;
 }
@@ -27,6 +28,7 @@ export const EMPTY_ENTRY: BoardEntry = {
   vendorNotes: "",
   randomNotes: "",
   sourceType: null,
+  confirmedCount: 0,
   status: "pending",
   updatedAt: null,
   updatedBy: null,
@@ -42,6 +44,7 @@ export interface TemplateEntry {
   vendorNotes: string;
   randomNotes: string;
   sourceType: SourceType;
+  confirmedCount: number;
   updatedAt: string | null;
 }
 
@@ -52,6 +55,7 @@ export const EMPTY_TEMPLATE_ENTRY: TemplateEntry = {
   vendorNotes: "",
   randomNotes: "",
   sourceType: null,
+  confirmedCount: 0,
   updatedAt: null,
 };
 
