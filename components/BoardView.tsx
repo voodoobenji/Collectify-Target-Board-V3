@@ -457,29 +457,29 @@ export default function BoardView({
       )}
 
       <div className="sticky top-0 z-20 bg-ink pt-3 pb-3 -mt-1 -mx-4 px-4 sm:-mx-8 sm:px-8 border-b border-line">
-        <div className="relative flex flex-col items-center text-center mb-4">
+        <div className="relative flex flex-col items-center text-center mb-4 lg:mb-8 lg:pt-2">
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="absolute right-0 top-1 text-xs text-textmuted hover:text-textprimary"
+            className="absolute right-0 top-1 text-xs lg:text-sm text-textmuted hover:text-textprimary"
           >
             Sign out
           </button>
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 lg:gap-4">
             <img
               src="/COLLECTIFY_LOGO.png"
               alt="Collectify"
-              className="h-10 w-10 sm:h-12 sm:w-12 rounded-full border border-gold/60 shrink-0"
+              className="h-10 w-10 sm:h-12 sm:w-12 lg:h-16 lg:w-16 rounded-full border border-gold/60 shrink-0"
               style={{ boxShadow: "0 0 16px rgba(201,168,118,0.4)" }}
             />
-            <span className="font-brand uppercase text-2xl sm:text-3xl font-extrabold tracking-wide text-textprimary leading-none">
+            <span className="font-brand uppercase text-2xl sm:text-3xl lg:text-5xl font-extrabold tracking-wide text-textprimary leading-none">
               Collectify
             </span>
-            <span className="h-1.5 w-1.5 rounded-full bg-live pulse shrink-0" />
+            <span className="h-1.5 w-1.5 lg:h-2 lg:w-2 rounded-full bg-live pulse shrink-0" />
           </div>
-          <span className="font-mono text-[10px] uppercase tracking-[0.35em] text-gold mt-1.5">
+          <span className="font-mono text-[10px] lg:text-xs uppercase tracking-[0.35em] text-gold mt-1.5 lg:mt-2.5">
             Target Guide
           </span>
-          <p className="text-textmuted text-[11px] mt-1 font-mono">
+          <p className="text-textmuted text-[11px] lg:text-xs mt-1 lg:mt-1.5 font-mono">
             {board.date} &middot; updated {timeAgo(lastUpdated)}
           </p>
         </div>
