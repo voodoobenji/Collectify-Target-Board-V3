@@ -44,29 +44,18 @@ export default function Filters({
         placeholder="Search a store..."
         className="bg-panel border border-line rounded-lg px-4 py-2 sm:py-2.5 text-sm sm:text-base placeholder:text-textmuted focus:outline-none focus:ring-1 focus:ring-live w-full sm:w-64"
       />
-      <div className="flex flex-wrap gap-2">
-        {chanceOptions.map((opt) => (
-          <button
-            key={opt.value}
-            onClick={() => onChanceFilter(opt.value)}
-            className={`text-xs sm:text-sm font-mono uppercase tracking-wide px-3 py-1.5 sm:py-2 rounded-full border transition-colors ${
-              chanceFilter === opt.value
-                ? "bg-live/15 border-live text-live"
-                : "bg-panel border-line text-textmuted hover:text-textprimary"
-            }`}
-          >
-            {opt.label}
-          </button>
-        ))}
-        {showStatusFilter && (
-          <>
-            <span className="w-px bg-line mx-1 hidden sm:block" />
-            {statusOptions.map((opt) => (
+      <div className="flex flex-wrap items-start gap-4">
+        <div>
+          <div className="text-[10px] font-mono uppercase tracking-wide text-textmuted mb-1.5">
+            Priority
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {chanceOptions.map((opt) => (
               <button
                 key={opt.value}
-                onClick={() => onStatusFilter(opt.value)}
+                onClick={() => onChanceFilter(opt.value)}
                 className={`text-xs sm:text-sm font-mono uppercase tracking-wide px-3 py-1.5 sm:py-2 rounded-full border transition-colors ${
-                  statusFilter === opt.value
+                  chanceFilter === opt.value
                     ? "bg-live/15 border-live text-live"
                     : "bg-panel border-line text-textmuted hover:text-textprimary"
                 }`}
@@ -74,7 +63,29 @@ export default function Filters({
                 {opt.label}
               </button>
             ))}
-          </>
+          </div>
+        </div>
+        {showStatusFilter && (
+          <div>
+            <div className="text-[10px] font-mono uppercase tracking-wide text-textmuted mb-1.5">
+              Status
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {statusOptions.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => onStatusFilter(opt.value)}
+                  className={`text-xs sm:text-sm font-mono uppercase tracking-wide px-3 py-1.5 sm:py-2 rounded-full border transition-colors ${
+                    statusFilter === opt.value
+                      ? "bg-live/15 border-live text-live"
+                      : "bg-panel border-line text-textmuted hover:text-textprimary"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </div>
