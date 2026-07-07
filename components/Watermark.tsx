@@ -20,20 +20,34 @@ export default function Watermark({ username, date }: { username: string; date: 
         alignContent: "flex-start",
       }}
     >
-      {tiles.map((_, i) => (
-        <span
-          key={i}
-          style={{
-            fontSize: "11px",
-            fontFamily: "var(--font-mono)",
-            color: "#ffffff",
-            opacity: 0.045,
-            whiteSpace: "nowrap",
-          }}
-        >
-          {label}
-        </span>
-      ))}
+      {tiles.map((_, i) =>
+        i % 5 === 0 ? (
+          <img
+            key={i}
+            src="/COLLECTIFY_LOGO.png"
+            alt=""
+            style={{
+              height: "26px",
+              width: "26px",
+              borderRadius: "9999px",
+              opacity: 0.05,
+            }}
+          />
+        ) : (
+          <span
+            key={i}
+            style={{
+              fontSize: "11px",
+              fontFamily: "var(--font-mono)",
+              color: "#ffffff",
+              opacity: 0.045,
+              whiteSpace: "nowrap",
+            }}
+          >
+            {label}
+          </span>
+        )
+      )}
     </div>
   );
 }
