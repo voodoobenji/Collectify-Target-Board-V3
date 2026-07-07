@@ -669,7 +669,7 @@ export default function BoardView({
         )}
       </div>
 
-      {showLegend && <LegendModal onClose={() => setShowLegend(false)} />}
+      {showLegend && <LegendModal onClose={() => setShowLegend(false)} isAdmin={isAdmin} />}
 
       {weekModalStoreId && (() => {
         const s = STORES.find((st) => st.id === weekModalStoreId);

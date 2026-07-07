@@ -5,7 +5,13 @@ import { useState } from "react";
 type Tab = "legend" | "howto";
 type Audience = "member" | "admin";
 
-export default function LegendModal({ onClose }: { onClose: () => void }) {
+export default function LegendModal({
+  onClose,
+  isAdmin = false,
+}: {
+  onClose: () => void;
+  isAdmin?: boolean;
+}) {
   const [tab, setTab] = useState<Tab>("legend");
   const [audience, setAudience] = useState<Audience>("member");
 
@@ -137,30 +143,32 @@ export default function LegendModal({ onClose }: { onClose: () => void }) {
           </div>
         ) : (
           <div>
-            <div className="flex gap-1.5 mb-4">
-              <button
-                onClick={() => setAudience("member")}
-                className={`text-[11px] font-mono uppercase tracking-wide px-3 py-1.5 rounded-full border flex-1 transition-colors ${
-                  audience === "member"
-                    ? "border-gold text-gold bg-gold/10"
-                    : "border-line text-textmuted"
-                }`}
-              >
-                For Members
-              </button>
-              <button
-                onClick={() => setAudience("admin")}
-                className={`text-[11px] font-mono uppercase tracking-wide px-3 py-1.5 rounded-full border flex-1 transition-colors ${
-                  audience === "admin"
-                    ? "border-gold text-gold bg-gold/10"
-                    : "border-line text-textmuted"
-                }`}
-              >
-                For Admins
-              </button>
-            </div>
+            {isAdmin && (
+              <div className="flex gap-1.5 mb-4">
+                <button
+                  onClick={() => setAudience("member")}
+                  className={`text-[11px] font-mono uppercase tracking-wide px-3 py-1.5 rounded-full border flex-1 transition-colors ${
+                    audience === "member"
+                      ? "border-gold text-gold bg-gold/10"
+                      : "border-line text-textmuted"
+                  }`}
+                >
+                  For Members
+                </button>
+                <button
+                  onClick={() => setAudience("admin")}
+                  className={`text-[11px] font-mono uppercase tracking-wide px-3 py-1.5 rounded-full border flex-1 transition-colors ${
+                    audience === "admin"
+                      ? "border-gold text-gold bg-gold/10"
+                      : "border-line text-textmuted"
+                  }`}
+                >
+                  For Admins
+                </button>
+              </div>
+            )}
 
-            {audience === "member" ? (
+            {(!isAdmin || audience === "member") ? (
               <ol className="space-y-4">
                 {[
                   ["1", "Pick your day", "Tap Mon\u2013Fri at the top. Today's tab shows the live board; other days show the typical pattern for that weekday."],
