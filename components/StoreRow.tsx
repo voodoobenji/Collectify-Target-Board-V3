@@ -338,7 +338,7 @@ export default function StoreRow({
         </div>
       )}
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap">
           <span
             className={`shrink-0 text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border ${
               chance ? chanceStyles[chance] : "border-line text-textmuted"
@@ -347,8 +347,7 @@ export default function StoreRow({
             {chance ?? "No Data"}
           </span>
           <FavoriteStar isFavorite={isFavorite} onToggle={() => onToggleFavorite?.(store.id)} />
-          <span className="font-serif text-base sm:text-lg text-textprimary truncate">{store.name}</span>
-          <MapLink store={store} small />
+          <span className="font-serif text-base sm:text-lg text-textprimary">{store.name}</span>
         </div>
         {showStatus && (
           <span
@@ -359,6 +358,7 @@ export default function StoreRow({
         )}
       </div>
       <div className="flex items-center gap-2 mt-2 text-sm font-mono text-textmuted flex-wrap">
+        <MapLink store={store} small />
         {entry.window && <span className="text-textprimary">{entry.window}</span>}
         {entry.sourceType && (
           <span className="text-gold">
