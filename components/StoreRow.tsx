@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { StoreRef } from "@/lib/stores";
 import type { BoardEntry, Chance, SourceType, Status } from "@/lib/types";
 import { appleMapsUrl, googleMapsUrl } from "@/lib/maps";
@@ -14,6 +15,7 @@ interface Props {
   vendorNickname?: string;
   isFavorite?: boolean;
   onToggleFavorite?: (storeId: string) => void;
+  currentUsername?: string;
 }
 
 const chanceStyles: Record<string, string> = {
@@ -46,6 +48,12 @@ const sourceLabels: Record<string, string> = {
   both: "Vendor + Push",
 };
 
+const sourceIcons: Record<string, string> = {
+  vendor: "\u{1F69A}",
+  employee_push: "\u{1F464}",
+  both: "\u{1F69A}\u{1F464}",
+};
+
 function MapLink({ store, small }: { store: StoreRef; small?: boolean }) {
   const size = small ? "text-[10px]" : "text-[11px]";
   return (
@@ -73,6 +81,27 @@ function MapLink({ store, small }: { store: StoreRef; small?: boolean }) {
   );
 }
 
+function FavoriteStar({
+  isFavorite,
+  onToggle,
+}: {
+  isFavorite?: boolean;
+  onToggle?: () => void;
+}) {
+  return (
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        onToggle?.();
+      }}
+      className={`shrink-0 text-base leading-none ${isFavorite ? "text-gold" : "text-line hover:text-textmuted"}`}
+      aria-label="Toggle favorite"
+    >
+      {isFavorite ? "\u2605" : "\u2606"}
+    </button>
+  );
+}
+
 export default function StoreRow({
   store,
   entry,
@@ -83,25 +112,45 @@ export default function StoreRow({
   vendorNickname,
   isFavorite,
   onToggleFavorite,
+  currentUsername,
 }: Props) {
   const chance = entry.chance;
+  const [flagInputOpen, setFlagInputOpen] = useState(false);
+  const [flagReasonDraft, setFlagReasonDraft] = useState("");
+
+  const showVendorNotes = entry.sourceType === "vendor" || entry.sourceType === "both";
+  const showRandomNotes = entry.sourceType === "employee_push" || entry.sourceType === "both";
+
+  function submitFlag() {
+    if (!flagReasonDraft.trim()) return;
+    onPatch(store.id, {
+      flagged: {
+        reason: flagReasonDraft.trim(),
+        flaggedBy: currentUsername ?? "admin",
+        flaggedAt: new Date().toISOString(),
+      },
+    });
+    setFlagReasonDraft("");
+    setFlagInputOpen(false);
+  }
+
+  function clearFlag() {
+    if (window.confirm("Clear this flag?")) {
+      onPatch(store.id, { flagged: null });
+    }
+  }
 
   if (editMode) {
     return (
-      <div className="border border-line rounded-lg p-3 bg-panel card-fill">
+      <div
+        className={`border rounded-lg p-3 bg-panel card-fill ${
+          entry.flagged ? "border-medium" : "border-line"
+        }`}
+      >
         <div className="flex items-start justify-between gap-2 mb-2">
           <div>
             <div className="flex items-center gap-1.5">
-              <button
-      onClick={(e) => {
-        e.stopPropagation();
-        onToggleFavorite?.(store.id);
-      }}
-      className={`shrink-0 text-base leading-none ${isFavorite ? "text-gold" : "text-line hover:text-textmuted"}`}
-      aria-label="Toggle favorite"
-    >
-      {isFavorite ? "\u2605" : "\u2606"}
-    </button>
+              <FavoriteStar isFavorite={isFavorite} onToggle={() => onToggleFavorite?.(store.id)} />
               <span className="font-medium text-sm">{store.name}</span>
               <MapLink store={store} />
             </div>
@@ -133,28 +182,35 @@ export default function StoreRow({
           </div>
         </div>
 
-        <div className="flex gap-1.5 mb-2">
-          {(
-            [
-              ["vendor", "Vendor"],
-              ["employee_push", "Employee Push"],
-              ["both", "Both"],
-            ] as [SourceType, string][]
-          ).map(([val, label]) => (
-            <button
-              key={val}
-              onClick={() =>
-                onPatch(store.id, { sourceType: entry.sourceType === val ? null : val })
-              }
-              className={`text-[10px] font-mono uppercase px-2 py-1 rounded border flex-1 transition-colors ${
-                entry.sourceType === val
-                  ? "border-gold text-gold bg-gold/10"
-                  : "border-line text-textmuted"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
+        <div className="mb-2">
+          <div className="text-[10px] uppercase tracking-wide text-textmuted mb-1">
+            Source type {!entry.sourceType && <span className="text-medium">(required)</span>}
+          </div>
+          <div className="flex gap-1.5">
+            {(
+              [
+                ["vendor", "\u{1F69A} Vendor"],
+                ["employee_push", "\u{1F464} Employee Push"],
+                ["both", "\u{1F69A}\u{1F464} Both"],
+              ] as [SourceType, string][]
+            ).map(([val, label]) => (
+              <button
+                key={val}
+                onClick={() =>
+                  onPatch(store.id, { sourceType: entry.sourceType === val ? null : val })
+                }
+                className={`text-[10px] font-mono uppercase px-2 py-1.5 rounded border flex-1 transition-colors ${
+                  entry.sourceType === val
+                    ? "border-gold text-gold bg-gold/10"
+                    : !entry.sourceType
+                      ? "border-medium/60 text-textmuted"
+                      : "border-line text-textmuted"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
 
         <input
@@ -164,20 +220,25 @@ export default function StoreRow({
           placeholder="Window, e.g. 7-9AM"
           className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 font-mono placeholder:text-textmuted"
         />
-        <textarea
-          value={entry.vendorNotes}
-          onChange={(e) => onPatch(store.id, { vendorNotes: e.target.value })}
-          placeholder="Vendor pattern (scheduled delivery)..."
-          rows={2}
-          className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
-        />
-        <textarea
-          value={entry.randomNotes}
-          onChange={(e) => onPatch(store.id, { randomNotes: e.target.value })}
-          placeholder="Random / employee-push pattern..."
-          rows={2}
-          className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
-        />
+
+        {showVendorNotes && (
+          <textarea
+            value={entry.vendorNotes}
+            onChange={(e) => onPatch(store.id, { vendorNotes: e.target.value })}
+            placeholder="Vendor pattern (scheduled delivery)..."
+            rows={2}
+            className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
+          />
+        )}
+        {showRandomNotes && (
+          <textarea
+            value={entry.randomNotes}
+            onChange={(e) => onPatch(store.id, { randomNotes: e.target.value })}
+            placeholder="Random / employee-push pattern..."
+            rows={2}
+            className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
+          />
+        )}
         <textarea
           value={entry.reason}
           onChange={(e) => onPatch(store.id, { reason: e.target.value })}
@@ -185,6 +246,64 @@ export default function StoreRow({
           rows={2}
           className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
         />
+
+        {showStatus && (
+          <div className="mb-2">
+            {entry.flagged ? (
+              <div className="border border-medium rounded px-2 py-1.5 bg-medium/10">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[10px] font-mono uppercase text-medium">
+                    &#128681; Flagged by {entry.flagged.flaggedBy}
+                  </span>
+                  <button
+                    onClick={clearFlag}
+                    className="text-[10px] font-mono uppercase text-textmuted hover:text-textprimary"
+                  >
+                    Clear
+                  </button>
+                </div>
+                <p className="text-xs text-textmuted mt-1">{entry.flagged.reason}</p>
+              </div>
+            ) : flagInputOpen ? (
+              <div className="border border-line rounded px-2 py-1.5">
+                <input
+                  type="text"
+                  autoFocus
+                  value={flagReasonDraft}
+                  onChange={(e) => setFlagReasonDraft(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && submitFlag()}
+                  placeholder="Why flag this store? (e.g. no reliable update)"
+                  className="w-full bg-panel2 border border-line rounded px-2 py-1 text-xs mb-1.5 placeholder:text-textmuted"
+                />
+                <div className="flex gap-1.5">
+                  <button
+                    onClick={submitFlag}
+                    className="text-[10px] font-mono uppercase px-2 py-1 rounded border border-medium text-medium flex-1"
+                  >
+                    Set Flag
+                  </button>
+                  <button
+                    onClick={() => {
+                      setFlagInputOpen(false);
+                      setFlagReasonDraft("");
+                    }}
+                    className="text-[10px] font-mono uppercase px-2 py-1 rounded border border-line text-textmuted flex-1"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => setFlagInputOpen(true)}
+                className="text-[10px] font-mono uppercase tracking-wide text-textmuted hover:text-medium transition-colors"
+              >
+                &#128681; Flag this store
+              </button>
+            )}
+          </div>
+        )}
+
         {showStatus && (
           <div className="flex gap-1.5">
             {(["pending", "hit", "no_hit"] as Status[]).map((s) => (
@@ -206,10 +325,18 @@ export default function StoreRow({
 
   return (
     <div
-      className={`w-full border border-line rounded-lg p-4 bg-panel card-fill ${
-        chance ? chanceBorderLeft[chance] : ""
-      }`}
+      className={`w-full border rounded-lg p-4 bg-panel card-fill ${
+        entry.flagged ? "border-medium" : "border-line"
+      } ${chance && !entry.flagged ? chanceBorderLeft[chance] : ""}`}
     >
+      {entry.flagged && (
+        <div className="flex items-start gap-1.5 mb-2 pb-2 border-b border-medium/40">
+          <span className="text-[10px] font-mono uppercase text-medium shrink-0 mt-0.5">
+            &#128681; Flagged
+          </span>
+          <span className="text-xs text-textmuted">{entry.flagged.reason}</span>
+        </div>
+      )}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <span
@@ -219,16 +346,7 @@ export default function StoreRow({
           >
             {chance ?? "No Data"}
           </span>
-          <button
-      onClick={(e) => {
-        e.stopPropagation();
-        onToggleFavorite?.(store.id);
-      }}
-      className={`shrink-0 text-base leading-none ${isFavorite ? "text-gold" : "text-line hover:text-textmuted"}`}
-      aria-label="Toggle favorite"
-    >
-      {isFavorite ? "\u2605" : "\u2606"}
-    </button>
+          <FavoriteStar isFavorite={isFavorite} onToggle={() => onToggleFavorite?.(store.id)} />
           <span className="font-serif text-base sm:text-lg text-textprimary truncate">{store.name}</span>
           <MapLink store={store} small />
         </div>
@@ -243,7 +361,9 @@ export default function StoreRow({
       <div className="flex items-center gap-2 mt-2 text-sm font-mono text-textmuted flex-wrap">
         {entry.window && <span className="text-textprimary">{entry.window}</span>}
         {entry.sourceType && (
-          <span className="text-gold">{sourceLabels[entry.sourceType]}</span>
+          <span className="text-gold">
+            {sourceIcons[entry.sourceType]} {sourceLabels[entry.sourceType]}
+          </span>
         )}
         {entry.confirmedCount > 0 ? (
           <span className="text-[10px] uppercase px-1.5 py-0.5 rounded border border-live text-live bg-live/10">

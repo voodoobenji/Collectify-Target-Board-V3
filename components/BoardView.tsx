@@ -653,6 +653,7 @@ export default function BoardView({
                       vendorNickname={vendorMap[store.id]}
                       isFavorite={favorites.has(store.id)}
                       onToggleFavorite={handleToggleFavorite}
+                      currentUsername={username}
                     />
                   ))}
                 </div>
