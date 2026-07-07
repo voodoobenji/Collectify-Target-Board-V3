@@ -173,10 +173,11 @@ export default function LegendModal({
                 {[
                   ["1", "Pick your day", "Tap Mon\u2013Fri at the top. Today's tab shows the live board; other days show the typical pattern for that weekday."],
                   ["2", "Browse or search", "Use the region chips to jump to your area, or search a store by name. Filter by High/Medium/Low if you only want the strong bets."],
-                  ["3", "Read the card", "Chance level, vendor/employee icon, hit history, and any notes are all right there \u2014 no need to tap anything to read the full note."],
-                  ["4", "Tap Map for directions", "Apple or Google, opens straight to that store's real address."],
-                  ["5", "Star your favorites", "Tap the star on any store to save it. Use the \u2605 Favorites filter to see only your saved stores."],
-                  ["6", "See the whole week", "Tap \"View full week\" on any card to see that store's pattern across all 5 days at once."],
+                  ["3", "See what's worth checking right now", "On today's tab, tap \u{1F550} Right Now to narrow the list down to only stores whose window falls within about 2 hours of the actual current time."],
+                  ["4", "Read the card", "Chance level, vendor/employee icon, hit history, and any notes are all right there \u2014 no need to tap anything to read the full note."],
+                  ["5", "Tap Map for directions", "Apple or Google, opens straight to that store's real address."],
+                  ["6", "Star your favorites", "Tap the star on any store to save it. Use the \u2605 Favorites filter to see only your saved stores."],
+                  ["7", "See the whole week", "Tap \"View full week\" on any card to see that store's pattern across all 5 days at once."],
                 ].map(([n, title, body]) => (
                   <li key={n} className="flex gap-3">
                     <span className="shrink-0 h-6 w-6 rounded-full border border-gold text-gold text-xs flex items-center justify-center font-mono">
