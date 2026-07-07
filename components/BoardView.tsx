@@ -9,6 +9,7 @@ import StoreRow from "./StoreRow";
 import Filters from "./Filters";
 import StoreWeekModal from "./StoreWeekModal";
 import LegendModal from "./LegendModal";
+import { parseWindowRanges, overlapsWindow, formatMinutes } from "@/lib/timeWindow";
 import Watermark from "./Watermark";
 import { SEED_TEMPLATES } from "@/lib/seed-templates";
 
@@ -118,6 +119,18 @@ export default function BoardView({
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [showLegend, setShowLegend] = useState(false);
+  const [rightNowOnly, setRightNowOnly] = useState(false);
+  const [nowMinutes, setNowMinutes] = useState<number>(() => {
+    const d = new Date();
+    return d.getHours() * 60 + d.getMinutes();
+  });
+  useEffect(() => {
+    const id = setInterval(() => {
+      const d = new Date();
+      setNowMinutes(d.getHours() * 60 + d.getMinutes());
+    }, 60000);
+    return () => clearInterval(id);
+  }, []);
   const boardRef = useRef(board);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [currentRegion, setCurrentRegion] = useState<string | null>(null);
@@ -343,6 +356,10 @@ export default function BoardView({
     const q = search.trim().toLowerCase();
     const byRegion = new Map<string, { store: StoreRef; entry: BoardEntry }[]>();
 
+    const rightNowActive = rightNowOnly && isLiveView;
+    const targetStart = nowMinutes - 120;
+    const targetEnd = nowMinutes + 120;
+
     for (const store of STORES) {
       const entry = activeEntries[store.id];
       if (!entry) continue;
@@ -350,6 +367,11 @@ export default function BoardView({
       if (q && !store.name.toLowerCase().includes(q)) continue;
       if (chanceFilter !== "all" && entry.chance !== chanceFilter) continue;
       if (isLiveView && statusFilter !== "all" && entry.status !== statusFilter) continue;
+      if (rightNowActive) {
+        const ranges = parseWindowRanges(entry.window);
+        if (ranges.length === 0) continue;
+        if (!overlapsWindow(ranges, targetStart, targetEnd)) continue;
+      }
 
       const list = byRegion.get(store.region) ?? [];
       list.push({ store, entry });
@@ -368,7 +390,7 @@ export default function BoardView({
     return orderedRegions
       .filter((r) => byRegion.has(r))
       .map((r) => ({ region: r, items: byRegion.get(r)! }));
-  }, [activeEntries, search, chanceFilter, statusFilter, isLiveView, favoritesOnly, favorites]);
+  }, [activeEntries, search, chanceFilter, statusFilter, isLiveView, favoritesOnly, favorites, rightNowOnly, nowMinutes]);
 
   useEffect(() => {
     function handleScroll() {
@@ -496,6 +518,18 @@ export default function BoardView({
           >
             &#9733; Favorites{favorites.size > 0 ? ` (${favorites.size})` : ""}
           </button>
+          {isLiveView && (
+            <button
+              onClick={() => setRightNowOnly((v) => !v)}
+              className={`shrink-0 text-[11px] font-mono uppercase tracking-wide px-2.5 py-1.5 rounded-full border transition-colors ${
+                rightNowOnly
+                  ? "border-live text-live bg-live/10"
+                  : "border-line text-textmuted hover:text-live hover:border-live"
+              }`}
+            >
+              &#128336; Right Now
+            </button>
+          )}
           <button
             onClick={() => setShowLegend(true)}
             className="shrink-0 h-7 w-7 rounded-full border border-line text-textmuted hover:text-live hover:border-live transition-colors text-xs font-mono"
@@ -533,6 +567,15 @@ export default function BoardView({
           </div>
         )}
       </div>
+
+      {rightNowOnly && isLiveView && (
+        <div className="bg-live/10 border border-live/50 rounded-lg px-4 py-3 mb-6 text-xs text-textmuted">
+          Showing guide windows between <strong className="text-live">{formatMinutes(nowMinutes - 120)}</strong> and{" "}
+          <strong className="text-live">{formatMinutes(nowMinutes + 120)}</strong>. If a store's window
+          is earlier in that range, check whether it's already been marked <strong>Hit</strong> or{" "}
+          <strong>Overdue</strong> before heading out.
+        </div>
+      )}
 
       {!isLiveView && (
         <div className="bg-panel2 border border-line rounded-lg px-4 py-3 mb-6 text-xs text-textmuted">
