@@ -33,6 +33,7 @@ interface DayInfo {
   vendorNotes: string;
   randomNotes: string;
   sourceType: string | null;
+  confirmedCount: number;
 }
 
 export default function StoreWeekModal({
@@ -60,6 +61,7 @@ export default function StoreWeekModal({
         vendorNotes: todayEntry.vendorNotes,
         randomNotes: todayEntry.randomNotes,
         sourceType: todayEntry.sourceType,
+        confirmedCount: todayEntry.confirmedCount,
       },
     };
     const others = WEEKDAYS.filter((d) => d !== todayWeekday);
@@ -140,6 +142,11 @@ export default function StoreWeekModal({
                       {isToday && <span className="text-live text-[10px] ml-2">Today</span>}
                     </span>
                     <div className="flex items-center gap-1.5">
+                      {info && info.confirmedCount > 0 && (
+                        <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border border-live text-live bg-live/10">
+                          &#10003; {info.confirmedCount}x confirmed
+                        </span>
+                      )}
                       {info?.sourceType && (
                         <span className="text-[10px] font-mono uppercase text-gold">
                           {sourceLabels[info.sourceType]}

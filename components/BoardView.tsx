@@ -8,6 +8,7 @@ import { WEEKDAYS } from "@/lib/types";
 import StoreRow from "./StoreRow";
 import Filters from "./Filters";
 import StoreWeekModal from "./StoreWeekModal";
+import LegendModal from "./LegendModal";
 import Watermark from "./Watermark";
 import { SEED_TEMPLATES } from "@/lib/seed-templates";
 
@@ -114,6 +115,9 @@ export default function BoardView({
   const [startingNewDay, setStartingNewDay] = useState(false);
   const [importing, setImporting] = useState(false);
   const [weekModalStoreId, setWeekModalStoreId] = useState<string | null>(null);
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [showLegend, setShowLegend] = useState(false);
   const boardRef = useRef(board);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [currentRegion, setCurrentRegion] = useState<string | null>(null);
@@ -121,6 +125,36 @@ export default function BoardView({
   boardRef.current = board;
 
   const isLiveView = selectedDay === todayWeekday;
+
+  useEffect(() => {
+    fetch("/api/favorites", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.favorites) setFavorites(new Set(data.favorites));
+      })
+      .catch(() => {});
+  }, []);
+
+  async function handleToggleFavorite(storeId: string) {
+    setFavorites((prev) => {
+      const next = new Set(prev);
+      if (next.has(storeId)) next.delete(storeId);
+      else next.add(storeId);
+      return next;
+    });
+    try {
+      const res = await fetch("/api/favorites", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ storeId }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.favorites) setFavorites(new Set(data.favorites));
+      }
+    } catch {
+    }
+  }
 
   // Poll for live updates from other viewers/admin (only matters on today's tab)
   useEffect(() => {
@@ -312,6 +346,7 @@ export default function BoardView({
     for (const store of STORES) {
       const entry = activeEntries[store.id];
       if (!entry) continue;
+      if (favoritesOnly && !favorites.has(store.id)) continue;
       if (q && !store.name.toLowerCase().includes(q)) continue;
       if (chanceFilter !== "all" && entry.chance !== chanceFilter) continue;
       if (isLiveView && statusFilter !== "all" && entry.status !== statusFilter) continue;
@@ -333,7 +368,7 @@ export default function BoardView({
     return orderedRegions
       .filter((r) => byRegion.has(r))
       .map((r) => ({ region: r, items: byRegion.get(r)! }));
-  }, [activeEntries, search, chanceFilter, statusFilter, isLiveView]);
+  }, [activeEntries, search, chanceFilter, statusFilter, isLiveView, favoritesOnly, favorites]);
 
   useEffect(() => {
     function handleScroll() {
@@ -448,6 +483,26 @@ export default function BoardView({
               </button>
             );
           })}
+        </div>
+
+        <div className="flex items-center gap-2 mb-3">
+          <button
+            onClick={() => setFavoritesOnly((v) => !v)}
+            className={`shrink-0 text-[11px] font-mono uppercase tracking-wide px-2.5 py-1.5 rounded-full border transition-colors ${
+              favoritesOnly
+                ? "border-gold text-gold bg-gold/10"
+                : "border-line text-textmuted hover:text-gold hover:border-gold"
+            }`}
+          >
+            &#9733; Favorites{favorites.size > 0 ? ` (${favorites.size})` : ""}
+          </button>
+          <button
+            onClick={() => setShowLegend(true)}
+            className="shrink-0 h-7 w-7 rounded-full border border-line text-textmuted hover:text-live hover:border-live transition-colors text-xs font-mono"
+            aria-label="What do the tags mean?"
+          >
+            ?
+          </button>
         </div>
 
         <Filters
@@ -596,6 +651,8 @@ export default function BoardView({
                       showStatus={isLiveView}
                       onViewWeek={(id) => setWeekModalStoreId(id)}
                       vendorNickname={vendorMap[store.id]}
+                      isFavorite={favorites.has(store.id)}
+                      onToggleFavorite={handleToggleFavorite}
                     />
                   ))}
                 </div>
@@ -610,6 +667,8 @@ export default function BoardView({
           </p>
         )}
       </div>
+
+      {showLegend && <LegendModal onClose={() => setShowLegend(false)} />}
 
       {weekModalStoreId && (() => {
         const s = STORES.find((st) => st.id === weekModalStoreId);

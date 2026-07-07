@@ -12,6 +12,8 @@ interface Props {
   showStatus?: boolean;
   onViewWeek?: (storeId: string) => void;
   vendorNickname?: string;
+  isFavorite?: boolean;
+  onToggleFavorite?: (storeId: string) => void;
 }
 
 const chanceStyles: Record<string, string> = {
@@ -79,6 +81,8 @@ export default function StoreRow({
   showStatus = true,
   onViewWeek,
   vendorNickname,
+  isFavorite,
+  onToggleFavorite,
 }: Props) {
   const chance = entry.chance;
 
@@ -88,6 +92,16 @@ export default function StoreRow({
         <div className="flex items-start justify-between gap-2 mb-2">
           <div>
             <div className="flex items-center gap-1.5">
+              <button
+      onClick={(e) => {
+        e.stopPropagation();
+        onToggleFavorite?.(store.id);
+      }}
+      className={`shrink-0 text-base leading-none ${isFavorite ? "text-gold" : "text-line hover:text-textmuted"}`}
+      aria-label="Toggle favorite"
+    >
+      {isFavorite ? "\u2605" : "\u2606"}
+    </button>
               <span className="font-medium text-sm">{store.name}</span>
               <MapLink store={store} />
             </div>
@@ -203,8 +217,18 @@ export default function StoreRow({
               chance ? chanceStyles[chance] : "border-line text-textmuted"
             }`}
           >
-            {chance ?? "\u2014"}
+            {chance ?? "No Data"}
           </span>
+          <button
+      onClick={(e) => {
+        e.stopPropagation();
+        onToggleFavorite?.(store.id);
+      }}
+      className={`shrink-0 text-base leading-none ${isFavorite ? "text-gold" : "text-line hover:text-textmuted"}`}
+      aria-label="Toggle favorite"
+    >
+      {isFavorite ? "\u2605" : "\u2606"}
+    </button>
           <span className="font-serif text-base sm:text-lg text-textprimary truncate">{store.name}</span>
           <MapLink store={store} small />
         </div>
@@ -216,10 +240,21 @@ export default function StoreRow({
           </span>
         )}
       </div>
-      <div className="flex items-center gap-2 mt-2 text-sm font-mono text-textmuted">
+      <div className="flex items-center gap-2 mt-2 text-sm font-mono text-textmuted flex-wrap">
         {entry.window && <span className="text-textprimary">{entry.window}</span>}
         {entry.sourceType && (
           <span className="text-gold">{sourceLabels[entry.sourceType]}</span>
+        )}
+        {entry.confirmedCount > 0 ? (
+          <span className="text-[10px] uppercase px-1.5 py-0.5 rounded border border-live text-live bg-live/10">
+            &#10003; {entry.confirmedCount}x confirmed
+          </span>
+        ) : (
+          entry.chance && (
+            <span className="text-[10px] uppercase px-1.5 py-0.5 rounded border border-line text-textmuted">
+              predicted
+            </span>
+          )
         )}
       </div>
       {entry.vendorNotes && (
