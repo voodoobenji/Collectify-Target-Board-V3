@@ -141,6 +141,18 @@ export default function BoardView({
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [showLegend, setShowLegend] = useState(false);
+  useEffect(() => {
+    try {
+      const seen = localStorage.getItem("collectify_seen_intro");
+      if (!seen) {
+        setShowLegend(true);
+        localStorage.setItem("collectify_seen_intro", "1");
+      }
+    } catch {
+      // localStorage unavailable (e.g. private browsing) - just skip auto-open
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [rightNowOnly, setRightNowOnly] = useState(false);
   const [sortMode, setSortMode] = useState<SortMode>("priority");
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -603,10 +615,10 @@ export default function BoardView({
         )}
         <button
           onClick={() => setShowLegend(true)}
-          className="shrink-0 h-7 w-7 sm:h-9 sm:w-9 rounded-full border border-line text-textmuted hover:text-live hover:border-live transition-colors text-xs sm:text-sm font-mono"
-          aria-label="What do the tags mean?"
+          className="shrink-0 flex items-center gap-1.5 text-[11px] sm:text-xs font-mono uppercase tracking-wide px-3 py-1.5 sm:py-2 rounded-full border border-gold text-gold bg-gold/10 hover:bg-gold/20 transition-colors"
+          aria-label="New here? Tap for a quick walkthrough"
         >
-          ?
+          &#128075; First Time?
         </button>
       </div>
 

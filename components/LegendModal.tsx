@@ -12,7 +12,7 @@ export default function LegendModal({
   onClose: () => void;
   isAdmin?: boolean;
 }) {
-  const [tab, setTab] = useState<Tab>("legend");
+  const [tab, setTab] = useState<Tab>("howto");
   const [audience, setAudience] = useState<Audience>("member");
 
   return (
