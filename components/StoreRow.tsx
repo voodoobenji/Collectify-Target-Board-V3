@@ -609,6 +609,24 @@ export default function StoreRow({
             Last sold {new Date(entry.lastSoldAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
           </span>
         )}
+        {entry.lineForming &&
+          Date.now() - new Date(entry.lineForming.reportedAt).getTime() < 90 * 60 * 1000 &&
+          (entry.lineForming.storeUrl ? (
+            <a
+              href={entry.lineForming.storeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="text-[10px] uppercase px-1.5 py-0.5 rounded border border-high text-high bg-high/10 animate-pulse"
+              title="Reported on the Collectify map - tap to view"
+            >
+              &#128308; Line Forming
+            </a>
+          ) : (
+            <span className="text-[10px] uppercase px-1.5 py-0.5 rounded border border-high text-high bg-high/10 animate-pulse">
+              &#128308; Line Forming
+            </span>
+          ))}
         {entry.confirmedCount > 0 ? (
           <span
             className="text-[10px] uppercase px-1.5 py-0.5 rounded border border-gold text-gold bg-gold/10"
@@ -639,6 +657,25 @@ export default function StoreRow({
       )}
       {entry.reason && (
         <p className="text-base text-textmuted leading-relaxed mt-2">{entry.reason}</p>
+      )}
+      {entry.externalGuide && (
+        <div className="mt-2.5 pl-3 border-l-2 border-purple-400">
+          <p className="text-[10px] uppercase tracking-wide text-purple-300 font-mono mb-0.5">
+            &#128506; Via Collectify Map
+          </p>
+          <p className="text-base text-textmuted leading-relaxed">{entry.externalGuide.text}</p>
+          {entry.externalGuide.storeUrl && (
+            <a
+              href={entry.externalGuide.storeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="text-[10px] font-mono uppercase text-purple-300 hover:text-purple-200"
+            >
+              View on map &rsaquo;
+            </a>
+          )}
+        </div>
       )}
       {onViewWeek && (
         <button
