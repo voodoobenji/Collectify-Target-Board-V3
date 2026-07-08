@@ -21,6 +21,8 @@ export interface BoardEntry {
   confirmedCount: number;
   flagged: FlaggedInfo | null;
   status: Status;
+  soldCount: number;
+  lastSoldAt: string | null;
   updatedAt: string | null;
   updatedBy: string | null;
 }
@@ -43,6 +45,8 @@ export const EMPTY_ENTRY: BoardEntry = {
   confirmedCount: 0,
   flagged: null,
   status: "pending",
+  soldCount: 0,
+  lastSoldAt: null,
   updatedAt: null,
   updatedBy: null,
 };
