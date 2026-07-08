@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { StoreRef } from "@/lib/stores";
-import type { BoardEntry, Chance, SourceType, Status } from "@/lib/types";
+import type { BoardEntry, Chance, SourceType, StockLocation, Status } from "@/lib/types";
 import { appleMapsUrl, googleMapsUrl } from "@/lib/maps";
 
 interface Props {
@@ -54,6 +54,22 @@ const sourceIcons: Record<string, string> = {
   employee_push: "\u{1F464}",
   both: "\u{1F69A}\u{1F464}",
 };
+
+const stockLocationLabels: Record<string, string> = {
+  tcg_section: "TCG Section",
+  guest_services: "Guest Services",
+  both: "TCG + GS",
+};
+
+const WINDOW_PRESETS: [string, string][] = [
+  ["Opening", "Opening"],
+  ["7-9AM", "7-9AM"],
+  ["8-10AM", "8-10AM"],
+  ["11-1PM", "11-1PM"],
+  ["2-4PM", "2-4PM"],
+  ["5-7PM", "5-7PM"],
+  ["8-Close", "8-Close"],
+];
 
 function MapLink({ store, small }: { store: StoreRef; small?: boolean }) {
   const size = small ? "text-[10px]" : "text-[11px]";
@@ -215,6 +231,21 @@ export default function StoreRow({
           </div>
         </div>
 
+        <div className="flex flex-wrap gap-1 mb-1.5">
+          {WINDOW_PRESETS.map(([val, label]) => (
+            <button
+              key={val}
+              onClick={() => onPatch(store.id, { window: val })}
+              className={`text-[9px] font-mono uppercase px-1.5 py-0.5 rounded border transition-colors ${
+                entry.window === val
+                  ? "border-gold text-gold bg-gold/10"
+                  : "border-line text-textmuted"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
         <input
           type="text"
           value={entry.window}
@@ -222,6 +253,59 @@ export default function StoreRow({
           placeholder="Window, e.g. 7-9AM"
           className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 font-mono placeholder:text-textmuted"
         />
+
+        <div className="mb-2">
+          <div className="text-[10px] uppercase tracking-wide text-textmuted mb-1">Stock location</div>
+          <div className="flex gap-1.5">
+            {(
+              [
+                ["tcg_section", "TCG Section"],
+                ["guest_services", "Guest Services"],
+                ["both", "Both"],
+              ] as [StockLocation, string][]
+            ).map(([val, label]) => (
+              <button
+                key={val}
+                onClick={() =>
+                  onPatch(store.id, { stockLocation: entry.stockLocation === val ? null : val })
+                }
+                className={`text-[10px] font-mono uppercase px-2 py-1 rounded border flex-1 transition-colors ${
+                  entry.stockLocation === val
+                    ? "border-gold text-gold bg-gold/10"
+                    : "border-line text-textmuted"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-2">
+          <div className="text-[10px] uppercase tracking-wide text-textmuted mb-1">Item limit</div>
+          <div className="flex gap-1.5 mb-1.5">
+            {["1 per person", "2 per person"].map((val) => (
+              <button
+                key={val}
+                onClick={() => onPatch(store.id, { itemLimit: entry.itemLimit === val ? "" : val })}
+                className={`text-[10px] font-mono uppercase px-2 py-1 rounded border flex-1 transition-colors ${
+                  entry.itemLimit === val
+                    ? "border-gold text-gold bg-gold/10"
+                    : "border-line text-textmuted"
+                }`}
+              >
+                {val}
+              </button>
+            ))}
+          </div>
+          <input
+            type="text"
+            value={entry.itemLimit}
+            onChange={(e) => onPatch(store.id, { itemLimit: e.target.value })}
+            placeholder="Or type a custom limit..."
+            className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs placeholder:text-textmuted"
+          />
+        </div>
 
         {showVendorNotes && (
           <textarea
@@ -369,6 +453,14 @@ export default function StoreRow({
           <span className="text-gold">
             {sourceIcons[entry.sourceType]} {sourceLabels[entry.sourceType]}
           </span>
+        )}
+        {entry.stockLocation && (
+          <span className="text-low">
+            &#128205; {stockLocationLabels[entry.stockLocation]}
+          </span>
+        )}
+        {entry.itemLimit && (
+          <span className="text-textmuted">Limit: {entry.itemLimit}</span>
         )}
         {entry.confirmedCount > 0 ? (
           <span

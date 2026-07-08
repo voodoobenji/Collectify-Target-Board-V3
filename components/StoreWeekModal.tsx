@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { StoreRef } from "@/lib/stores";
-import type { BoardEntry, Chance, SourceType } from "@/lib/types";
+import type { BoardEntry, Chance, SourceType, StockLocation } from "@/lib/types";
 import { WEEKDAYS } from "@/lib/types";
 import { appleMapsUrl, googleMapsUrl } from "@/lib/maps";
 
@@ -32,6 +32,14 @@ const sourceLabels: Record<string, string> = {
   both: "Vendor + Push",
 };
 
+const stockLocationLabels: Record<string, string> = {
+  tcg_section: "TCG Section",
+  guest_services: "Guest Services",
+  both: "TCG + GS",
+};
+
+const WINDOW_PRESETS = ["Opening", "7-9AM", "8-10AM", "11-1PM", "2-4PM", "5-7PM", "8-Close"];
+
 interface DayInfo {
   chance: Chance;
   window: string;
@@ -39,6 +47,8 @@ interface DayInfo {
   vendorNotes: string;
   randomNotes: string;
   sourceType: SourceType;
+  stockLocation: StockLocation;
+  itemLimit: string;
   confirmedCount: number;
 }
 
@@ -49,6 +59,8 @@ const EMPTY_DAY_INFO: DayInfo = {
   vendorNotes: "",
   randomNotes: "",
   sourceType: null,
+  stockLocation: null,
+  itemLimit: "",
   confirmedCount: 0,
 };
 
@@ -104,6 +116,8 @@ export default function StoreWeekModal({
         vendorNotes: todayEntry.vendorNotes,
         randomNotes: todayEntry.randomNotes,
         sourceType: todayEntry.sourceType,
+        stockLocation: todayEntry.stockLocation,
+        itemLimit: todayEntry.itemLimit,
         confirmedCount: todayEntry.confirmedCount,
       },
     };
@@ -261,6 +275,21 @@ export default function StoreWeekModal({
                           className="flex-1 bg-panel2 border border-line rounded px-2 py-1 text-xs font-mono placeholder:text-textmuted"
                         />
                       </div>
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {WINDOW_PRESETS.map((val) => (
+                          <button
+                            key={val}
+                            onClick={() => patchDay(day, { window: val })}
+                            className={`text-[9px] font-mono uppercase px-1.5 py-0.5 rounded border transition-colors ${
+                              info.window === val
+                                ? "border-gold text-gold bg-gold/10"
+                                : "border-line text-textmuted"
+                            }`}
+                          >
+                            {val}
+                          </button>
+                        ))}
+                      </div>
                       <div className="flex gap-1.5 mb-2">
                         {(
                           [
@@ -283,6 +312,53 @@ export default function StoreWeekModal({
                             {label}
                           </button>
                         ))}
+                      </div>
+                      <div className="flex gap-1.5 mb-2">
+                        {(
+                          [
+                            ["tcg_section", "TCG Section"],
+                            ["guest_services", "Guest Svcs"],
+                            ["both", "Both"],
+                          ] as [StockLocation, string][]
+                        ).map(([val, label]) => (
+                          <button
+                            key={val}
+                            onClick={() =>
+                              patchDay(day, { stockLocation: info.stockLocation === val ? null : val })
+                            }
+                            className={`text-[10px] font-mono uppercase px-2 py-1 rounded border flex-1 transition-colors ${
+                              info.stockLocation === val
+                                ? "border-gold text-gold bg-gold/10"
+                                : "border-line text-textmuted"
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="flex gap-1.5 mb-2">
+                        {["1 per person", "2 per person"].map((val) => (
+                          <button
+                            key={val}
+                            onClick={() =>
+                              patchDay(day, { itemLimit: info.itemLimit === val ? "" : val })
+                            }
+                            className={`text-[10px] font-mono uppercase px-2 py-1 rounded border flex-1 transition-colors ${
+                              info.itemLimit === val
+                                ? "border-gold text-gold bg-gold/10"
+                                : "border-line text-textmuted"
+                            }`}
+                          >
+                            {val}
+                          </button>
+                        ))}
+                        <input
+                          type="text"
+                          value={info.itemLimit}
+                          onChange={(e) => patchDay(day, { itemLimit: e.target.value })}
+                          placeholder="Custom limit"
+                          className="flex-1 bg-panel2 border border-line rounded px-2 py-1 text-xs placeholder:text-textmuted"
+                        />
                       </div>
                       {showVendorNotes && (
                         <textarea
@@ -310,12 +386,23 @@ export default function StoreWeekModal({
                         className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs placeholder:text-textmuted resize-none"
                       />
                     </>
-                  ) : !info.chance && !info.window && !info.reason && !info.vendorNotes && !info.randomNotes ? (
+                  ) : !info.chance && !info.window && !info.reason && !info.vendorNotes && !info.randomNotes && !info.stockLocation && !info.itemLimit ? (
                     <p className="text-textmuted text-xs">No data for this day.</p>
                   ) : (
                     <>
                       {info.window && (
                         <p className="text-xs font-mono text-textprimary mb-1">{info.window}</p>
+                      )}
+                      {(info.stockLocation || info.itemLimit) && (
+                        <p className="text-xs text-textmuted mb-1">
+                          {info.stockLocation && (
+                            <span className="text-low">
+                              &#128205; {stockLocationLabels[info.stockLocation]}
+                            </span>
+                          )}
+                          {info.stockLocation && info.itemLimit && "  \u00b7  "}
+                          {info.itemLimit && <span>Limit: {info.itemLimit}</span>}
+                        </p>
                       )}
                       {info.vendorNotes && (
                         <p className="text-xs text-textmuted mb-1">
