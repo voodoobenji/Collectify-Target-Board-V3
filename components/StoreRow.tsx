@@ -394,6 +394,31 @@ export default function StoreRow({
           <span>{entry.multiSeller ? "ON" : "off"}</span>
         </button>
 
+        <div className="flex items-center justify-between gap-2 mb-2 px-2 py-1.5 rounded border border-line">
+          <span className="text-[10px] font-mono uppercase text-textmuted">
+            &#10003; Confirmed Hits (history)
+          </span>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => onPatch(store.id, { confirmedCount: Math.max(0, (entry.confirmedCount ?? 0) - 1) })}
+              className="h-6 w-6 rounded border border-line text-textmuted hover:text-high hover:border-high text-xs font-mono"
+            >
+              &minus;
+            </button>
+            <span className="w-6 text-center text-xs font-mono text-gold">{entry.confirmedCount ?? 0}</span>
+            <button
+              onClick={() => onPatch(store.id, { confirmedCount: (entry.confirmedCount ?? 0) + 1 })}
+              className="h-6 w-6 rounded border border-line text-textmuted hover:text-live hover:border-live text-xs font-mono"
+            >
+              +
+            </button>
+          </div>
+        </div>
+        <p className="text-[9px] text-textmuted mb-2 -mt-1">
+          Auto-mined from chat, sometimes miscounts (e.g. "line formed" isn&apos;t a real hit). Adjust
+          freely, doesn&apos;t re-run the analysis.
+        </p>
+
         {showVendorNotes && (
           <DebouncedTextarea
             value={entry.vendorNotes}

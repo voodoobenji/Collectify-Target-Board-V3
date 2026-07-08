@@ -390,6 +390,33 @@ export default function StoreWeekModal({
                         <span>&#128257; Known Multi-Seller</span>
                         <span>{info.multiSeller ? "ON" : "off"}</span>
                       </button>
+                      <div className="flex items-center justify-between gap-2 mb-1 px-2 py-1.5 rounded border border-line">
+                        <span className="text-[10px] font-mono uppercase text-textmuted">
+                          &#10003; Confirmed Hits
+                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() =>
+                              patchDay(day, { confirmedCount: Math.max(0, (info.confirmedCount ?? 0) - 1) })
+                            }
+                            className="h-6 w-6 rounded border border-line text-textmuted hover:text-high hover:border-high text-xs font-mono"
+                          >
+                            &minus;
+                          </button>
+                          <span className="w-6 text-center text-xs font-mono text-gold">
+                            {info.confirmedCount ?? 0}
+                          </span>
+                          <button
+                            onClick={() => patchDay(day, { confirmedCount: (info.confirmedCount ?? 0) + 1 })}
+                            className="h-6 w-6 rounded border border-line text-textmuted hover:text-live hover:border-live text-xs font-mono"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                      <p className="text-[9px] text-textmuted mb-2">
+                        Auto-mined from chat, sometimes miscounts. Adjust freely.
+                      </p>
                       {showVendorNotes && (
                         <DebouncedTextarea
                           value={info.vendorNotes}
