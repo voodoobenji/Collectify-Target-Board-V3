@@ -455,18 +455,39 @@ export default function StoreRow({
         )}
 
         {showStatus && (
-          <div className="flex gap-1.5">
-            {(["pending", "hit"] as Status[]).map((s) => (
+          <div>
+            <div className="flex gap-1.5">
               <button
-                key={s}
-                onClick={() => onPatch(store.id, { status: s })}
+                onClick={() =>
+                  onPatch(store.id, { status: "pending", soldCount: 0, lastSoldAt: null })
+                }
                 className={`text-[11px] font-mono uppercase px-2 py-1 rounded border flex-1 transition-colors ${
-                  entry.status === s ? statusStyles[s] : "border-line text-textmuted"
+                  entry.status === "pending" ? statusStyles.pending : "border-line text-textmuted"
                 }`}
               >
-                {statusLabels[s]}
+                {statusLabels.pending}
               </button>
-            ))}
+              <button
+                onClick={() =>
+                  onPatch(store.id, {
+                    status: "hit",
+                    soldCount: (entry.soldCount ?? 0) + 1,
+                    lastSoldAt: new Date().toISOString(),
+                  })
+                }
+                className={`text-[11px] font-mono uppercase px-2 py-1 rounded border flex-1 transition-colors ${
+                  entry.status === "hit" ? statusStyles.hit : "border-line text-textmuted"
+                }`}
+              >
+                {statusLabels.hit}
+                {entry.soldCount > 1 ? ` (${entry.soldCount}x)` : ""}
+              </button>
+            </div>
+            {entry.status === "hit" && (
+              <p className="text-[10px] text-textmuted mt-1">
+                Tap Sold again to log another sale today &mdash; some stores restock more than once.
+              </p>
+            )}
           </div>
         )}
       </div>
@@ -504,6 +525,7 @@ export default function StoreRow({
             className={`shrink-0 text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border ${statusStyles[entry.status]}`}
           >
             {statusLabels[entry.status]}
+            {entry.status === "hit" && entry.soldCount > 1 ? ` (${entry.soldCount}x)` : ""}
           </span>
         )}
       </div>
@@ -525,6 +547,11 @@ export default function StoreRow({
         )}
         {entry.itemLimit && (
           <span className="text-textmuted">Limit: {entry.itemLimit}</span>
+        )}
+        {entry.lastSoldAt && (
+          <span className="text-live">
+            Last sold {new Date(entry.lastSoldAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
+          </span>
         )}
         {entry.confirmedCount > 0 ? (
           <span
