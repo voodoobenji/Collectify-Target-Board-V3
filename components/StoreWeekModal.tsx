@@ -50,6 +50,7 @@ interface DayInfo {
   sourceType: SourceType;
   stockLocation: StockLocation;
   itemLimit: string;
+  multiSeller: boolean;
   confirmedCount: number;
 }
 
@@ -62,6 +63,7 @@ const EMPTY_DAY_INFO: DayInfo = {
   sourceType: null,
   stockLocation: null,
   itemLimit: "",
+  multiSeller: false,
   confirmedCount: 0,
 };
 
@@ -119,6 +121,7 @@ export default function StoreWeekModal({
         sourceType: todayEntry.sourceType,
         stockLocation: todayEntry.stockLocation,
         itemLimit: todayEntry.itemLimit,
+        multiSeller: todayEntry.multiSeller,
         confirmedCount: todayEntry.confirmedCount,
       },
     };
@@ -361,6 +364,17 @@ export default function StoreWeekModal({
                           className="flex-1 bg-panel2 border border-line rounded px-2 py-1 text-xs placeholder:text-textmuted"
                         />
                       </div>
+                      <button
+                        onClick={() => patchDay(day, { multiSeller: !info.multiSeller })}
+                        className={`w-full flex items-center justify-between text-[10px] font-mono uppercase px-2 py-1.5 rounded border mb-2 transition-colors ${
+                          info.multiSeller
+                            ? "border-gold text-gold bg-gold/10"
+                            : "border-line text-textmuted"
+                        }`}
+                      >
+                        <span>&#128257; Known Multi-Seller</span>
+                        <span>{info.multiSeller ? "ON" : "off"}</span>
+                      </button>
                       {showVendorNotes && (
                         <DebouncedTextarea
                           value={info.vendorNotes}
@@ -387,7 +401,7 @@ export default function StoreWeekModal({
                         className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs placeholder:text-textmuted resize-none"
                       />
                     </>
-                  ) : !info.chance && !info.window && !info.reason && !info.vendorNotes && !info.randomNotes && !info.stockLocation && !info.itemLimit ? (
+                  ) : !info.chance && !info.window && !info.reason && !info.vendorNotes && !info.randomNotes && !info.stockLocation && !info.itemLimit && !info.multiSeller ? (
                     <p className="text-textmuted text-xs">No data for this day.</p>
                   ) : (
                     <>
@@ -403,6 +417,11 @@ export default function StoreWeekModal({
                           )}
                           {info.stockLocation && info.itemLimit && "  \u00b7  "}
                           {info.itemLimit && <span>Limit: {info.itemLimit}</span>}
+                        </p>
+                      )}
+                      {info.multiSeller && (
+                        <p className="text-xs text-gold mb-1">
+                          &#128257; Sells Multiple Times
                         </p>
                       )}
                       {info.vendorNotes && (

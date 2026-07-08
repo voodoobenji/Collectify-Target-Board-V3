@@ -371,6 +371,18 @@ export default function StoreRow({
           />
         </div>
 
+        <button
+          onClick={() => onPatch(store.id, { multiSeller: !entry.multiSeller })}
+          className={`w-full flex items-center justify-between text-[10px] font-mono uppercase px-2 py-1.5 rounded border mb-2 transition-colors ${
+            entry.multiSeller
+              ? "border-gold text-gold bg-gold/10"
+              : "border-line text-textmuted"
+          }`}
+        >
+          <span>&#128257; Known Multi-Seller</span>
+          <span>{entry.multiSeller ? "ON" : "off"}</span>
+        </button>
+
         {showVendorNotes && (
           <DebouncedTextarea
             value={entry.vendorNotes}
@@ -547,6 +559,14 @@ export default function StoreRow({
         )}
         {entry.itemLimit && (
           <span className="text-textmuted">Limit: {entry.itemLimit}</span>
+        )}
+        {entry.multiSeller && (
+          <span
+            className="text-[10px] uppercase px-1.5 py-0.5 rounded border border-gold text-gold bg-gold/10"
+            title="This store is known to restock more than once in a day"
+          >
+            &#128257; Sells Multiple Times
+          </span>
         )}
         {entry.lastSoldAt && (
           <span className="text-live">
