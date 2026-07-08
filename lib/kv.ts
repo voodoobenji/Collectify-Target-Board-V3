@@ -152,6 +152,8 @@ export async function startNewDay(updatedBy: string): Promise<Board> {
       // carry forward from the previous board entry, nothing else has this data.
       flagged: prev?.flagged ?? null,
       status: "pending",
+      soldCount: 0,
+      lastSoldAt: null,
       updatedAt: new Date().toISOString(),
       updatedBy,
     };
