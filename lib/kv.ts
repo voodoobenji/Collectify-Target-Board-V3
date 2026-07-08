@@ -104,6 +104,25 @@ export async function patchEntry(
   return board;
 }
 
+// For server-to-server updates (like the map-reports webhook) that aren't
+// tied to an authenticated admin session - doesn't touch updatedBy/updatedAt
+// the same way a human edit would, so it's clear in the data where this came
+// from if that's ever needed later.
+export async function patchEntryRaw(
+  storeId: string,
+  patch: Partial<BoardEntry>
+): Promise<Board> {
+  const board = await getBoard();
+  const current = board.entries[storeId] ?? { ...EMPTY_ENTRY };
+  board.entries[storeId] = {
+    ...current,
+    ...patch,
+  };
+  board.version += 1;
+  await kv.set(BOARD_KEY, board);
+  return board;
+}
+
 export async function patchTemplateEntry(
   weekday: string,
   storeId: string,
@@ -156,6 +175,11 @@ export async function startNewDay(updatedBy: string): Promise<Board> {
       status: "pending",
       soldCount: 0,
       lastSoldAt: null,
+      lineForming: null,
+      // Unlike lineForming (a "right now" signal that means nothing the next
+      // day), externalGuide represents an outside system's ongoing write-up -
+      // carries forward until that system sends an updated one.
+      externalGuide: prev?.externalGuide ?? null,
       updatedAt: new Date().toISOString(),
       updatedBy,
     };
