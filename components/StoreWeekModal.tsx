@@ -11,6 +11,7 @@ interface LogEntry {
   date: string;
   type: "guide" | "confirmed";
   snippet: string;
+  url: string | null;
 }
 
 const DAY_LABELS: Record<string, string> = {
@@ -484,7 +485,18 @@ export default function StoreWeekModal({
                             >
                               {entry.type === "confirmed" ? "confirmed" : "guide"}
                             </span>
-                            <span className="text-textmuted">{entry.snippet}</span>
+                            <span className="text-textmuted flex-1">{entry.snippet}</span>
+                            {entry.url && (
+                              <a
+                                href={entry.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="shrink-0 text-textmuted hover:text-live font-mono"
+                                title="View original message in Discord"
+                              >
+                                &#8599;
+                              </a>
+                            )}
                           </div>
                         ))
                       )}
