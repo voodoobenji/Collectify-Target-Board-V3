@@ -3,6 +3,18 @@ export type Status = "pending" | "hit" | "no_hit";
 export type SourceType = "vendor" | "employee_push" | "both" | null;
 export type StockLocation = "tcg_section" | "guest_services" | "both" | null;
 
+export interface LineFormingInfo {
+  reportedAt: string;
+  storeUrl: string | null;
+}
+
+export interface ExternalGuideInfo {
+  text: string;
+  updatedAt: string;
+  source: string;
+  storeUrl: string | null;
+}
+
 export interface FlaggedInfo {
   reason: string;
   flaggedBy: string;
@@ -24,6 +36,8 @@ export interface BoardEntry {
   status: Status;
   soldCount: number;
   lastSoldAt: string | null;
+  lineForming: LineFormingInfo | null;
+  externalGuide: ExternalGuideInfo | null;
   updatedAt: string | null;
   updatedBy: string | null;
 }
@@ -49,6 +63,8 @@ export const EMPTY_ENTRY: BoardEntry = {
   status: "pending",
   soldCount: 0,
   lastSoldAt: null,
+  lineForming: null,
+  externalGuide: null,
   updatedAt: null,
   updatedBy: null,
 };
