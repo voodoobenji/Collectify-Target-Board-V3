@@ -71,6 +71,8 @@ async function saveTemplateFromBoard(board: Board): Promise<void> {
       vendorNotes: e.vendorNotes,
       randomNotes: e.randomNotes,
       sourceType: e.sourceType,
+      stockLocation: e.stockLocation,
+      itemLimit: e.itemLimit,
       confirmedCount: e.confirmedCount,
       updatedAt: e.updatedAt,
     };
@@ -142,6 +144,8 @@ export async function startNewDay(updatedBy: string): Promise<Board> {
       vendorNotes: fromTpl?.vendorNotes ?? prev?.vendorNotes ?? "",
       randomNotes: fromTpl?.randomNotes ?? prev?.randomNotes ?? "",
       sourceType: fromTpl?.sourceType ?? prev?.sourceType ?? null,
+      stockLocation: fromTpl?.stockLocation ?? prev?.stockLocation ?? null,
+      itemLimit: fromTpl?.itemLimit ?? prev?.itemLimit ?? "",
       confirmedCount: fromTpl?.confirmedCount ?? prev?.confirmedCount ?? 0,
       // Flags are live-board-only (not part of the weekday template) and are
       // explicitly persistent across day rollover until an admin clears them -
@@ -193,6 +197,8 @@ export async function applyTemplateToBoard(weekday: string, updatedBy: string): 
       vendorNotes: info.vendorNotes ?? "",
       randomNotes: info.randomNotes ?? "",
       sourceType: info.sourceType ?? null,
+      stockLocation: info.stockLocation ?? null,
+      itemLimit: info.itemLimit ?? "",
       confirmedCount: info.confirmedCount ?? 0,
       updatedAt: new Date().toISOString(),
       updatedBy,
