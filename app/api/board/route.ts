@@ -22,7 +22,7 @@ export async function PATCH(req: NextRequest) {
   if (!storeId || !patch) {
     return NextResponse.json({ error: "Missing storeId or patch" }, { status: 400 });
   }
-  const allowedKeys = ["chance", "window", "reason", "vendorNotes", "randomNotes", "sourceType", "stockLocation", "itemLimit", "confirmedCount", "flagged", "status", "soldCount", "lastSoldAt"];
+  const allowedKeys = ["chance", "window", "reason", "vendorNotes", "randomNotes", "sourceType", "stockLocation", "itemLimit", "multiSeller", "confirmedCount", "flagged", "status", "soldCount", "lastSoldAt"];
   const safePatch: Record<string, unknown> = {};
   for (const k of allowedKeys) {
     if (k in patch) safePatch[k] = patch[k];
