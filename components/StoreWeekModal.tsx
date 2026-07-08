@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { StoreRef } from "@/lib/stores";
 import type { BoardEntry, Chance, SourceType, StockLocation } from "@/lib/types";
 import { WEEKDAYS } from "@/lib/types";
+import { DebouncedInput, DebouncedTextarea } from "./StoreRow";
 import { appleMapsUrl, googleMapsUrl } from "@/lib/maps";
 
 interface LogEntry {
@@ -267,10 +268,10 @@ export default function StoreWeekModal({
                           <option value="Medium">Medium</option>
                           <option value="Low">Low</option>
                         </select>
-                        <input
+                        <DebouncedInput
                           type="text"
                           value={info.window}
-                          onChange={(e) => patchDay(day, { window: e.target.value })}
+                          onCommit={(v) => patchDay(day, { window: v })}
                           placeholder="Window"
                           className="flex-1 bg-panel2 border border-line rounded px-2 py-1 text-xs font-mono placeholder:text-textmuted"
                         />
@@ -352,35 +353,35 @@ export default function StoreWeekModal({
                             {val}
                           </button>
                         ))}
-                        <input
+                        <DebouncedInput
                           type="text"
                           value={info.itemLimit}
-                          onChange={(e) => patchDay(day, { itemLimit: e.target.value })}
+                          onCommit={(v) => patchDay(day, { itemLimit: v })}
                           placeholder="Custom limit"
                           className="flex-1 bg-panel2 border border-line rounded px-2 py-1 text-xs placeholder:text-textmuted"
                         />
                       </div>
                       {showVendorNotes && (
-                        <textarea
+                        <DebouncedTextarea
                           value={info.vendorNotes}
-                          onChange={(e) => patchDay(day, { vendorNotes: e.target.value })}
+                          onCommit={(v) => patchDay(day, { vendorNotes: v })}
                           placeholder="Vendor pattern..."
                           rows={2}
                           className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
                         />
                       )}
                       {showRandomNotes && (
-                        <textarea
+                        <DebouncedTextarea
                           value={info.randomNotes}
-                          onChange={(e) => patchDay(day, { randomNotes: e.target.value })}
+                          onCommit={(v) => patchDay(day, { randomNotes: v })}
                           placeholder="Random / employee-push pattern..."
                           rows={2}
                           className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
                         />
                       )}
-                      <textarea
+                      <DebouncedTextarea
                         value={info.reason}
-                        onChange={(e) => patchDay(day, { reason: e.target.value })}
+                        onCommit={(v) => patchDay(day, { reason: v })}
                         placeholder="General notes..."
                         rows={2}
                         className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs placeholder:text-textmuted resize-none"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { StoreRef } from "@/lib/stores";
 import type { BoardEntry, Chance, SourceType, StockLocation, Status } from "@/lib/types";
 import { appleMapsUrl, googleMapsUrl } from "@/lib/maps";
@@ -96,6 +96,70 @@ function MapLink({ store, small }: { store: StoreRef; small?: boolean }) {
       </a>
     </span>
   );
+}
+
+// Typing into these fields no longer fires a network request (and the
+// resulting full-list re-render) on every keystroke - that was the actual
+// cause of both the visible lag and dropped characters. Local state keeps
+// typing instant; the real update only propagates ~500ms after you pause.
+export function DebouncedInput({
+  value,
+  onCommit,
+  ...rest
+}: {
+  value: string;
+  onCommit: (v: string) => void;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">) {
+  const [local, setLocal] = useState(value);
+  const pending = useRef(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!pending.current) setLocal(value);
+  }, [value]);
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const v = e.target.value;
+    setLocal(v);
+    pending.current = true;
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      pending.current = false;
+      onCommit(v);
+    }, 500);
+  }
+
+  return <input {...rest} value={local} onChange={handleChange} />;
+}
+
+export function DebouncedTextarea({
+  value,
+  onCommit,
+  ...rest
+}: {
+  value: string;
+  onCommit: (v: string) => void;
+} & Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "value" | "onChange">) {
+  const [local, setLocal] = useState(value);
+  const pending = useRef(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!pending.current) setLocal(value);
+  }, [value]);
+
+  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    const v = e.target.value;
+    setLocal(v);
+    pending.current = true;
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      pending.current = false;
+      onCommit(v);
+    }, 500);
+  }
+
+  return <textarea {...rest} value={local} onChange={handleChange} />;
 }
 
 function FavoriteStar({
@@ -246,10 +310,10 @@ export default function StoreRow({
             </button>
           ))}
         </div>
-        <input
+        <DebouncedInput
           type="text"
           value={entry.window}
-          onChange={(e) => onPatch(store.id, { window: e.target.value })}
+          onCommit={(v) => onPatch(store.id, { window: v })}
           placeholder="Window, e.g. 7-9AM"
           className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 font-mono placeholder:text-textmuted"
         />
@@ -298,36 +362,36 @@ export default function StoreRow({
               </button>
             ))}
           </div>
-          <input
+          <DebouncedInput
             type="text"
             value={entry.itemLimit}
-            onChange={(e) => onPatch(store.id, { itemLimit: e.target.value })}
+            onCommit={(v) => onPatch(store.id, { itemLimit: v })}
             placeholder="Or type a custom limit..."
             className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs placeholder:text-textmuted"
           />
         </div>
 
         {showVendorNotes && (
-          <textarea
+          <DebouncedTextarea
             value={entry.vendorNotes}
-            onChange={(e) => onPatch(store.id, { vendorNotes: e.target.value })}
+            onCommit={(v) => onPatch(store.id, { vendorNotes: v })}
             placeholder="Vendor pattern (scheduled delivery)..."
             rows={2}
             className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
           />
         )}
         {showRandomNotes && (
-          <textarea
+          <DebouncedTextarea
             value={entry.randomNotes}
-            onChange={(e) => onPatch(store.id, { randomNotes: e.target.value })}
+            onCommit={(v) => onPatch(store.id, { randomNotes: v })}
             placeholder="Random / employee-push pattern..."
             rows={2}
             className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
           />
         )}
-        <textarea
+        <DebouncedTextarea
           value={entry.reason}
-          onChange={(e) => onPatch(store.id, { reason: e.target.value })}
+          onCommit={(v) => onPatch(store.id, { reason: v })}
           placeholder="General notes..."
           rows={2}
           className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"

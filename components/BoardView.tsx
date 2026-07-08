@@ -122,6 +122,15 @@ export default function BoardView({
   const [templateLoading, setTemplateLoading] = useState(false);
 
   const [editMode, setEditMode] = useState(false);
+  const [groupingSnapshot, setGroupingSnapshot] = useState<Record<string, BoardEntry> | null>(null);
+  useEffect(() => {
+    if (isAdmin && editMode) {
+      setGroupingSnapshot((prev) => prev ?? activeEntries);
+    } else {
+      setGroupingSnapshot(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAdmin, editMode]);
   const [search, setSearch] = useState("");
   const [chanceFilter, setChanceFilter] = useState<ChanceFilter>("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
@@ -406,17 +415,24 @@ export default function BoardView({
     const targetStart = nowMinutes - 120;
     const targetEnd = nowMinutes + 120;
 
+    // While actively editing, use a frozen snapshot to decide sort order and
+    // filter matches, so a card doesn't jump or vanish out from under you as
+    // you change its chance/status mid-edit. The displayed entry itself is
+    // still always the live one, so typing is reflected instantly.
+    const decisionSource = isAdmin && editMode && groupingSnapshot ? groupingSnapshot : activeEntries;
+
     const matched: { store: StoreRef; entry: BoardEntry; distance?: number }[] = [];
 
     for (const store of STORES) {
       const entry = activeEntries[store.id];
+      const decisionEntry = decisionSource[store.id] ?? entry;
       if (!entry) continue;
       if (favoritesOnly && !favorites.has(store.id)) continue;
       if (q && !store.name.toLowerCase().includes(q)) continue;
-      if (chanceFilter !== "all" && entry.chance !== chanceFilter) continue;
-      if (isLiveView && statusFilter !== "all" && entry.status !== statusFilter) continue;
+      if (chanceFilter !== "all" && decisionEntry.chance !== chanceFilter) continue;
+      if (isLiveView && statusFilter !== "all" && decisionEntry.status !== statusFilter) continue;
       if (rightNowActive) {
-        const ranges = parseWindowRanges(entry.window);
+        const ranges = parseWindowRanges(decisionEntry.window);
         if (ranges.length === 0) continue;
         if (!overlapsWindow(ranges, targetStart, targetEnd)) continue;
       }
@@ -445,8 +461,10 @@ export default function BoardView({
     for (const list of byRegion.values()) {
       if (sortMode === "time") {
         list.sort((a, b) => {
-          const aRanges = parseWindowRanges(a.entry.window);
-          const bRanges = parseWindowRanges(b.entry.window);
+          const aWindow = (decisionSource[a.store.id] ?? a.entry).window;
+          const bWindow = (decisionSource[b.store.id] ?? b.entry).window;
+          const aRanges = parseWindowRanges(aWindow);
+          const bRanges = parseWindowRanges(bWindow);
           const aStart = aRanges.length > 0 ? Math.min(...aRanges.map((r) => r.startMin)) : 9999;
           const bStart = bRanges.length > 0 ? Math.min(...bRanges.map((r) => r.startMin)) : 9999;
           if (aStart !== bStart) return aStart - bStart;
@@ -454,7 +472,9 @@ export default function BoardView({
         });
       } else {
         list.sort((a, b) => {
-          const r = priorityRank(a.entry.chance) - priorityRank(b.entry.chance);
+          const aChance = (decisionSource[a.store.id] ?? a.entry).chance;
+          const bChance = (decisionSource[b.store.id] ?? b.entry).chance;
+          const r = priorityRank(aChance) - priorityRank(bChance);
           if (r !== 0) return r;
           return a.store.name.localeCompare(b.store.name);
         });
@@ -465,7 +485,7 @@ export default function BoardView({
     return orderedRegions
       .filter((r) => byRegion.has(r))
       .map((r) => ({ region: r, items: byRegion.get(r)! }));
-  }, [activeEntries, search, chanceFilter, statusFilter, isLiveView, favoritesOnly, favorites, rightNowOnly, nowMinutes, sortMode, userLocation]);
+  }, [activeEntries, search, chanceFilter, statusFilter, isLiveView, favoritesOnly, favorites, rightNowOnly, nowMinutes, sortMode, userLocation, groupingSnapshot, isAdmin, editMode]);
 
   useEffect(() => {
     function handleScroll() {
