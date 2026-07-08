@@ -18,6 +18,7 @@ export interface BoardEntry {
   sourceType: SourceType;
   stockLocation: StockLocation;
   itemLimit: string;
+  multiSeller: boolean;
   confirmedCount: number;
   flagged: FlaggedInfo | null;
   status: Status;
@@ -42,6 +43,7 @@ export const EMPTY_ENTRY: BoardEntry = {
   sourceType: null,
   stockLocation: null,
   itemLimit: "",
+  multiSeller: false,
   confirmedCount: 0,
   flagged: null,
   status: "pending",
@@ -63,6 +65,7 @@ export interface TemplateEntry {
   sourceType: SourceType;
   stockLocation: StockLocation;
   itemLimit: string;
+  multiSeller: boolean;
   confirmedCount: number;
   updatedAt: string | null;
 }
@@ -76,6 +79,7 @@ export const EMPTY_TEMPLATE_ENTRY: TemplateEntry = {
   sourceType: null,
   stockLocation: null,
   itemLimit: "",
+  multiSeller: false,
   confirmedCount: 0,
   updatedAt: null,
 };
