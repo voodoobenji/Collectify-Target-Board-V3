@@ -264,6 +264,17 @@ export default function StoreRow({
           </div>
         </div>
 
+        <button
+          onClick={() => {
+            if (window.confirm("Clear the chance, window, and notes for this store on this day only? Vendor/location/limit info stays.")) {
+              onPatch(store.id, { chance: null, window: "", reason: "", vendorNotes: "", randomNotes: "" });
+            }
+          }}
+          className="w-full text-[10px] font-mono uppercase tracking-wide px-2 py-1.5 rounded border border-line text-textmuted hover:text-high hover:border-high transition-colors mb-2"
+        >
+          &#10005; Clear Prediction (this day only)
+        </button>
+
         <div className="mb-2">
           <div className="text-[10px] uppercase tracking-wide text-textmuted mb-1">
             Source type {!entry.sourceType && <span className="text-medium">(required)</span>}

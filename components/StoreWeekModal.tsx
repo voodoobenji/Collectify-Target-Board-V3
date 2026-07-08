@@ -279,6 +279,20 @@ export default function StoreWeekModal({
                           className="flex-1 bg-panel2 border border-line rounded px-2 py-1 text-xs font-mono placeholder:text-textmuted"
                         />
                       </div>
+                      <button
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              `Clear the chance, window, and notes for ${DAY_LABELS[day]} only? Vendor/location/limit info stays.`
+                            )
+                          ) {
+                            patchDay(day, { chance: null, window: "", reason: "", vendorNotes: "", randomNotes: "" });
+                          }
+                        }}
+                        className="w-full text-[10px] font-mono uppercase tracking-wide px-2 py-1.5 rounded border border-line text-textmuted hover:text-high hover:border-high transition-colors mb-2"
+                      >
+                        &#10005; Clear Prediction ({DAY_LABELS[day]} only)
+                      </button>
                       <div className="flex flex-wrap gap-1 mb-2">
                         {WINDOW_PRESETS.map((val) => (
                           <button
