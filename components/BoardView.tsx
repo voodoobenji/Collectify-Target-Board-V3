@@ -728,12 +728,17 @@ export default function BoardView({
                 reason: "",
                 vendorNotes: "",
                 randomNotes: "",
+                sourceType: null,
+                confirmedCount: 0,
+                flagged: null,
                 status: "pending",
                 updatedAt: null,
                 updatedBy: null,
               }
             }
             onClose={() => setWeekModalStoreId(null)}
+            canEdit={isAdmin && editMode}
+            onPatchToday={handlePatch}
           />
         );
       })()}
