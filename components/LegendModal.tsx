@@ -55,7 +55,7 @@ export default function LegendModal({
         {tab === "legend" ? (
           <div className="space-y-4 text-sm text-textmuted">
             <p className="text-xs bg-panel2 border border-line rounded px-3 py-2">
-              Two separate systems on this board: <span className="text-textprimary">Pending/Hit</span> describes{" "}
+              Two separate systems on this board: <span className="text-textprimary">No Update/Hasn't Sold vs. Sold</span> describes{" "}
               <span className="text-textprimary">today only</span>, set live by an admin. Everything
               below (High/Medium/Low/No Data, past hits, guide history) describes the store&apos;s{" "}
               <span className="text-textprimary">historical pattern</span> mined from months of chat &mdash;
@@ -128,11 +128,11 @@ export default function LegendModal({
 
             <div className="pt-2 border-t border-line">
               <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border border-live text-live bg-live/10">
-                Hit
+                Sold
               </span>
               <p className="mt-1.5">
                 An admin confirmed this store actually restocked <span className="text-textprimary">today</span>.
-                Resets to Pending every new day.
+                Resets to No Update/Hasn&apos;t Sold every new day.
               </p>
             </div>
 
@@ -196,7 +196,7 @@ export default function LegendModal({
                   ["1", "Toggle Edit mode", "Switches store cards into editable form, on whichever day tab you're currently viewing \u2014 today or any weekday pattern."],
                   ["2", "Set chance + source type", "Source type (Vendor/Employee Push/Both) is required and shown first \u2014 it decides which notes fields even appear below it."],
                   ["3", "Fill in window & notes", "Vendor notes only show if source includes Vendor; employee notes only show if it includes Employee Push. General notes always shown."],
-                  ["4", "Mark Hit when confirmed", "Only on today's live board. Resets to Pending automatically every new day."],
+                  ["4", "Mark Sold when confirmed", "Only on today's live board. Resets to No Update/Hasn't Sold automatically every new day."],
                   ["5", "Mark Overdue if it's missed its window", "Public, persistent, stays until you clear it \u2014 even across a new day starting. Use this instead of a \"didn't hit\" click."],
                   ["6", "Start New Day each morning", "Archives today, carries forward that weekday's typical pattern (and any Overdue flags) into a fresh live board."],
                   ["7", "Import Patterns after a data refresh", "Pulls the latest analyzed history into the weekday templates \u2014 only needed after new Discord history has been processed."],

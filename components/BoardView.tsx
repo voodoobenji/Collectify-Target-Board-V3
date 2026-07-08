@@ -742,7 +742,7 @@ export default function BoardView({
               {isLiveView ? stats.hit : "\u2014"}
             </span>
           </div>
-          <div className="text-[10px] uppercase tracking-wide text-textmuted mt-2 text-center">Confirmed Hit</div>
+          <div className="text-[10px] uppercase tracking-wide text-textmuted mt-2 text-center">Confirmed Sold</div>
         </div>
         <div className="flex flex-col items-center">
           <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full border-2 border-gold/50 flex items-center justify-center bg-panel card-fill">
@@ -750,7 +750,7 @@ export default function BoardView({
               {isLiveView ? stats.pending : "\u2014"}
             </span>
           </div>
-          <div className="text-[10px] uppercase tracking-wide text-textmuted mt-2 text-center">Pending</div>
+          <div className="text-[10px] uppercase tracking-wide text-textmuted mt-2 text-center">No Update/Hasn't Sold</div>
         </div>
       </div>
 

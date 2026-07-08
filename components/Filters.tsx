@@ -22,8 +22,8 @@ const chanceOptions: { value: ChanceFilter; label: string }[] = [
 
 const statusOptions: { value: StatusFilter; label: string }[] = [
   { value: "all", label: "All" },
-  { value: "pending", label: "Pending" },
-  { value: "hit", label: "Hit" },
+  { value: "pending", label: "No Update/Hasn't Sold" },
+  { value: "hit", label: "Sold" },
 ];
 
 export default function Filters({

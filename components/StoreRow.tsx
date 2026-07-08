@@ -38,8 +38,8 @@ const statusStyles: Record<Status, string> = {
 };
 
 const statusLabels: Record<Status, string> = {
-  pending: "Pending",
-  hit: "Hit",
+  pending: "No Update/Hasn't Sold",
+  hit: "Sold",
   no_hit: "No Hit",
 };
 
