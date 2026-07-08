@@ -172,12 +172,13 @@ export default function LegendModal({
               <ol className="space-y-4">
                 {[
                   ["1", "Pick your day", "Tap Mon\u2013Fri at the top. Today's tab shows the live board; other days show the typical pattern for that weekday."],
-                  ["2", "Browse or search", "Use the region chips to jump to your area, or search a store by name. Filter by High/Medium/Low if you only want the strong bets."],
-                  ["3", "See what's worth checking right now", "On today's tab, tap \u{1F550} Right Now to narrow the list down to only stores whose window falls within about 2 hours of the actual current time."],
-                  ["4", "Read the card", "Chance level, vendor/employee icon, hit history, and any notes are all right there \u2014 no need to tap anything to read the full note."],
-                  ["5", "Tap Map for directions", "Apple or Google, opens straight to that store's real address."],
-                  ["6", "Star your favorites", "Tap the star on any store to save it. Use the \u2605 Favorites filter to see only your saved stores."],
-                  ["7", "See the whole week", "Tap \"View full week\" on any card to see that store's pattern across all 5 days at once."],
+                  ["2", "Sort it your way", "Priority (default), Time (earliest window first), or \u{1F4CD} Near Me (real distance, needs your location)."],
+                  ["3", "Browse or search", "Use the region chips to jump to your area, or search a store by name. Filter by High/Medium/Low if you only want the strong bets."],
+                  ["4", "See what's worth checking right now", "On today's tab, tap \u{1F550} Right Now to narrow the list down to only stores whose window falls within about 2 hours of the actual current time."],
+                  ["5", "Read the card", "Chance level, vendor/employee icon, stock location, item limit, hit history, and any notes are all right there \u2014 no need to tap anything to read the full note."],
+                  ["6", "Tap Map for directions", "Apple or Google, opens straight to that store's real address."],
+                  ["7", "Star your favorites", "Tap the star on any store to save it. Use the \u2605 Favorites filter to see only your saved stores."],
+                  ["8", "See the whole week, and the receipts", "Tap \"View full week\" to see that store's pattern across all 5 days, plus a \"View recent activity\" log showing the actual dated pings behind the rating."],
                 ].map(([n, title, body]) => (
                   <li key={n} className="flex gap-3">
                     <span className="shrink-0 h-6 w-6 rounded-full border border-gold text-gold text-xs flex items-center justify-center font-mono">
@@ -194,12 +195,14 @@ export default function LegendModal({
               <ol className="space-y-4">
                 {[
                   ["1", "Toggle Edit mode", "Switches store cards into editable form, on whichever day tab you're currently viewing \u2014 today or any weekday pattern."],
-                  ["2", "Set chance + source type", "Source type (Vendor/Employee Push/Both) is required and shown first \u2014 it decides which notes fields even appear below it."],
-                  ["3", "Fill in window & notes", "Vendor notes only show if source includes Vendor; employee notes only show if it includes Employee Push. General notes always shown."],
-                  ["4", "Mark Sold when confirmed", "Only on today's live board. Resets to No Update/Hasn't Sold automatically every new day."],
-                  ["5", "Mark Overdue if it's missed its window", "Public, persistent, stays until you clear it \u2014 even across a new day starting. Use this instead of a \"didn't hit\" click."],
-                  ["6", "Start New Day each morning", "Archives today, carries forward that weekday's typical pattern (and any Overdue flags) into a fresh live board."],
-                  ["7", "Import Patterns after a data refresh", "Pulls the latest analyzed history into the weekday templates \u2014 only needed after new Discord history has been processed."],
+                  ["2", "Or edit the whole week at once", "Tap \"View full week\" on any store with Edit mode on \u2014 every day for that store becomes editable in one popup. Saves as you type, no tab-switching needed."],
+                  ["3", "Set chance + source type", "Source type (Vendor/Employee Push/Both) is required and shown first \u2014 it decides which notes fields even appear below it."],
+                  ["4", "Use the window presets", "Quick-fill buttons (Opening, 7-9AM, 8-Close, etc.) sit above the window field \u2014 tap one, still editable after."],
+                  ["5", "Set stock location & item limit", "TCG Section / Guest Services / Both, plus 1 or 2 per person or a custom limit. Both are visible to members on the card."],
+                  ["6", "Mark Sold when confirmed", "Only on today's live board. Resets to No Update/Hasn't Sold automatically every new day."],
+                  ["7", "Mark Overdue if it's missed its window", "Public, persistent, stays until you clear it \u2014 even across a new day starting. Use this instead of a \"didn't hit\" click."],
+                  ["8", "Start New Day each morning", "Archives today, carries forward that weekday's typical pattern (and any Overdue flags) into a fresh live board."],
+                  ["9", "Import Patterns after a data refresh", "Pulls the latest analyzed history into the weekday templates \u2014 only needed after new Discord history has been processed."],
                 ].map(([n, title, body]) => (
                   <li key={n} className="flex gap-3">
                     <span className="shrink-0 h-6 w-6 rounded-full border border-gold text-gold text-xs flex items-center justify-center font-mono">
