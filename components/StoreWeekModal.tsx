@@ -6,6 +6,12 @@ import type { BoardEntry, Chance, SourceType } from "@/lib/types";
 import { WEEKDAYS } from "@/lib/types";
 import { appleMapsUrl, googleMapsUrl } from "@/lib/maps";
 
+interface LogEntry {
+  date: string;
+  type: "guide" | "confirmed";
+  snippet: string;
+}
+
 const DAY_LABELS: Record<string, string> = {
   monday: "Monday",
   tuesday: "Tuesday",
@@ -63,6 +69,29 @@ export default function StoreWeekModal({
 }) {
   const [data, setData] = useState<Record<string, DayInfo | null>>({});
   const [loading, setLoading] = useState(true);
+  const [expandedLog, setExpandedLog] = useState<string | null>(null);
+  const [logData, setLogData] = useState<Record<string, LogEntry[]>>({});
+  const [logLoading, setLogLoading] = useState<string | null>(null);
+
+  async function toggleLog(day: string) {
+    if (expandedLog === day) {
+      setExpandedLog(null);
+      return;
+    }
+    setExpandedLog(day);
+    if (logData[day]) return;
+    setLogLoading(day);
+    try {
+      const res = await fetch(`/api/history-log/${day}`, { cache: "no-store" });
+      if (res.ok) {
+        const json = await res.json();
+        setLogData((prev) => ({ ...prev, [day]: json?.log?.[store.id] ?? [] }));
+      }
+    } catch {
+    } finally {
+      setLogLoading(null);
+    }
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -300,6 +329,45 @@ export default function StoreWeekModal({
                       )}
                       {info.reason && <p className="text-xs text-textmuted">{info.reason}</p>}
                     </>
+                  )}
+
+                  <button
+                    onClick={() => toggleLog(day)}
+                    className="mt-2 text-[10px] font-mono uppercase tracking-wide text-textmuted hover:text-live transition-colors"
+                  >
+                    {expandedLog === day ? "Hide recent activity" : "View recent activity"} &rsaquo;
+                  </button>
+
+                  {expandedLog === day && (
+                    <div className="mt-2 pt-2 border-t border-line space-y-1.5">
+                      {logLoading === day ? (
+                        <p className="text-textmuted text-[11px]">Loading...</p>
+                      ) : (logData[day]?.length ?? 0) === 0 ? (
+                        <p className="text-textmuted text-[11px]">No recent activity logged.</p>
+                      ) : (
+                        logData[day].map((entry, i) => (
+                          <div key={i} className="flex gap-2 text-[11px]">
+                            <span
+                              className={`shrink-0 font-mono ${
+                                entry.type === "confirmed" ? "text-live" : "text-textmuted"
+                              }`}
+                            >
+                              {entry.date}
+                            </span>
+                            <span
+                              className={`shrink-0 uppercase text-[9px] px-1 rounded border ${
+                                entry.type === "confirmed"
+                                  ? "border-live text-live"
+                                  : "border-line text-textmuted"
+                              }`}
+                            >
+                              {entry.type === "confirmed" ? "confirmed" : "guide"}
+                            </span>
+                            <span className="text-textmuted">{entry.snippet}</span>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   )}
                 </div>
               );

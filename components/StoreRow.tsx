@@ -16,6 +16,7 @@ interface Props {
   isFavorite?: boolean;
   onToggleFavorite?: (storeId: string) => void;
   currentUsername?: string;
+  distanceMiles?: number;
 }
 
 const chanceStyles: Record<string, string> = {
@@ -113,6 +114,7 @@ export default function StoreRow({
   isFavorite,
   onToggleFavorite,
   currentUsername,
+  distanceMiles,
 }: Props) {
   const chance = entry.chance;
   const [flagInputOpen, setFlagInputOpen] = useState(false);
@@ -359,6 +361,9 @@ export default function StoreRow({
       </div>
       <div className="flex items-center gap-2 mt-2 text-sm font-mono text-textmuted flex-wrap">
         <MapLink store={store} small />
+        {distanceMiles != null && (
+          <span className="text-gold">{distanceMiles.toFixed(1)} mi</span>
+        )}
         {entry.window && <span className="text-textprimary">{entry.window}</span>}
         {entry.sourceType && (
           <span className="text-gold">

@@ -10,6 +10,19 @@ import Filters from "./Filters";
 import StoreWeekModal from "./StoreWeekModal";
 import LegendModal from "./LegendModal";
 import { parseWindowRanges, overlapsWindow, formatMinutes } from "@/lib/timeWindow";
+
+type SortMode = "priority" | "time" | "nearMe";
+
+function haversineMiles(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const R = 3958.8;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 import Watermark from "./Watermark";
 import { SEED_TEMPLATES } from "@/lib/seed-templates";
 
@@ -120,6 +133,39 @@ export default function BoardView({
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [showLegend, setShowLegend] = useState(false);
   const [rightNowOnly, setRightNowOnly] = useState(false);
+  const [sortMode, setSortMode] = useState<SortMode>("priority");
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
+
+  function requestNearMe() {
+    if (sortMode === "nearMe") {
+      setSortMode("priority");
+      return;
+    }
+    if (userLocation) {
+      setSortMode("nearMe");
+      return;
+    }
+    if (!navigator.geolocation) {
+      setLocationError("Location isn't available on this device.");
+      return;
+    }
+    setLocationLoading(true);
+    setLocationError(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setSortMode("nearMe");
+        setLocationLoading(false);
+      },
+      () => {
+        setLocationError("Couldn't get your location. Check permissions and try again.");
+        setLocationLoading(false);
+      },
+      { enableHighAccuracy: false, timeout: 8000 }
+    );
+  }
   const [nowMinutes, setNowMinutes] = useState<number>(() => {
     const d = new Date();
     return d.getHours() * 60 + d.getMinutes();
@@ -354,11 +400,13 @@ export default function BoardView({
 
   const grouped = useMemo(() => {
     const q = search.trim().toLowerCase();
-    const byRegion = new Map<string, { store: StoreRef; entry: BoardEntry }[]>();
+    const byRegion = new Map<string, { store: StoreRef; entry: BoardEntry; distance?: number }[]>();
 
     const rightNowActive = rightNowOnly && isLiveView;
     const targetStart = nowMinutes - 120;
     const targetEnd = nowMinutes + 120;
+
+    const matched: { store: StoreRef; entry: BoardEntry; distance?: number }[] = [];
 
     for (const store of STORES) {
       const entry = activeEntries[store.id];
@@ -372,25 +420,52 @@ export default function BoardView({
         if (ranges.length === 0) continue;
         if (!overlapsWindow(ranges, targetStart, targetEnd)) continue;
       }
+      matched.push({ store, entry });
+    }
 
-      const list = byRegion.get(store.region) ?? [];
-      list.push({ store, entry });
-      byRegion.set(store.region, list);
+    if (sortMode === "nearMe" && userLocation) {
+      const withDistance = matched
+        .filter((m) => m.store.lat != null && m.store.lng != null)
+        .map((m) => ({
+          ...m,
+          distance: haversineMiles(userLocation.lat, userLocation.lng, m.store.lat!, m.store.lng!),
+        }));
+      withDistance.sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
+      return withDistance.length > 0
+        ? [{ region: "__nearby__", items: withDistance }]
+        : [];
+    }
+
+    for (const item of matched) {
+      const list = byRegion.get(item.store.region) ?? [];
+      list.push(item);
+      byRegion.set(item.store.region, list);
     }
 
     for (const list of byRegion.values()) {
-      list.sort((a, b) => {
-        const r = priorityRank(a.entry.chance) - priorityRank(b.entry.chance);
-        if (r !== 0) return r;
-        return a.store.name.localeCompare(b.store.name);
-      });
+      if (sortMode === "time") {
+        list.sort((a, b) => {
+          const aRanges = parseWindowRanges(a.entry.window);
+          const bRanges = parseWindowRanges(b.entry.window);
+          const aStart = aRanges.length > 0 ? Math.min(...aRanges.map((r) => r.startMin)) : 9999;
+          const bStart = bRanges.length > 0 ? Math.min(...bRanges.map((r) => r.startMin)) : 9999;
+          if (aStart !== bStart) return aStart - bStart;
+          return a.store.name.localeCompare(b.store.name);
+        });
+      } else {
+        list.sort((a, b) => {
+          const r = priorityRank(a.entry.chance) - priorityRank(b.entry.chance);
+          if (r !== 0) return r;
+          return a.store.name.localeCompare(b.store.name);
+        });
+      }
     }
 
     const orderedRegions = [...REGION_ORDER, ...[...byRegion.keys()].filter((r) => !REGION_ORDER.includes(r))];
     return orderedRegions
       .filter((r) => byRegion.has(r))
       .map((r) => ({ region: r, items: byRegion.get(r)! }));
-  }, [activeEntries, search, chanceFilter, statusFilter, isLiveView, favoritesOnly, favorites, rightNowOnly, nowMinutes]);
+  }, [activeEntries, search, chanceFilter, statusFilter, isLiveView, favoritesOnly, favorites, rightNowOnly, nowMinutes, sortMode, userLocation]);
 
   useEffect(() => {
     function handleScroll() {
@@ -515,6 +590,44 @@ export default function BoardView({
         </button>
       </div>
 
+      <div className="mb-4">
+        <div className="text-xs font-mono uppercase tracking-[0.2em] text-gold mb-2">Sort</div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setSortMode("priority")}
+            className={`flex-1 text-[11px] sm:text-xs font-mono uppercase tracking-wide px-2.5 py-1.5 sm:py-2 rounded-full border transition-colors ${
+              sortMode === "priority"
+                ? "bg-live/15 border-live text-live"
+                : "bg-panel border-line text-textmuted hover:text-textprimary"
+            }`}
+          >
+            Priority
+          </button>
+          <button
+            onClick={() => setSortMode("time")}
+            className={`flex-1 text-[11px] sm:text-xs font-mono uppercase tracking-wide px-2.5 py-1.5 sm:py-2 rounded-full border transition-colors ${
+              sortMode === "time"
+                ? "bg-live/15 border-live text-live"
+                : "bg-panel border-line text-textmuted hover:text-textprimary"
+            }`}
+          >
+            Time
+          </button>
+          <button
+            onClick={requestNearMe}
+            disabled={locationLoading}
+            className={`flex-1 text-[11px] sm:text-xs font-mono uppercase tracking-wide px-2.5 py-1.5 sm:py-2 rounded-full border transition-colors disabled:opacity-50 ${
+              sortMode === "nearMe"
+                ? "bg-live/15 border-live text-live"
+                : "bg-panel border-line text-textmuted hover:text-textprimary"
+            }`}
+          >
+            {locationLoading ? "Locating..." : "\u{1F4CD} Near Me"}
+          </button>
+        </div>
+        {locationError && <p className="text-high text-[11px] mt-1.5">{locationError}</p>}
+      </div>
+
       <Filters
         search={search}
         onSearch={setSearch}
@@ -549,7 +662,7 @@ export default function BoardView({
           })}
         </div>
 
-        {grouped.length > 1 && (
+        {sortMode !== "nearMe" && grouped.length > 1 && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
             {grouped.map(({ region, items }) => (
               <button
@@ -660,8 +773,8 @@ export default function BoardView({
           </div>
         ) : (
         grouped.map(({ region, items }) => {
-          const label = items[0]?.store.regionLabel ?? region;
-          const collapsed = collapsedRegions.has(region);
+          const label = region === "__nearby__" ? "Nearest to You" : (items[0]?.store.regionLabel ?? region);
+          const collapsed = region === "__nearby__" ? false : collapsedRegions.has(region);
           return (
             <section
               key={region}
@@ -684,7 +797,7 @@ export default function BoardView({
               <div className="h-px gold-rule mb-3 -mt-2" />
               {!collapsed && (
                 <div className="grid gap-2 sm:grid-cols-2">
-                  {items.map(({ store, entry }) => (
+                  {items.map(({ store, entry, distance }) => (
                     <StoreRow
                       key={store.id}
                       store={store}
@@ -697,6 +810,7 @@ export default function BoardView({
                       isFavorite={favorites.has(store.id)}
                       onToggleFavorite={handleToggleFavorite}
                       currentUsername={username}
+                      distanceMiles={distance}
                     />
                   ))}
                 </div>
