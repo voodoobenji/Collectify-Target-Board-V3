@@ -57,7 +57,7 @@ export default function LegendModal({
             <p className="text-xs bg-panel2 border border-line rounded px-3 py-2">
               Two separate systems on this board: <span className="text-textprimary">No Update/Hasn't Sold vs. Sold</span> describes{" "}
               <span className="text-textprimary">today only</span>, set live by an admin. Everything
-              below (High/Medium/Low/No Data, past hits, guide history) describes the store&apos;s{" "}
+              below (High/Medium/Low/Not Expected, past hits, guide history) describes the store&apos;s{" "}
               <span className="text-textprimary">historical pattern</span> mined from months of chat &mdash;
               they&apos;re not the same thing.
             </p>
@@ -67,31 +67,36 @@ export default function LegendModal({
                 High
               </span>
               <p className="mt-1.5">
-                Strong, recent pattern. Hits often on this weekday and it&apos;s shown up within the
-                last couple weeks.
+                <span className="text-textprimary">Strong Chances</span> &mdash; recent pattern points
+                to a very likely hit today!
               </p>
             </div>
             <div>
               <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border border-medium text-medium bg-medium/10">
                 Medium
               </span>
-              <p className="mt-1.5">Some real signal, but mixed, occasional, or a bit dated.</p>
+              <p className="mt-1.5">
+                <span className="text-textprimary">Solid Chances</span> &mdash; people will be
+                checking, not a sure thing but strong enough that you&apos;ll need to be on it.
+              </p>
             </div>
             <div>
               <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border border-low text-low bg-low/10">
                 Low
               </span>
               <p className="mt-1.5">
-                We have recent information, and it points to this one probably not hitting.
+                <span className="text-textprimary">Low Chances</span> &mdash; not very likely, but not
+                impossible, and if you&apos;re around feel free to check in!
               </p>
             </div>
             <div>
               <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border border-line text-textmuted">
-                No Data
+                Not Expected/Sells Other Day(s)
               </span>
               <p className="mt-1.5">
-                Nothing recent enough to go on &mdash; last real mention was 6+ weeks ago, or it&apos;s
-                never come up for this weekday. Not a prediction either way, just genuinely unknown.
+                Nothing points to this hitting today &mdash; either there&apos;s no recent activity to
+                go on, or an admin has made the call it&apos;s off today (shifted to a different day,
+                etc.). Bottom line either way: don&apos;t prioritize this one right now.
               </p>
             </div>
 

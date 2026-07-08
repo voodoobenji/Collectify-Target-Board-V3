@@ -538,7 +538,7 @@ export default function StoreRow({
               chance ? chanceStyles[chance] : "border-line text-textmuted"
             }`}
           >
-            {chance ?? "No Data"}
+            {chance ?? "Not Expected/Sells Other Day(s)"}
           </span>
           <FavoriteStar isFavorite={isFavorite} onToggle={() => onToggleFavorite?.(store.id)} />
           <span className="font-serif text-base sm:text-lg text-textprimary">{store.name}</span>
