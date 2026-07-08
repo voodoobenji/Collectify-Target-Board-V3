@@ -1,6 +1,7 @@
 export type Chance = "High" | "Medium" | "Low" | null;
 export type Status = "pending" | "hit" | "no_hit";
 export type SourceType = "vendor" | "employee_push" | "both" | null;
+export type StockLocation = "tcg_section" | "guest_services" | "both" | null;
 
 export interface FlaggedInfo {
   reason: string;
@@ -15,6 +16,8 @@ export interface BoardEntry {
   vendorNotes: string;
   randomNotes: string;
   sourceType: SourceType;
+  stockLocation: StockLocation;
+  itemLimit: string;
   confirmedCount: number;
   flagged: FlaggedInfo | null;
   status: Status;
@@ -35,6 +38,8 @@ export const EMPTY_ENTRY: BoardEntry = {
   vendorNotes: "",
   randomNotes: "",
   sourceType: null,
+  stockLocation: null,
+  itemLimit: "",
   confirmedCount: 0,
   flagged: null,
   status: "pending",
@@ -52,6 +57,8 @@ export interface TemplateEntry {
   vendorNotes: string;
   randomNotes: string;
   sourceType: SourceType;
+  stockLocation: StockLocation;
+  itemLimit: string;
   confirmedCount: number;
   updatedAt: string | null;
 }
@@ -63,6 +70,8 @@ export const EMPTY_TEMPLATE_ENTRY: TemplateEntry = {
   vendorNotes: "",
   randomNotes: "",
   sourceType: null,
+  stockLocation: null,
+  itemLimit: "",
   confirmedCount: 0,
   updatedAt: null,
 };
