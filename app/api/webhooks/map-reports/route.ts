@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { STORES } from "@/lib/stores";
 import { patchEntryRaw } from "@/lib/kv";
+import { matchStoreByAddress } from "@/lib/store-matching";
 
 // ============================================================================
 // IMPORTANT: this endpoint's payload parsing is a BEST GUESS based on
@@ -8,39 +8,16 @@ import { patchEntryRaw } from "@/lib/kv";
 // an actual example JSON body from your friend, this file will very likely
 // need small adjustments to the field names below (search for "ADJUST").
 // Nothing else in the app depends on this being perfect on the first try.
+//
+// NOTE: write-ups/predictions ("Guide" content) are handled separately now,
+// via a nightly poll (app/api/cron/sync-guides/route.ts) instead of this
+// webhook - they're not a discrete event on Benny's side, they just
+// autopopulate as his AI gets more info, so there's nothing to push here.
+// The contentType === "guide" branch below is left in place in case that
+// ever changes on his end, but it's not the primary path anymore.
 // ============================================================================
 
 const WEBHOOK_SECRET = process.env.MAP_WEBHOOK_SECRET;
-
-function normalizeAddress(addr: string): string {
-  return addr
-    .toLowerCase()
-    .replace(/[.,#]/g, "")
-    .replace(/\bsuite\b|\bste\b|\bunit\b/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function matchStoreByAddress(rawAddress: string) {
-  if (!rawAddress) return null;
-  const target = normalizeAddress(rawAddress);
-  const targetNumber = target.match(/^\d+/)?.[0];
-
-  // Try to match on street number + a few words of street name, since exact
-  // string equality is unlikely between two independently-formatted addresses
-  for (const store of STORES) {
-    if (!store.address) continue;
-    const candidate = normalizeAddress(store.address);
-    const candidateNumber = candidate.match(/^\d+/)?.[0];
-    if (targetNumber && candidateNumber && targetNumber === candidateNumber) {
-      const targetWords = target.split(" ").slice(1, 4).join(" ");
-      if (candidate.includes(targetWords) || target.includes(candidate.split(" ").slice(1, 4).join(" "))) {
-        return store;
-      }
-    }
-  }
-  return null;
-}
 
 export async function POST(req: NextRequest) {
   // ADJUST: confirm the actual header/param name their app uses, if any -
