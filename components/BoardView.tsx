@@ -668,6 +668,7 @@ export default function BoardView({
         statusFilter={statusFilter}
         onStatusFilter={setStatusFilter}
         showStatusFilter={isLiveView}
+        onSelectStore={(id) => setWeekModalStoreId(id)}
       />
 
       <div className="sticky top-0 z-20 bg-ink pt-3 pb-3 mb-3 -mx-4 px-4 sm:-mx-8 sm:px-8 border-b border-line">

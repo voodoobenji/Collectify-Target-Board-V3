@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { STORES } from "@/lib/stores";
+import { STORES, StoreRef } from "@/lib/stores";
 
 type ChanceFilter = "all" | "High" | "Medium" | "Low";
 type StatusFilter = "all" | "pending" | "hit" | "no_hit";
@@ -14,6 +14,9 @@ interface Props {
   statusFilter: StatusFilter;
   onStatusFilter: (v: StatusFilter) => void;
   showStatusFilter?: boolean;
+  // Optional: when provided, clicking a search suggestion opens that store's
+  // week view instead of just filtering the list down to it.
+  onSelectStore?: (storeId: string) => void;
 }
 
 const chanceOptions: { value: ChanceFilter; label: string }[] = [
@@ -37,6 +40,7 @@ export default function Filters({
   statusFilter,
   onStatusFilter,
   showStatusFilter = true,
+  onSelectStore,
 }: Props) {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -66,8 +70,17 @@ export default function Filters({
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  function selectSuggestion(name: string) {
-    onSearch(name);
+  function selectSuggestion(store: StoreRef) {
+    if (onSelectStore) {
+      // Jump straight to the store's week view - clear the search box back
+      // to empty since the modal shows the full detail, no need to also
+      // leave the board filtered down to one row.
+      onSelectStore(store.id);
+      onSearch("");
+    } else {
+      // Fallback for any usage without week-view wiring: just filter.
+      onSearch(store.name);
+    }
     setShowSuggestions(false);
     setActiveIndex(-1);
   }
@@ -82,7 +95,7 @@ export default function Filters({
       setActiveIndex((i) => (i <= 0 ? suggestions.length - 1 : i - 1));
     } else if (e.key === "Enter" && activeIndex >= 0) {
       e.preventDefault();
-      selectSuggestion(suggestions[activeIndex].name);
+      selectSuggestion(suggestions[activeIndex]);
     } else if (e.key === "Escape") {
       setShowSuggestions(false);
       setActiveIndex(-1);
@@ -112,7 +125,7 @@ export default function Filters({
                 <button
                   type="button"
                   onMouseDown={(e) => e.preventDefault()}
-                  onClick={() => selectSuggestion(s.name)}
+                  onClick={() => selectSuggestion(s)}
                   className={`w-full text-left px-4 py-2 text-sm transition-colors ${
                     i === activeIndex
                       ? "bg-live/15 text-live"
