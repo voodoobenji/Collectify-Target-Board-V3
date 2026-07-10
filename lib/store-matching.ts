@@ -1,15 +1,15 @@
 import { STORES, StoreRef } from "./stores";
 
-// Benny's API sends storeUrl as a relative path (e.g. "/stores/target-official-294"),
-// not a full URL. Rendered as-is in an <a href>, the browser resolves it against
-// OUR domain instead of his, which silently sends people to the wrong site.
-// This normalizes it to a real absolute URL pointing at his map.
-const BENNY_MAP_BASE_URL = "https://collectify-beta.vercel.app";
+// Benny's map does not currently support a unique URL for an individual store.
+// Ignore any relative store path or URL supplied by the API and always send the
+// "View on Map" button to the map homepage instead. Keep the argument so the
+// webhook and nightly sync can continue calling this helper without other changes.
+const BENNY_MAP_HOME_URL = "https://collectify-beta.vercel.app";
 
-export function resolveBennyUrl(url: string | null | undefined): string | null {
-  if (!url) return null;
-  if (url.startsWith("http://") || url.startsWith("https://")) return url;
-  return `${BENNY_MAP_BASE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
+export function resolveBennyUrl(
+  _url: string | null | undefined
+): string {
+  return BENNY_MAP_HOME_URL;
 }
 
 // Shared by the map-reports webhook (Line Forming) and the nightly guide
