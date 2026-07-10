@@ -1615,7 +1615,7 @@ export const STORES: StoreRef[] = [
   },
   {
     "id": "T178",
-    "name": "Apple Valley Hwy 18",
+    "name": "Apple Valley North",
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "address": "20288 US Highway 18, Apple Valley, CA 92307, USA",
