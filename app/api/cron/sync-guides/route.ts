@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { patchEntryRaw } from "@/lib/kv";
-import { matchStoreByAddress } from "@/lib/store-matching";
+import { matchStoreByAddress, resolveBennyUrl } from "@/lib/store-matching";
 
 // ============================================================================
 // Nightly poll of Benny's map platform for current Target write-ups /
@@ -105,7 +105,7 @@ export async function GET(req: NextRequest) {
         text,
         updatedAt: item.updatedAt ?? now,
         source: "Collectify Map",
-        storeUrl: item.storeUrl ?? item.mapUrl ?? item.url ?? null,
+        storeUrl: resolveBennyUrl(item.storeUrl ?? item.mapUrl ?? item.url ?? null),
       },
     });
     matched++;
