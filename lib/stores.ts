@@ -1558,5 +1558,221 @@ export const STORES: StoreRef[] = [
     "address": "1010 N El Camino Real, Encinitas, CA 92024, USA",
     "lat": 33.0627365,
     "lng": -117.2652234
+  },
+  {
+    "id": "T172",
+    "name": "Burbank Hollywood Way",
+    "region": "SFV",
+    "regionLabel": "San Fernando Valley",
+    "address": "1033 N Hollywood Way, Burbank, CA 91505, USA",
+    "lat": 34.168504876729,
+    "lng": -118.347357063604
+  },
+  {
+    "id": "T173",
+    "name": "Chula Vista",
+    "region": "SD",
+    "regionLabel": "San Diego",
+    "address": "1240 Broadway, Chula Vista, CA 91911, USA",
+    "lat": 32.605380023465,
+    "lng": -117.079516243786
+  },
+  {
+    "id": "T174",
+    "name": "La Brea (1302 S)",
+    "region": "LOSANGELES",
+    "regionLabel": "Los Angeles Central",
+    "address": "1302 S La Brea Ave, Los Angeles, CA 90019, USA",
+    "lat": 34.050001600676,
+    "lng": -118.344116610924
+  },
+  {
+    "id": "T175",
+    "name": "Redondo Beach Kingsdale",
+    "region": "CULVERINGSB",
+    "regionLabel": "Culver City / South Bay",
+    "address": "1601 Kingsdale Ave, Redondo Beach, CA 90278, USA",
+    "lat": 33.869004329743,
+    "lng": -118.35637260363
+  },
+  {
+    "id": "T176",
+    "name": "Westminster Beach",
+    "region": "OC",
+    "regionLabel": "Orange County",
+    "address": "16400 Beach Blvd, Westminster, CA 92683, USA",
+    "lat": 33.7254983,
+    "lng": -117.9874724
+  },
+  {
+    "id": "T177",
+    "name": "San Diego Camino Del Sur",
+    "region": "SD",
+    "regionLabel": "San Diego",
+    "address": "17170 Camino Del Sur, San Diego, CA 92127, USA",
+    "lat": 33.021726138178,
+    "lng": -117.127079934235
+  },
+  {
+    "id": "T178",
+    "name": "Apple Valley Hwy 18",
+    "region": "SGV/IE",
+    "regionLabel": "San Gabriel Valley / Inland Empire",
+    "address": "20288 US Highway 18, Apple Valley, CA 92307, USA",
+    "lat": 34.5275925,
+    "lng": -117.2174511
+  },
+  {
+    "id": "T179",
+    "name": "Carson Mall",
+    "region": "CULVERINGSB",
+    "regionLabel": "Culver City / South Bay",
+    "address": "20700 S Avalon Blvd, Carson, CA 90746, USA",
+    "lat": 33.843688706643,
+    "lng": -118.263120487655
+  },
+  {
+    "id": "T180",
+    "name": "Murrieta Clinton Keith",
+    "region": "SGV/IE",
+    "regionLabel": "San Gabriel Valley / Inland Empire",
+    "address": "27818 Clinton Keith Rd, Murrieta, CA 92562, USA",
+    "lat": 33.59890643183,
+    "lng": -117.176607416521
+  },
+  {
+    "id": "T181",
+    "name": "Escondido Via Rancho",
+    "region": "SD",
+    "regionLabel": "San Diego",
+    "address": "280 E Via Rancho Pkwy, Escondido, CA 92025, USA",
+    "lat": 33.069145971689,
+    "lng": -117.068890042327
+  },
+  {
+    "id": "T182",
+    "name": "Fullerton Yorba Linda",
+    "region": "OC",
+    "regionLabel": "Orange County",
+    "address": "2920 Yorba Linda Blvd, Fullerton, CA 92831, USA",
+    "lat": 33.888974100256,
+    "lng": -117.876292004122
+  },
+  {
+    "id": "T183",
+    "name": "Temecula",
+    "region": "SGV/IE",
+    "regionLabel": "San Gabriel Valley / Inland Empire",
+    "address": "29676 Rancho California Rd, Temecula, CA 92591, USA",
+    "lat": 33.505779691659,
+    "lng": -117.144309853649
+  },
+  {
+    "id": "T184",
+    "name": "USC Hoover",
+    "region": "LOSANGELES",
+    "regionLabel": "Los Angeles Central",
+    "address": "3131 S Hoover St, Los Angeles, CA 90089, USA",
+    "lat": 34.026184694506,
+    "lng": -118.284034556367
+  },
+  {
+    "id": "T185",
+    "name": "Westlake LA",
+    "region": "LOSANGELES",
+    "regionLabel": "Los Angeles Central",
+    "address": "330 N Westlake Ave, Los Angeles, CA 90026, USA",
+    "lat": 34.068983842008,
+    "lng": -118.266920320888
+  },
+  {
+    "id": "T186",
+    "name": "Santa Ana Bristol",
+    "region": "OC",
+    "regionLabel": "Orange County",
+    "address": "3300 S Bristol St, Santa Ana, CA 92704, USA",
+    "lat": 33.703641302656,
+    "lng": -117.885710087463
+  },
+  {
+    "id": "T187",
+    "name": "Palmdale",
+    "region": "SGV/IE",
+    "regionLabel": "San Gabriel Valley / Inland Empire",
+    "address": "39440 10th St W, Palmdale, CA 93551, USA",
+    "lat": 34.599086580383,
+    "lng": -118.147550116476
+  },
+  {
+    "id": "T188",
+    "name": "La Brea (415 S)",
+    "region": "LOSANGELES",
+    "regionLabel": "Los Angeles Central",
+    "address": "415 S La Brea Ave, Los Angeles, CA 90036, USA",
+    "lat": 34.066561257667,
+    "lng": -118.344089224429
+  },
+  {
+    "id": "T189",
+    "name": "Eagle Rock",
+    "region": "LOSANGELES",
+    "regionLabel": "Los Angeles Central",
+    "address": "4211 Eagle Rock Blvd, Los Angeles, CA 90065, USA",
+    "lat": 34.122328910933,
+    "lng": -118.224464588449
+  },
+  {
+    "id": "T190",
+    "name": "Irvine Campus Dr",
+    "region": "OC",
+    "regionLabel": "Orange County",
+    "address": "4255 Campus Dr, Irvine, CA 92612, USA",
+    "lat": 33.648976808083,
+    "lng": -117.839176151411
+  },
+  {
+    "id": "T191",
+    "name": "Dillon St",
+    "region": "LOSANGELES",
+    "regionLabel": "Los Angeles Central",
+    "address": "609 N Dillon St, Los Angeles, CA 90026, USA",
+    "lat": 34.078562446521,
+    "lng": -118.279102205564
+  },
+  {
+    "id": "T192",
+    "name": "Virgil Ave",
+    "region": "LOSANGELES",
+    "regionLabel": "Los Angeles Central",
+    "address": "620 S Virgil Ave, Los Angeles, CA 90005, USA",
+    "lat": 34.063289001554,
+    "lng": -118.28696841965
+  },
+  {
+    "id": "T193",
+    "name": "Beverly Blvd",
+    "region": "LOSANGELES",
+    "regionLabel": "Los Angeles Central",
+    "address": "8480 Beverly Blvd, Los Angeles, CA 90048, USA",
+    "lat": 34.075983925284,
+    "lng": -118.376158432719
+  },
+  {
+    "id": "T194",
+    "name": "Spring Valley",
+    "region": "SD",
+    "regionLabel": "San Diego",
+    "address": "935 Sweetwater Rd, Spring Valley, CA 91977, USA",
+    "lat": 32.712939941699,
+    "lng": -117.01261471307
+  },
+  {
+    "id": "T195",
+    "name": "San Clemente",
+    "region": "OC",
+    "regionLabel": "Orange County",
+    "address": "990 Avenida Vista Hermosa, San Clemente, CA 92673, USA",
+    "lat": 33.463380374597,
+    "lng": -117.605786701398
   }
 ];

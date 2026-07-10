@@ -6,12 +6,18 @@ import { STORES, StoreRef } from "./stores";
 // two independently-formatted addresses is unlikely.
 
 export function normalizeAddress(addr: string): string {
-  return addr
+  let a = addr
     .toLowerCase()
     .replace(/[.,#]/g, "")
-    .replace(/\bsuite\b|\bste\b|\bunit\b/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
+    .replace(/\bsuite\b|\bste\b|\bunit\b/g, "");
+  // Directional words vs abbreviations (e.g. "North" vs "N") caused real
+  // false-negative matches against known stores - normalize both to the
+  // short form before comparing.
+  a = a.replace(/\bnorth\b/g, "n");
+  a = a.replace(/\bsouth\b/g, "s");
+  a = a.replace(/\beast\b/g, "e");
+  a = a.replace(/\bwest\b/g, "w");
+  return a.replace(/\s+/g, " ").trim();
 }
 
 export function matchStoreByAddress(rawAddress: string): StoreRef | null {
@@ -24,9 +30,16 @@ export function matchStoreByAddress(rawAddress: string): StoreRef | null {
     const candidate = normalizeAddress(store.address);
     const candidateNumber = candidate.match(/^\d+/)?.[0];
     if (targetNumber && candidateNumber && targetNumber === candidateNumber) {
-      const targetWords = target.split(" ").slice(1, 4).join(" ");
-      if (candidate.includes(targetWords) || target.includes(candidate.split(" ").slice(1, 4).join(" "))) {
-        return store;
+      // Loosened from a single 3-word block to checking any 2 consecutive
+      // words within the next few - the old fixed window was too strict
+      // and missed real matches when word order/count varied slightly.
+      const tWords = target.split(" ").slice(1, 6);
+      const cWordsStr = candidate.split(" ").slice(1, 6).join(" ");
+      for (let i = 0; i < tWords.length - 1; i++) {
+        const pair = `${tWords[i]} ${tWords[i + 1]}`;
+        if (cWordsStr.includes(pair)) {
+          return store;
+        }
       }
     }
   }
