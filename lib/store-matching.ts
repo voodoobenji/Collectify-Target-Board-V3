@@ -1,5 +1,17 @@
 import { STORES, StoreRef } from "./stores";
 
+// Benny's API sends storeUrl as a relative path (e.g. "/stores/target-official-294"),
+// not a full URL. Rendered as-is in an <a href>, the browser resolves it against
+// OUR domain instead of his, which silently sends people to the wrong site.
+// This normalizes it to a real absolute URL pointing at his map.
+const BENNY_MAP_BASE_URL = "https://collectify-beta.vercel.app";
+
+export function resolveBennyUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  return `${BENNY_MAP_BASE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
+}
+
 // Shared by the map-reports webhook (Line Forming) and the nightly guide
 // sync (write-ups/predictions) - both need to match an address coming from
 // Benny's system against our 171 stores, since exact string equality across
