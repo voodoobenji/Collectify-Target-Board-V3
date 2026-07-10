@@ -1219,7 +1219,7 @@ export const STORES: StoreRef[] = [
   },
   {
     "id": "T130",
-    "name": "Victorville CA-18",
+    "name": "Hesperia Main",
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "address": "12795 Main St, Hesperia, CA 92345, USA",
@@ -1615,7 +1615,7 @@ export const STORES: StoreRef[] = [
   },
   {
     "id": "T178",
-    "name": "Apple Valley North",
+    "name": "Apple Valley North Hwy 18",
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
     "address": "20288 US Highway 18, Apple Valley, CA 92307, USA",
