@@ -12,9 +12,11 @@ import { matchStoreByAddress } from "@/lib/store-matching";
 // fit here instead. Line Forming is still handled by the webhook
 // (app/api/webhooks/map-reports/route.ts) since that IS a real event.
 //
-// IMPORTANT: the response shape below (MAP_GUIDES_ENDPOINT payload) is a
-// GUESS pending confirmation from Benny - see "ADJUST" comments. Until he
-// gives us a real endpoint + example response, this route just no-ops.
+// CONFIRMED payload shape (from a real response, 2026-07-10):
+// { "generatedAt": "...", "items": [{ "storeId", "address", "storeUrl",
+// "text", "updatedAt" }, ...] }. No "retailer" field - this endpoint only
+// ever returns Target predictions, so the retailer filter below is a no-op
+// by design, left in place in case that ever changes.
 // ============================================================================
 
 interface GuideItem {
@@ -60,10 +62,9 @@ export async function GET(req: NextRequest) {
         { status: 502 }
       );
     }
-    // ADJUST: confirm whether the response is a bare array or wrapped in an
-    // envelope like { data: [...] } / { guides: [...] }.
+    // Confirmed from a real response: array is under "items".
     const body = await res.json();
-    items = Array.isArray(body) ? body : (body.data ?? body.guides ?? []);
+    items = Array.isArray(body) ? body : (body.items ?? body.data ?? body.guides ?? []);
   } catch (err) {
     return NextResponse.json(
       { error: "Failed to fetch or parse map guides endpoint", detail: String(err) },
