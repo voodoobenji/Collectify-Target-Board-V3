@@ -110,12 +110,14 @@ export async function GET(req: NextRequest) {
     matched++;
   }
 
-  return NextResponse.json({
+  const summary = {
     ok: true,
     total: items.length,
     matched,
     skippedNoAddress,
     skippedNotFound,
     skippedOtherRetailer,
-  });
+  };
+  console.log("[sync-guides]", JSON.stringify(summary));
+  return NextResponse.json(summary);
 }
