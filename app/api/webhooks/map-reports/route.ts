@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { patchEntryRaw } from "@/lib/kv";
-import { matchStoreByAddress } from "@/lib/store-matching";
+import { matchStoreByAddress, resolveBennyUrl } from "@/lib/store-matching";
 
 // ============================================================================
 // IMPORTANT: this endpoint's payload parsing is a BEST GUESS based on
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
   const status = String(body.status ?? body.Status ?? "").toLowerCase();
   const retailer = String(body.retailer ?? body.Retailer ?? "").toLowerCase();
   const address = String(body.store ?? body.Store ?? body.address ?? "");
-  const storeUrl = (body.storeUrl ?? body.mapUrl ?? body.url ?? null) as string | null;
+  const storeUrl = resolveBennyUrl((body.storeUrl ?? body.mapUrl ?? body.url ?? null) as string | null);
   const notes = String(body.notes ?? body.Notes ?? body.text ?? "");
   const contentType = String(body.contentType ?? body.type ?? "update").toLowerCase();
 
