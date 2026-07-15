@@ -55,11 +55,12 @@ export default function LegendModal({
         {tab === "legend" ? (
           <div className="space-y-4 text-sm text-textmuted">
             <p className="text-xs bg-panel2 border border-line rounded px-3 py-2">
-              Two separate systems on this board: <span className="text-textprimary">No Update/Hasn't Sold vs. Sold</span> describes{" "}
+              Two separate systems on this board:{" "}
+              <span className="text-textprimary">No Update/Hasn&apos;t Sold vs. Sold</span> describes{" "}
               <span className="text-textprimary">today only</span>, set live by an admin. Everything
-              below (High/Medium/Low/Not Expected, past hits, guide history) describes the store&apos;s{" "}
-              <span className="text-textprimary">historical pattern</span> mined from months of chat &mdash;
-              they&apos;re not the same thing.
+              else (High/Medium/Low, past hits, notes) is the store&apos;s{" "}
+              <span className="text-textprimary">typical pattern for that weekday</span>, rebuilt from
+              the last two weeks of hits and guides &mdash; not a promise about today.
             </p>
 
             <div>
@@ -67,8 +68,8 @@ export default function LegendModal({
                 High
               </span>
               <p className="mt-1.5">
-                <span className="text-textprimary">Strong Chances</span> &mdash; recent pattern points
-                to a very likely hit today!
+                <span className="text-textprimary">Strong chance</span> &mdash; this store actually
+                hit on this weekday more than once in the last couple weeks.
               </p>
             </div>
             <div>
@@ -76,8 +77,8 @@ export default function LegendModal({
                 Medium
               </span>
               <p className="mt-1.5">
-                <span className="text-textprimary">Solid Chances</span> &mdash; people will be
-                checking, not a sure thing but strong enough that you&apos;ll need to be on it.
+                <span className="text-textprimary">Solid chance</span> &mdash; hit at least once
+                recently, or the guide flags it. Not a sure thing, but worth being on.
               </p>
             </div>
             <div>
@@ -85,8 +86,8 @@ export default function LegendModal({
                 Low
               </span>
               <p className="mt-1.5">
-                <span className="text-textprimary">Low Chances</span> &mdash; not very likely, but not
-                impossible, and if you&apos;re around feel free to check in!
+                <span className="text-textprimary">Low chance</span> &mdash; hasn&apos;t been hitting
+                this weekday lately, but not impossible. Check if you&apos;re nearby.
               </p>
             </div>
             <div>
@@ -94,9 +95,34 @@ export default function LegendModal({
                 Not Expected/Sells Other Day(s)
               </span>
               <p className="mt-1.5">
-                Nothing points to this hitting today &mdash; either there&apos;s no recent activity to
-                go on, or an admin has made the call it&apos;s off today (shifted to a different day,
-                etc.). Bottom line either way: don&apos;t prioritize this one right now.
+                Nothing points to this hitting today &mdash; no recent activity, or an admin called it
+                off for today. Either way, don&apos;t prioritize it right now.
+              </p>
+            </div>
+
+            <div className="pt-2 border-t border-line">
+              <span className="text-[10px] font-mono uppercase tracking-wide text-gold">
+                &#128221; Via Admin Notes
+              </span>
+              <p className="mt-1.5">
+                The gold note is the guide write-up for this store, curated by admins &mdash; the
+                pattern, timing, and what to expect.
+              </p>
+            </div>
+            <div>
+              <span className="text-[10px] font-mono uppercase tracking-wide text-purple">
+                &#128506; Via Collectify Map
+              </span>
+              <p className="mt-1.5">
+                The purple note is pulled from the Collectify map &mdash; a separate outside source,
+                shown alongside the admin note.
+              </p>
+            </div>
+            <div>
+              <span className="text-[10px] font-mono text-textmuted/70">updated 12m ago</span>
+              <p className="mt-1.5">
+                How long since an admin last touched this store today. The fresher it is, the more you
+                can trust it.
               </p>
             </div>
 
@@ -105,8 +131,8 @@ export default function LegendModal({
                 &#10003; Past Hits
               </span>
               <p className="mt-1.5">
-                An actual hit was reported in chat or a guide, historically, on this weekday. Stronger
-                evidence than a guess, but still about the past &mdash; not a claim about today.
+                Actual hits reported for this store on this weekday over the last couple weeks &mdash;
+                real evidence, but still about the past, not a claim about today.
               </p>
             </div>
             <div>
@@ -114,8 +140,8 @@ export default function LegendModal({
                 Guide History
               </span>
               <p className="mt-1.5">
-                Based on how often this store has come up in guides for this weekday &mdash; a
-                pattern, not a confirmed outcome.
+                Shown when a store has a read for the weekday but no confirmed hit yet &mdash; a
+                pattern, not an outcome.
               </p>
             </div>
 
@@ -124,10 +150,9 @@ export default function LegendModal({
                 &#128681; Overdue
               </span>
               <p className="mt-1.5">
-                An admin manually marked this store as having missed its typical restock window.
-                Visible to everyone, stays up until an admin clears it &mdash; including across a new
-                day starting. Doesn&apos;t change the chance level or any prediction data, it&apos;s
-                just a heads-up.
+                An admin manually flagged this store as having missed its typical window. Visible to
+                everyone, stays up until an admin clears it. Just a heads-up &mdash; it doesn&apos;t
+                change the chance level.
               </p>
             </div>
 
@@ -136,15 +161,11 @@ export default function LegendModal({
                 Sold
               </span>
               <p className="mt-1.5">
-                An admin confirmed this store actually restocked <span className="text-textprimary">today</span>.
-                Resets to No Update/Hasn&apos;t Sold every new day.
+                An admin confirmed this store actually restocked{" "}
+                <span className="text-textprimary">today</span>. Resets to No Update/Hasn&apos;t Sold
+                every new day.
               </p>
             </div>
-
-            <p className="text-xs pt-2 border-t border-line">
-              Hit rate % = how many of the last several guides for this weekday mentioned this
-              store, weighted so recent weeks count far more than older ones.
-            </p>
           </div>
         ) : (
           <div>
@@ -173,17 +194,19 @@ export default function LegendModal({
               </div>
             )}
 
-            {(!isAdmin || audience === "member") ? (
+            {!isAdmin || audience === "member" ? (
               <ol className="space-y-4">
                 {[
-                  ["1", "Pick your day", "Tap Mon\u2013Fri at the top. Today's tab shows the live board; other days show the typical pattern for that weekday."],
+                  ["1", "Pick your day", "Tap Mon–Fri at the top. Today's tab is the live board; other days show the typical pattern for that weekday."],
                   ["2", "Sort it your way", "Priority (default), Time (earliest window first), or \u{1F4CD} Near Me (real distance, needs your location)."],
-                  ["3", "Browse or search", "Use the region chips to jump to your area, or search a store by name. Filter by High/Medium/Low if you only want the strong bets."],
-                  ["4", "See what's worth checking right now", "On today's tab, tap \u{1F550} Right Now to narrow the list down to only stores whose window falls within about 2 hours of the actual current time."],
-                  ["5", "Read the card", "Chance level, vendor/employee icon, stock location, item limit, hit history, and any notes are all right there \u2014 no need to tap anything to read the full note."],
-                  ["6", "Tap Map for directions", "Apple or Google, opens straight to that store's real address."],
-                  ["7", "Star your favorites", "Tap the star on any store to save it. Use the \u2605 Favorites filter to see only your saved stores."],
-                  ["8", "See the whole week, and the receipts", "Tap \"View full week\" to see that store's pattern across all 5 days, plus a \"View recent activity\" log showing the actual dated pings behind the rating."],
+                  ["3", "Browse or search", "Region chips jump to your area, or search a store by name. Filter by High/Medium/Low if you only want the strong bets."],
+                  ["4", "See what's worth it right now", "On today's tab, tap \u{1F550} Right Now to narrow the list to stores whose window falls within about 2 hours of the current time."],
+                  ["5", "Read the card", "Chance, window, vendor/employee tag, stock location, and item limit are all right there. The gold note is the admin guide; the purple note is from the Collectify map."],
+                  ["6", "Check how fresh it is", "\"updated Xm ago\" at the bottom of a card tells you how recently an admin touched it today — the fresher, the more you can trust the status."],
+                  ["7", "Tap Map for directions", "Apple or Google, opens straight to that store's real address."],
+                  ["8", "Star your favorites", "Tap the star on any store to save it, then use the ★ Favorites filter to see only those."],
+                  ["9", "See the whole week", "Tap \"View full week\" for that store's pattern across all 5 days, plus a log of the actual dated pings behind the rating."],
+                  ["10", "Something wrong? Report it", "Tap ⚑ Report an issue on any card to flag a wrong address, wrong hours, or a duplicate — it goes straight to the admins."],
                 ].map(([n, title, body]) => (
                   <li key={n} className="flex gap-3">
                     <span className="shrink-0 h-6 w-6 rounded-full border border-gold text-gold text-xs flex items-center justify-center font-mono">
@@ -199,15 +222,15 @@ export default function LegendModal({
             ) : (
               <ol className="space-y-4">
                 {[
-                  ["1", "Toggle Edit mode", "Switches store cards into editable form, on whichever day tab you're currently viewing \u2014 today or any weekday pattern."],
-                  ["2", "Or edit the whole week at once", "Tap \"View full week\" on any store with Edit mode on \u2014 every day for that store becomes editable in one popup. Saves as you type, no tab-switching needed."],
-                  ["3", "Set chance + source type", "Source type (Vendor/Employee Push/Both) is required and shown first \u2014 it decides which notes fields even appear below it."],
-                  ["4", "Use the window presets", "Quick-fill buttons (Opening, 7-9AM, 8-Close, etc.) sit above the window field \u2014 tap one, still editable after."],
-                  ["5", "Set stock location & item limit", "TCG Section / Guest Services / Both, plus 1 or 2 per person or a custom limit. Both are visible to members on the card."],
-                  ["6", "Mark Sold when confirmed", "Only on today's live board. Resets to No Update/Hasn't Sold automatically every new day."],
-                  ["7", "Mark Overdue if it's missed its window", "Public, persistent, stays until you clear it \u2014 even across a new day starting. Use this instead of a \"didn't hit\" click."],
-                  ["8", "Start New Day each morning", "Archives today, carries forward that weekday's typical pattern (and any Overdue flags) into a fresh live board."],
-                  ["9", "Import Patterns after a data refresh", "Pulls the latest analyzed history into the weekday templates \u2014 only needed after new Discord history has been processed."],
+                  ["1", "Flip status right on the card", "On today's board (no Edit mode needed) each store has quick No Update / Sold buttons — tap Sold when it restocks. That's the fastest daily action."],
+                  ["2", "Toggle Edit mode for the details", "Turns cards into editable form on whichever day tab you're viewing — today or any weekday pattern."],
+                  ["3", "Fill a card", "Set chance, source type (just a quick 🚚/👤 tag now), a window (preset buttons or custom), stock location, and item limit — plus one Admin Notes box for everything."],
+                  ["4", "Carry from typical pattern", "In Edit mode, the gold \"Carry from typical pattern\" button pulls that weekday's saved prediction into the store with one tap, then tweak from there."],
+                  ["5", "Edit the whole week at once", "Tap \"View full week\" with Edit mode on — all 5 days for that store become editable in one popup, saving as you type."],
+                  ["6", "Mark Overdue if it missed its window", "Public and persistent — stays until you clear it, even across a new day. Use this instead of a \"didn't hit\" click."],
+                  ["7", "Review member reports", "When members flag stores, a ⚑ \"N stores reported\" bar appears at the top. Tap it to filter to those stores, fix them, and dismiss the reports."],
+                  ["8", "Start New Day each morning", "Archives today, carries that weekday's typical pattern (and any Overdue flags) into a fresh live board."],
+                  ["9", "Import Patterns after a data refresh", "Loads the latest rebuilt weekday templates — only needed after new channel history has been processed."],
                 ].map(([n, title, body]) => (
                   <li key={n} className="flex gap-3">
                     <span className="shrink-0 h-6 w-6 rounded-full border border-gold text-gold text-xs flex items-center justify-center font-mono">
