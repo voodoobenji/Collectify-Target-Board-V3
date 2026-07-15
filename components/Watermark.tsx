@@ -39,7 +39,7 @@ export default function Watermark({ username, date }: { username: string; date: 
             style={{
               fontSize: "11px",
               fontFamily: "var(--font-mono)",
-              color: "#ffffff",
+              color: "rgb(var(--textprimary))",
               opacity: 0.045,
               whiteSpace: "nowrap",
             }}

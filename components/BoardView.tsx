@@ -6,6 +6,7 @@ import { STORES, REGION_ORDER, type StoreRef } from "@/lib/stores";
 import type { Board, BoardEntry, TemplateEntry, WeekdayTemplate } from "@/lib/types";
 import { WEEKDAYS } from "@/lib/types";
 import StoreRow from "./StoreRow";
+import ThemeToggle from "./ThemeToggle";
 import Filters from "./Filters";
 import StoreWeekModal from "./StoreWeekModal";
 import LegendModal from "./LegendModal";
@@ -600,6 +601,9 @@ export default function BoardView({
       )}
 
       <div className="relative flex flex-col items-center text-center mb-4 lg:mb-8 lg:pt-2">
+        <div className="absolute left-0 top-1">
+          <ThemeToggle />
+        </div>
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
           className="absolute right-0 top-1 text-xs lg:text-sm text-textmuted hover:text-textprimary"

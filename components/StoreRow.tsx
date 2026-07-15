@@ -696,8 +696,8 @@ export default function StoreRow({
         </div>
       )}
       {entry.externalGuide && (
-        <div className="mt-2.5 pl-3 border-l-2 border-purple-400">
-          <p className="text-[10px] uppercase tracking-wide text-purple-300 font-mono mb-0.5">
+        <div className="mt-2.5 pl-3 border-l-2 border-purple">
+          <p className="text-[10px] uppercase tracking-wide text-purple font-mono mb-0.5">
             &#128506; Via Collectify Map
           </p>
           <p className="text-base text-textmuted leading-relaxed">{entry.externalGuide.text}</p>
@@ -707,7 +707,7 @@ export default function StoreRow({
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-[10px] font-mono uppercase text-purple-300 hover:text-purple-200"
+              className="text-[10px] font-mono uppercase text-purple hover:opacity-80"
             >
               View on map &rsaquo;
             </a>

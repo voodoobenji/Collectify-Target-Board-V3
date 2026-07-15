@@ -10,20 +10,61 @@
   --font-display: "Barlow Condensed", sans-serif;
   --font-body: "Inter", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
+
+  /* Dark theme — default fallback */
+  --ink: 11 18 32;
+  --panel: 17 27 46;
+  --panel2: 22 34 58;
+  --line: 34 49 77;
+  --textprimary: 232 236 244;
+  --textmuted: 163 177 204;
+  --high: 255 90 78;
+  --medium: 255 178 56;
+  --low: 91 141 239;
+  --gold: 201 168 118;
+  --live: 47 190 143;
+  --purple: 192 132 252;
+
+  --body-glow:
+    radial-gradient(circle at 50% -10%, rgba(47, 190, 143, 0.10), transparent 40%),
+    radial-gradient(circle at 100% 20%, rgba(201, 168, 118, 0.06), transparent 35%);
+  --card-fill: linear-gradient(155deg, rgba(255, 255, 255, 0.035), transparent 60%);
+  --selection-bg: #2fbe8f;
+  --selection-fg: #0b1220;
+}
+
+[data-theme="light"] {
+  --ink: 243 241 234;
+  --panel: 255 255 255;
+  --panel2: 238 240 243;
+  --line: 226 224 214;
+  --textprimary: 27 35 51;
+  --textmuted: 107 114 128;
+  --high: 206 58 44;
+  --medium: 176 118 17;
+  --low: 47 111 224;
+  --gold: 147 117 66;
+  --live: 18 133 95;
+  --purple: 99 87 196;
+
+  --body-glow:
+    radial-gradient(circle at 50% -10%, rgba(18, 133, 95, 0.06), transparent 40%),
+    radial-gradient(circle at 100% 20%, rgba(201, 168, 118, 0.10), transparent 35%);
+  --card-fill: linear-gradient(155deg, rgba(0, 0, 0, 0.02), transparent 60%);
+  --selection-bg: #12855f;
+  --selection-fg: #ffffff;
 }
 
 body {
-  background-color: #0b1220;
-  background-image:
-    radial-gradient(circle at 50% -10%, rgba(47, 190, 143, 0.10), transparent 40%),
-    radial-gradient(circle at 100% 20%, rgba(201, 168, 118, 0.06), transparent 35%);
-  color: #e8ecf4;
+  background-color: rgb(var(--ink));
+  background-image: var(--body-glow);
+  color: rgb(var(--textprimary));
   font-family: var(--font-body);
 }
 
 ::selection {
-  background: #2fbe8f;
-  color: #0b1220;
+  background: var(--selection-bg);
+  color: var(--selection-fg);
 }
 
 .scanline {
@@ -37,11 +78,11 @@ body {
 }
 
 .card-fill {
-  background-image: linear-gradient(155deg, rgba(255,255,255,0.035), transparent 60%);
+  background-image: var(--card-fill);
 }
 
 .gold-rule {
-  background-image: linear-gradient(90deg, rgba(201,168,118,0.6), rgba(201,168,118,0.05));
+  background-image: linear-gradient(90deg, rgba(201, 168, 118, 0.6), rgba(201, 168, 118, 0.05));
 }
 
 @keyframes pulse-dot {
