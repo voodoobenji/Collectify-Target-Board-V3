@@ -143,6 +143,7 @@ export default function BoardView({
   const [weekModalStoreId, setWeekModalStoreId] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [reportsOnly, setReportsOnly] = useState(false);
   const [showLegend, setShowLegend] = useState(false);
   useEffect(() => {
     try {
@@ -518,6 +519,7 @@ export default function BoardView({
       const decisionEntry = decisionSource[store.id] ?? entry;
       if (!entry) continue;
       if (favoritesOnly && !favorites.has(store.id)) continue;
+      if (reportsOnly && isLiveView && (entry.reports?.length ?? 0) === 0) continue;
       if (q && !store.name.toLowerCase().includes(q)) continue;
       if (chanceFilter !== "all" && decisionEntry.chance !== chanceFilter) continue;
       if (isLiveView && statusFilter !== "all" && decisionEntry.status !== statusFilter) continue;
@@ -575,7 +577,7 @@ export default function BoardView({
     return orderedRegions
       .filter((r) => byRegion.has(r))
       .map((r) => ({ region: r, items: byRegion.get(r)! }));
-  }, [activeEntries, search, chanceFilter, statusFilter, isLiveView, favoritesOnly, favorites, rightNowOnly, nowMinutes, sortMode, userLocation, groupingSnapshot, isAdmin, editMode]);
+  }, [activeEntries, search, chanceFilter, statusFilter, isLiveView, favoritesOnly, favorites, reportsOnly, rightNowOnly, nowMinutes, sortMode, userLocation, groupingSnapshot, isAdmin, editMode]);
 
   useEffect(() => {
     function handleScroll() {
@@ -608,6 +610,14 @@ export default function BoardView({
       pending: entries.filter((e) => e.status === "pending").length,
     };
   }, [activeEntries]);
+
+  const storesWithReports = useMemo(
+    () => Object.values(board.entries).filter((e) => (e.reports?.length ?? 0) > 0).length,
+    [board]
+  );
+  useEffect(() => {
+    if (reportsOnly && storesWithReports === 0) setReportsOnly(false);
+  }, [reportsOnly, storesWithReports]);
 
   function toggleRegion(region: string) {
     setCollapsedRegions((prev) => {
@@ -702,6 +712,22 @@ export default function BoardView({
           &#128075; First Time?
         </button>
       </div>
+
+      {isAdmin && isLiveView && storesWithReports > 0 && (
+        <button
+          onClick={() => setReportsOnly((v) => !v)}
+          className={`w-full mb-4 flex items-center justify-center gap-2 text-xs font-mono uppercase tracking-wide px-3 py-2 rounded-full border transition-colors ${
+            reportsOnly
+              ? "border-medium text-medium bg-medium/10"
+              : "border-medium/60 text-medium hover:bg-medium/10"
+          }`}
+        >
+          &#9873;{" "}
+          {reportsOnly
+            ? "Showing reported stores — tap to exit"
+            : `${storesWithReports} store${storesWithReports > 1 ? "s" : ""} reported — review`}
+        </button>
+      )}
 
       <StoreSearch
         search={search}
