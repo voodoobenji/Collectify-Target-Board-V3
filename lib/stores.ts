@@ -1650,15 +1650,6 @@ export const STORES: StoreRef[] = [
     "lng": -117.068890042327
   },
   {
-    "id": "T182",
-    "name": "Fullerton Yorba Linda",
-    "region": "OC",
-    "regionLabel": "Orange County",
-    "address": "2920 Yorba Linda Blvd, Fullerton, CA 92831, USA",
-    "lat": 33.888974100256,
-    "lng": -117.876292004122
-  },
-  {
     "id": "T183",
     "name": "Temecula",
     "region": "SGV/IE",
