@@ -6,6 +6,7 @@ import type { BoardEntry, Chance, SourceType, StockLocation } from "@/lib/types"
 import { WEEKDAYS } from "@/lib/types";
 import { DebouncedInput, DebouncedTextarea } from "./StoreRow";
 import { appleMapsUrl, googleMapsUrl } from "@/lib/maps";
+import { cleanGuideNote } from "@/lib/cleanNote";
 
 interface LogEntry {
   date: string;
@@ -233,6 +234,7 @@ export default function StoreWeekModal({
             {WEEKDAYS.map((day) => {
               const info = data[day] ?? EMPTY_DAY_INFO;
               const isToday = day === todayWeekday;
+              const adminNotes = cleanGuideNote(mergeAdminNotes(info));
 
               return (
                 <div key={day} className="border border-line rounded-lg p-3 card-fill">
@@ -424,7 +426,7 @@ export default function StoreWeekModal({
                       </p>
                       <div className="text-[10px] uppercase tracking-wide text-textmuted mb-1">Admin Notes</div>
                       <DebouncedTextarea
-                        value={mergeAdminNotes(info)}
+                        value={adminNotes}
                         onCommit={(v) => patchDay(day, { reason: v, vendorNotes: "", randomNotes: "" })}
                         placeholder="Notes about this store..."
                         rows={3}
@@ -454,12 +456,12 @@ export default function StoreWeekModal({
                           &#128257; Sells Multiple Times
                         </p>
                       )}
-                      {mergeAdminNotes(info) && (
+                      {adminNotes && (
                         <div className="pl-3 border-l-2 border-gold/60">
                           <p className="text-[9px] uppercase tracking-wide text-gold font-mono mb-0.5">
                             &#128221; Via Admin Notes
                           </p>
-                          <p className="text-xs text-textmuted whitespace-pre-line">{mergeAdminNotes(info)}</p>
+                          <p className="text-xs text-textmuted whitespace-pre-line">{adminNotes}</p>
                         </div>
                       )}
                     </>

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { StoreRef } from "@/lib/stores";
 import type { BoardEntry, Chance, SourceType, StockLocation, Status } from "@/lib/types";
 import { appleMapsUrl, googleMapsUrl } from "@/lib/maps";
+import { cleanGuideNote } from "@/lib/cleanNote";
 
 interface Props {
   store: StoreRef;
@@ -218,6 +219,7 @@ export default function StoreRow({
   onCarryFromTemplate,
 }: Props) {
   const chance = entry.chance;
+  const adminNotes = cleanGuideNote(mergeAdminNotes(entry));
   const [flagInputOpen, setFlagInputOpen] = useState(false);
   const [flagReasonDraft, setFlagReasonDraft] = useState("");
 
@@ -448,7 +450,7 @@ export default function StoreRow({
 
         <div className="text-[10px] uppercase tracking-wide text-textmuted mb-1">Admin Notes</div>
         <DebouncedTextarea
-          value={mergeAdminNotes(entry)}
+          value={adminNotes}
           onCommit={(v) => onPatch(store.id, { reason: v, vendorNotes: "", randomNotes: "" })}
           placeholder="Notes about this store..."
           rows={3}
@@ -687,12 +689,12 @@ export default function StoreRow({
           </button>
         </div>
       )}
-      {mergeAdminNotes(entry) && (
+      {adminNotes && (
         <div className="mt-2.5 pl-3 border-l-2 border-gold/60">
           <p className="text-[10px] uppercase tracking-wide text-gold font-mono mb-0.5">
             &#128221; Via Admin Notes
           </p>
-          <p className="text-base text-textmuted leading-relaxed whitespace-pre-line">{mergeAdminNotes(entry)}</p>
+          <p className="text-base text-textmuted leading-relaxed whitespace-pre-line">{adminNotes}</p>
         </div>
       )}
       {entry.externalGuide && (

@@ -12,6 +12,7 @@ import Filters from "./Filters";
 import StoreWeekModal from "./StoreWeekModal";
 import LegendModal from "./LegendModal";
 import { parseWindowRanges, overlapsWindow, formatMinutes } from "@/lib/timeWindow";
+import { cleanGuideNote } from "@/lib/cleanNote";
 
 type SortMode = "priority" | "time" | "nearMe";
 
@@ -362,7 +363,7 @@ export default function BoardView({
     handlePatch(storeId, {
       chance: t.chance ?? null,
       window: t.window ?? "",
-      reason: t.reason ?? "",
+      reason: cleanGuideNote(t.reason ?? ""),
       vendorNotes: t.vendorNotes ?? "",
       randomNotes: t.randomNotes ?? "",
       sourceType: t.sourceType ?? null,
