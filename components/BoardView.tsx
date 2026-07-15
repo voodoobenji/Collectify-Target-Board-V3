@@ -755,19 +755,7 @@ export default function BoardView({
       />
 
       <div className="mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-mono uppercase tracking-[0.2em] text-gold">Sort By</span>
-          <button
-            onClick={toggleCompact}
-            className={`text-[11px] font-mono uppercase tracking-wide px-2.5 py-1 rounded-full border transition-colors ${
-              compact
-                ? "border-live text-live bg-live/10"
-                : "border-line text-textmuted hover:text-textprimary"
-            }`}
-          >
-            {compact ? "✓ Compact" : "Compact"}
-          </button>
-        </div>
+        <div className="text-sm font-mono uppercase tracking-[0.2em] text-gold mb-2">Sort By</div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setSortMode("priority")}
@@ -853,6 +841,18 @@ export default function BoardView({
             ))}
           </div>
         )}
+        <div className="flex justify-end mt-2">
+          <button
+            onClick={toggleCompact}
+            className={`text-[10px] font-mono uppercase tracking-wide px-2.5 py-1 rounded-full border transition-colors ${
+              compact
+                ? "border-live text-live bg-live/10"
+                : "border-line text-textmuted hover:text-textprimary"
+            }`}
+          >
+            {compact ? "✓ Compact view" : "☰ Compact view"}
+          </button>
+        </div>
       </div>
 
       {rightNowOnly && isLiveView && (
