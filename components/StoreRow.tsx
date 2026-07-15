@@ -654,7 +654,7 @@ export default function StoreRow({
         )}
         {entry.lastSoldAt && (
           <span className="text-live">
-            Last sold {new Date(entry.lastSoldAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
+            Marked sold {timeAgoShort(entry.lastSoldAt)}
           </span>
         )}
         {entry.lineForming &&
