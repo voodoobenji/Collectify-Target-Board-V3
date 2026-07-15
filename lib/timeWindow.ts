@@ -40,9 +40,15 @@ export function parseWindowRanges(window: string): TimeRange[] {
     let pm2 = ap2 === "PM";
 
     if (ap2 && !ap1) {
-      // Inherit end's period for the start, unless the start hour is numerically
-      // greater than the end hour (a sign we've crossed noon, e.g. "11-1PM").
-      pm1 = hour1 > hour2 && hour1 !== 12 ? false : pm2;
+      if (pm2 && hour2 === 12 && hour1 !== 12) {
+        // Range ends at noon (12PM), so a smaller start hour is in the morning:
+        // "10-12PM" means 10AM-12PM, not 10PM-12PM.
+        pm1 = false;
+      } else {
+        // Inherit end's period for the start, unless the start hour is numerically
+        // greater than the end hour (a sign we've crossed noon, e.g. "11-1PM").
+        pm1 = hour1 > hour2 && hour1 !== 12 ? false : pm2;
+      }
     } else if (!ap1 && !ap2) {
       // No markers at all - apply reasonable defaults for typical restock hours
       if (hour1 <= 7 && hour2 <= 7) {

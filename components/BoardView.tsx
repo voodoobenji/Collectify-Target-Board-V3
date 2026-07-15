@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { signOut } from "next-auth/react";
 import { STORES, REGION_ORDER, type StoreRef } from "@/lib/stores";
 import type { Board, BoardEntry, TemplateEntry, WeekdayTemplate } from "@/lib/types";
-import { WEEKDAYS } from "@/lib/types";
+import { WEEKDAYS, EMPTY_TEMPLATE_ENTRY } from "@/lib/types";
 import StoreRow from "./StoreRow";
 import ThemeToggle from "./ThemeToggle";
 import StoreSearch from "./StoreSearch";
@@ -313,14 +313,7 @@ export default function BoardView({
   async function handleTemplatePatch(storeId: string, patch: Partial<BoardEntry>) {
     setTemplate((prev) => {
       const prevEntries = prev?.entries ?? {};
-      const current = prevEntries[storeId] ?? {
-        chance: null,
-        window: "",
-        reason: "",
-        vendorNotes: "",
-        randomNotes: "",
-        updatedAt: null,
-      };
+      const current = prevEntries[storeId] ?? { ...EMPTY_TEMPLATE_ENTRY };
       return {
         weekday: selectedDay,
         updatedAt: new Date().toISOString(),
@@ -449,7 +442,19 @@ export default function BoardView({
         chance: t?.chance ?? null,
         window: t?.window ?? "",
         reason: t?.reason ?? "",
+        vendorNotes: t?.vendorNotes ?? "",
+        randomNotes: t?.randomNotes ?? "",
+        sourceType: t?.sourceType ?? null,
+        stockLocation: t?.stockLocation ?? null,
+        itemLimit: t?.itemLimit ?? "",
+        multiSeller: t?.multiSeller ?? false,
+        confirmedCount: t?.confirmedCount ?? 0,
+        flagged: null,
         status: "pending",
+        soldCount: 0,
+        lastSoldAt: null,
+        lineForming: null,
+        externalGuide: null,
         updatedAt: t?.updatedAt ?? null,
         updatedBy: null,
       };
