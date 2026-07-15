@@ -22,6 +22,7 @@ interface Props {
   onCarryFromTemplate?: (storeId: string) => void;
   onReport?: (storeId: string, category: string, note: string) => Promise<boolean>;
   onClearReport?: (storeId: string, reportId?: string) => void;
+  compact?: boolean;
 }
 
 const reportCategoryLabels: Record<string, string> = {
@@ -228,9 +229,11 @@ export default function StoreRow({
   onCarryFromTemplate,
   onReport,
   onClearReport,
+  compact,
 }: Props) {
   const chance = entry.chance;
   const adminNotes = cleanGuideNote(mergeAdminNotes(entry));
+  const [expanded, setExpanded] = useState(false);
   const [flagInputOpen, setFlagInputOpen] = useState(false);
   const [flagReasonDraft, setFlagReasonDraft] = useState("");
   const [reportOpen, setReportOpen] = useState(false);
@@ -585,6 +588,40 @@ export default function StoreRow({
     );
   }
 
+  if (compact && !expanded) {
+    return (
+      <div
+        onClick={() => setExpanded(true)}
+        className={`w-full cursor-pointer border rounded-lg px-3 py-2 bg-panel card-fill flex items-center gap-2 ${
+          entry.flagged ? "border-medium" : "border-line"
+        } ${chance && !entry.flagged ? chanceBorderLeft[chance] : ""}`}
+      >
+        <span
+          className={`shrink-0 text-[9px] font-mono uppercase px-1.5 py-0.5 rounded border ${
+            chance ? chanceStyles[chance] : "border-line text-textmuted"
+          }`}
+        >
+          {chance ?? "—"}
+        </span>
+        <FavoriteStar isFavorite={isFavorite} onToggle={() => onToggleFavorite?.(store.id)} />
+        <span className="flex-1 min-w-0 truncate font-serif text-sm text-textprimary">{store.name}</span>
+        {entry.window && (
+          <span className="shrink-0 text-xs font-mono text-textmuted">{entry.window}</span>
+        )}
+        {showStatus && entry.status !== "pending" && (
+          <span
+            className={`shrink-0 text-[9px] font-mono uppercase px-1.5 py-0.5 rounded border ${statusStyles[entry.status]}`}
+          >
+            {entry.status === "hit"
+              ? `Sold${entry.soldCount > 1 ? ` ${entry.soldCount}x` : ""}`
+              : "No Hit"}
+          </span>
+        )}
+        <span className="shrink-0 text-textmuted text-sm">&rsaquo;</span>
+      </div>
+    );
+  }
+
   return (
     <div
       className={`w-full border rounded-lg p-4 bg-panel card-fill ${
@@ -790,6 +827,14 @@ export default function StoreRow({
           className="mt-2 text-[11px] font-mono uppercase tracking-wide text-textmuted hover:text-live transition-colors"
         >
           View full week &rsaquo;
+        </button>
+      )}
+      {compact && (
+        <button
+          onClick={() => setExpanded(false)}
+          className="mt-2 ml-4 text-[11px] font-mono uppercase tracking-wide text-textmuted hover:text-textprimary transition-colors"
+        >
+          &#9652; Show less
         </button>
       )}
       {(isAdmin || showStatus) && entry.updatedAt && (

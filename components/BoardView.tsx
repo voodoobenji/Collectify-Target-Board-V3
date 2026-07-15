@@ -144,6 +144,25 @@ export default function BoardView({
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [reportsOnly, setReportsOnly] = useState(false);
+  const [compact, setCompact] = useState(false);
+  useEffect(() => {
+    try {
+      setCompact(localStorage.getItem("collectify_compact") === "1");
+    } catch {
+      // localStorage unavailable — default to full cards
+    }
+  }, []);
+  function toggleCompact() {
+    setCompact((v) => {
+      const next = !v;
+      try {
+        localStorage.setItem("collectify_compact", next ? "1" : "0");
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  }
   const [showLegend, setShowLegend] = useState(false);
   useEffect(() => {
     try {
@@ -736,7 +755,19 @@ export default function BoardView({
       />
 
       <div className="mb-4">
-        <div className="text-sm font-mono uppercase tracking-[0.2em] text-gold mb-2">Sort By</div>
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-mono uppercase tracking-[0.2em] text-gold">Sort By</span>
+          <button
+            onClick={toggleCompact}
+            className={`text-[11px] font-mono uppercase tracking-wide px-2.5 py-1 rounded-full border transition-colors ${
+              compact
+                ? "border-live text-live bg-live/10"
+                : "border-line text-textmuted hover:text-textprimary"
+            }`}
+          >
+            {compact ? "✓ Compact" : "Compact"}
+          </button>
+        </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setSortMode("priority")}
@@ -958,6 +989,7 @@ export default function BoardView({
                       onCarryFromTemplate={isLiveView ? handleCarryFromTemplate : undefined}
                       onReport={handleReport}
                       onClearReport={isAdmin ? handleClearReport : undefined}
+                      compact={compact}
                     />
                   ))}
                 </div>
