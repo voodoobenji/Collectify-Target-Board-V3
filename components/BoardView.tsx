@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { signOut } from "next-auth/react";
 import { STORES, REGION_ORDER, type StoreRef } from "@/lib/stores";
-import type { Board, BoardEntry, WeekdayTemplate } from "@/lib/types";
+import type { Board, BoardEntry, TemplateEntry, WeekdayTemplate } from "@/lib/types";
 import { WEEKDAYS } from "@/lib/types";
 import StoreRow from "./StoreRow";
 import Filters from "./Filters";
@@ -340,6 +340,42 @@ export default function BoardView({
       }
     } catch {
     }
+  }
+
+  async function handleCarryFromTemplate(storeId: string) {
+    let entries: Record<string, TemplateEntry> = {};
+    try {
+      const res = await fetch(`/api/template/${todayWeekday}`, { cache: "no-store" });
+      const data = res.ok ? await res.json() : null;
+      entries = data?.template?.entries ?? {};
+    } catch {
+      alert("Couldn't load the typical pattern. Try again.");
+      return;
+    }
+    const t = entries[storeId];
+    if (!t || (t.chance == null && !t.window && !t.reason && !t.vendorNotes && !t.randomNotes)) {
+      alert(`No typical ${DAY_LABELS[todayWeekday]} pattern saved for this store yet.`);
+      return;
+    }
+    if (
+      !confirm(
+        `Fill this store from the typical ${DAY_LABELS[todayWeekday]} pattern? This overwrites today's chance, window, notes, and details for this store only.`
+      )
+    ) {
+      return;
+    }
+    handlePatch(storeId, {
+      chance: t.chance ?? null,
+      window: t.window ?? "",
+      reason: t.reason ?? "",
+      vendorNotes: t.vendorNotes ?? "",
+      randomNotes: t.randomNotes ?? "",
+      sourceType: t.sourceType ?? null,
+      stockLocation: t.stockLocation ?? null,
+      itemLimit: t.itemLimit ?? "",
+      multiSeller: t.multiSeller ?? false,
+      confirmedCount: t.confirmedCount ?? 0,
+    });
   }
 
   function handleEntryPatch(storeId: string, patch: Partial<BoardEntry>) {
@@ -844,6 +880,8 @@ export default function BoardView({
                       onToggleFavorite={handleToggleFavorite}
                       currentUsername={username}
                       distanceMiles={distance}
+                      isAdmin={isAdmin}
+                      onCarryFromTemplate={isLiveView ? handleCarryFromTemplate : undefined}
                     />
                   ))}
                 </div>

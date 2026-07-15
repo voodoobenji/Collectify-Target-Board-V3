@@ -17,6 +17,18 @@ interface Props {
   onToggleFavorite?: (storeId: string) => void;
   currentUsername?: string;
   distanceMiles?: number;
+  isAdmin?: boolean;
+  onCarryFromTemplate?: (storeId: string) => void;
+}
+
+function timeAgoShort(iso: string | null): string {
+  if (!iso) return "never";
+  const mins = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return `${Math.floor(hours / 24)}d ago`;
 }
 
 function mergeAdminNotes(entry: BoardEntry): string {
@@ -202,6 +214,8 @@ export default function StoreRow({
   onToggleFavorite,
   currentUsername,
   distanceMiles,
+  isAdmin,
+  onCarryFromTemplate,
 }: Props) {
   const chance = entry.chance;
   const [flagInputOpen, setFlagInputOpen] = useState(false);
@@ -267,6 +281,15 @@ export default function StoreRow({
             </select>
           </div>
         </div>
+
+        {onCarryFromTemplate && (
+          <button
+            onClick={() => onCarryFromTemplate(store.id)}
+            className="w-full text-[10px] font-mono uppercase tracking-wide px-2 py-1.5 rounded border border-gold/50 text-gold hover:bg-gold/10 transition-colors mb-2"
+          >
+            &#10549; Carry from typical pattern
+          </button>
+        )}
 
         <button
           onClick={() => {
@@ -570,6 +593,11 @@ export default function StoreRow({
           <span className="text-gold">{distanceMiles.toFixed(1)} mi</span>
         )}
         {entry.window && <span className="text-textprimary">{entry.window}</span>}
+        {isAdmin && entry.chance && !entry.window && (
+          <span className="text-[10px] uppercase px-1.5 py-0.5 rounded border border-medium text-medium bg-medium/10">
+            &#9888; Needs window
+          </span>
+        )}
         {entry.sourceType && (
           <span className="text-gold">
             {sourceIcons[entry.sourceType]} {sourceLabels[entry.sourceType]}
@@ -632,6 +660,33 @@ export default function StoreRow({
           )
         )}
       </div>
+      {isAdmin && showStatus && (
+        <div className="flex items-center gap-1.5 mt-2.5">
+          <button
+            onClick={() => onPatch(store.id, { status: "pending", soldCount: 0, lastSoldAt: null })}
+            className={`text-[10px] font-mono uppercase px-2 py-1 rounded border flex-1 transition-colors ${
+              entry.status === "pending" ? statusStyles.pending : "border-line text-textmuted hover:text-textprimary"
+            }`}
+          >
+            {statusLabels.pending}
+          </button>
+          <button
+            onClick={() =>
+              onPatch(store.id, {
+                status: "hit",
+                soldCount: (entry.soldCount ?? 0) + 1,
+                lastSoldAt: new Date().toISOString(),
+              })
+            }
+            className={`text-[10px] font-mono uppercase px-2 py-1 rounded border flex-1 transition-colors ${
+              entry.status === "hit" ? statusStyles.hit : "border-line text-textmuted hover:text-live"
+            }`}
+          >
+            {statusLabels.hit}
+            {entry.status === "hit" && entry.soldCount > 1 ? ` (${entry.soldCount}x)` : ""}
+          </button>
+        </div>
+      )}
       {mergeAdminNotes(entry) && (
         <div className="mt-2.5 pl-3 border-l-2 border-gold/60">
           <p className="text-[10px] uppercase tracking-wide text-gold font-mono mb-0.5">
@@ -666,6 +721,11 @@ export default function StoreRow({
         >
           View full week &rsaquo;
         </button>
+      )}
+      {isAdmin && entry.updatedAt && (
+        <p className="text-[10px] text-textmuted/70 font-mono mt-2">
+          updated {timeAgoShort(entry.updatedAt)}
+        </p>
       )}
     </div>
   );
