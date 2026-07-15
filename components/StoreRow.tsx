@@ -648,14 +648,25 @@ export default function StoreRow({
           <FavoriteStar isFavorite={isFavorite} onToggle={() => onToggleFavorite?.(store.id)} />
           <span className="font-serif text-base sm:text-lg text-textprimary">{store.name}</span>
         </div>
-        {showStatus && (
-          <span
-            className={`shrink-0 text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border ${statusStyles[entry.status]}`}
-          >
-            {statusLabels[entry.status]}
-            {entry.status === "hit" && entry.soldCount > 1 ? ` (${entry.soldCount}x)` : ""}
-          </span>
-        )}
+        <div className="flex items-center gap-2 shrink-0">
+          {showStatus && (
+            <span
+              className={`text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border ${statusStyles[entry.status]}`}
+            >
+              {statusLabels[entry.status]}
+              {entry.status === "hit" && entry.soldCount > 1 ? ` (${entry.soldCount}x)` : ""}
+            </span>
+          )}
+          {compact && (
+            <button
+              onClick={() => setExpanded(false)}
+              aria-label="Collapse card"
+              className="text-textmuted hover:text-textprimary text-base leading-none"
+            >
+              &#9662;
+            </button>
+          )}
+        </div>
       </div>
       <div className="flex items-center gap-2 mt-2 text-sm font-mono text-textmuted flex-wrap">
         <MapLink store={store} small />
