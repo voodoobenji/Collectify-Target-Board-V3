@@ -7,6 +7,7 @@ import type { Board, BoardEntry, TemplateEntry, WeekdayTemplate } from "@/lib/ty
 import { WEEKDAYS } from "@/lib/types";
 import StoreRow from "./StoreRow";
 import ThemeToggle from "./ThemeToggle";
+import StoreSearch from "./StoreSearch";
 import Filters from "./Filters";
 import StoreWeekModal from "./StoreWeekModal";
 import LegendModal from "./LegendModal";
@@ -600,16 +601,16 @@ export default function BoardView({
         </div>
       )}
 
-      <div className="relative flex flex-col items-center text-center mb-4 lg:mb-8 lg:pt-2">
-        <div className="absolute left-0 top-1">
-          <ThemeToggle />
-        </div>
+      <div className="flex items-center justify-between mb-3">
+        <ThemeToggle />
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
-          className="absolute right-0 top-1 text-xs lg:text-sm text-textmuted hover:text-textprimary"
+          className="text-xs lg:text-sm text-textmuted hover:text-textprimary"
         >
           Sign out
         </button>
+      </div>
+      <div className="flex flex-col items-center text-center mb-4 lg:mb-8">
         <div className="flex items-center gap-2.5 lg:gap-4">
           <img
             src="/COLLECTIFY_LOGO.png"
@@ -622,10 +623,10 @@ export default function BoardView({
           </span>
           <span className="h-1.5 w-1.5 lg:h-2 lg:w-2 rounded-full bg-live pulse shrink-0" />
         </div>
-        <span className="font-mono text-[10px] lg:text-xs uppercase tracking-[0.35em] text-gold mt-1.5 lg:mt-2.5">
+        <span className="font-mono text-xs lg:text-sm uppercase tracking-[0.35em] text-gold mt-2 lg:mt-3">
           Target Guide
         </span>
-        <p className="text-textmuted text-[11px] lg:text-xs mt-1 lg:mt-1.5 font-mono">
+        <p className="text-textmuted text-sm lg:text-base mt-1.5 font-mono">
           {board.date} &middot; updated {timeAgo(lastUpdated)}
         </p>
       </div>
@@ -662,8 +663,14 @@ export default function BoardView({
         </button>
       </div>
 
+      <StoreSearch
+        search={search}
+        onSearch={setSearch}
+        onSelectStore={(id) => setWeekModalStoreId(id)}
+      />
+
       <div className="mb-4">
-        <div className="text-xs font-mono uppercase tracking-[0.2em] text-gold mb-2">Sort</div>
+        <div className="text-sm font-mono uppercase tracking-[0.2em] text-gold mb-2">Sort By</div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setSortMode("priority")}
@@ -701,14 +708,11 @@ export default function BoardView({
       </div>
 
       <Filters
-        search={search}
-        onSearch={setSearch}
         chanceFilter={chanceFilter}
         onChanceFilter={setChanceFilter}
         statusFilter={statusFilter}
         onStatusFilter={setStatusFilter}
         showStatusFilter={isLiveView}
-        onSelectStore={(id) => setWeekModalStoreId(id)}
       />
 
       <div className="sticky top-0 z-20 bg-ink pt-3 pb-3 mb-3 -mx-4 px-4 sm:-mx-8 sm:px-8 border-b border-line">
