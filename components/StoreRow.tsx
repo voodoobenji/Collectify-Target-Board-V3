@@ -19,6 +19,13 @@ interface Props {
   distanceMiles?: number;
 }
 
+function mergeAdminNotes(entry: BoardEntry): string {
+  return [entry.vendorNotes, entry.randomNotes, entry.reason]
+    .map((s) => (s ?? "").trim())
+    .filter(Boolean)
+    .join("\n\n");
+}
+
 const chanceStyles: Record<string, string> = {
   High: "border-high text-high bg-high/10",
   Medium: "border-medium text-medium bg-medium/10",
@@ -199,9 +206,6 @@ export default function StoreRow({
   const chance = entry.chance;
   const [flagInputOpen, setFlagInputOpen] = useState(false);
   const [flagReasonDraft, setFlagReasonDraft] = useState("");
-
-  const showVendorNotes = entry.sourceType === "vendor" || entry.sourceType === "both";
-  const showRandomNotes = entry.sourceType === "employee_push" || entry.sourceType === "both";
 
   function submitFlag() {
     if (!flagReasonDraft.trim()) return;
@@ -419,29 +423,12 @@ export default function StoreRow({
           freely, doesn&apos;t re-run the analysis.
         </p>
 
-        {showVendorNotes && (
-          <DebouncedTextarea
-            value={entry.vendorNotes}
-            onCommit={(v) => onPatch(store.id, { vendorNotes: v })}
-            placeholder="Vendor pattern (scheduled delivery)..."
-            rows={2}
-            className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
-          />
-        )}
-        {showRandomNotes && (
-          <DebouncedTextarea
-            value={entry.randomNotes}
-            onCommit={(v) => onPatch(store.id, { randomNotes: v })}
-            placeholder="Random / employee-push pattern..."
-            rows={2}
-            className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
-          />
-        )}
+        <div className="text-[10px] uppercase tracking-wide text-textmuted mb-1">Admin Notes</div>
         <DebouncedTextarea
-          value={entry.reason}
-          onCommit={(v) => onPatch(store.id, { reason: v })}
-          placeholder="General notes..."
-          rows={2}
+          value={mergeAdminNotes(entry)}
+          onCommit={(v) => onPatch(store.id, { reason: v, vendorNotes: "", randomNotes: "" })}
+          placeholder="Notes about this store..."
+          rows={3}
           className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
         />
 
@@ -645,18 +632,11 @@ export default function StoreRow({
           )
         )}
       </div>
-      {entry.vendorNotes && (
-        <p className="text-base text-textmuted leading-relaxed mt-2.5">
-          <span className="text-gold font-medium">Vendor:</span> {entry.vendorNotes}
-        </p>
-      )}
-      {entry.randomNotes && (
-        <p className="text-base text-textmuted leading-relaxed mt-2">
-          <span className="text-low font-medium">Random:</span> {entry.randomNotes}
-        </p>
-      )}
-      {entry.reason && (
-        <p className="text-base text-textmuted leading-relaxed mt-2">{entry.reason}</p>
+      {mergeAdminNotes(entry) && (
+        <div className="mt-2.5">
+          <p className="text-[10px] uppercase tracking-wide text-textmuted font-mono mb-0.5">Admin Notes</p>
+          <p className="text-base text-textmuted leading-relaxed whitespace-pre-line">{mergeAdminNotes(entry)}</p>
+        </div>
       )}
       {entry.externalGuide && (
         <div className="mt-2.5 pl-3 border-l-2 border-purple-400">

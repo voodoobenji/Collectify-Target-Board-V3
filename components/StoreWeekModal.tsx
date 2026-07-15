@@ -42,6 +42,13 @@ const stockLocationLabels: Record<string, string> = {
 
 const WINDOW_PRESETS = ["Opening", "7-9AM", "8-10AM", "11-1PM", "2-4PM", "5-7PM", "8-Close"];
 
+function mergeAdminNotes(info: { vendorNotes: string; randomNotes: string; reason: string }): string {
+  return [info.vendorNotes, info.randomNotes, info.reason]
+    .map((s) => (s ?? "").trim())
+    .filter(Boolean)
+    .join("\n\n");
+}
+
 interface DayInfo {
   chance: Chance;
   window: string;
@@ -226,8 +233,6 @@ export default function StoreWeekModal({
             {WEEKDAYS.map((day) => {
               const info = data[day] ?? EMPTY_DAY_INFO;
               const isToday = day === todayWeekday;
-              const showVendorNotes = info.sourceType === "vendor" || info.sourceType === "both";
-              const showRandomNotes = info.sourceType === "employee_push" || info.sourceType === "both";
 
               return (
                 <div key={day} className="border border-line rounded-lg p-3 card-fill">
@@ -417,29 +422,12 @@ export default function StoreWeekModal({
                       <p className="text-[9px] text-textmuted mb-2">
                         Auto-mined from chat, sometimes miscounts. Adjust freely.
                       </p>
-                      {showVendorNotes && (
-                        <DebouncedTextarea
-                          value={info.vendorNotes}
-                          onCommit={(v) => patchDay(day, { vendorNotes: v })}
-                          placeholder="Vendor pattern..."
-                          rows={2}
-                          className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
-                        />
-                      )}
-                      {showRandomNotes && (
-                        <DebouncedTextarea
-                          value={info.randomNotes}
-                          onCommit={(v) => patchDay(day, { randomNotes: v })}
-                          placeholder="Random / employee-push pattern..."
-                          rows={2}
-                          className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
-                        />
-                      )}
+                      <div className="text-[10px] uppercase tracking-wide text-textmuted mb-1">Admin Notes</div>
                       <DebouncedTextarea
-                        value={info.reason}
-                        onCommit={(v) => patchDay(day, { reason: v })}
-                        placeholder="General notes..."
-                        rows={2}
+                        value={mergeAdminNotes(info)}
+                        onCommit={(v) => patchDay(day, { reason: v, vendorNotes: "", randomNotes: "" })}
+                        placeholder="Notes about this store..."
+                        rows={3}
                         className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs placeholder:text-textmuted resize-none"
                       />
                     </>
@@ -466,17 +454,12 @@ export default function StoreWeekModal({
                           &#128257; Sells Multiple Times
                         </p>
                       )}
-                      {info.vendorNotes && (
-                        <p className="text-xs text-textmuted mb-1">
-                          <span className="text-gold">Vendor:</span> {info.vendorNotes}
-                        </p>
+                      {mergeAdminNotes(info) && (
+                        <div>
+                          <p className="text-[9px] uppercase tracking-wide text-textmuted font-mono mb-0.5">Admin Notes</p>
+                          <p className="text-xs text-textmuted whitespace-pre-line">{mergeAdminNotes(info)}</p>
+                        </div>
                       )}
-                      {info.randomNotes && (
-                        <p className="text-xs text-textmuted mb-1">
-                          <span className="text-low">Random:</span> {info.randomNotes}
-                        </p>
-                      )}
-                      {info.reason && <p className="text-xs text-textmuted">{info.reason}</p>}
                     </>
                   )}
 
