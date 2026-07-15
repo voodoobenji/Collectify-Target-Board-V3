@@ -633,8 +633,10 @@ export default function StoreRow({
         )}
       </div>
       {mergeAdminNotes(entry) && (
-        <div className="mt-2.5">
-          <p className="text-[10px] uppercase tracking-wide text-textmuted font-mono mb-0.5">Admin Notes</p>
+        <div className="mt-2.5 pl-3 border-l-2 border-gold/60">
+          <p className="text-[10px] uppercase tracking-wide text-gold font-mono mb-0.5">
+            &#128221; Via Admin Notes
+          </p>
           <p className="text-base text-textmuted leading-relaxed whitespace-pre-line">{mergeAdminNotes(entry)}</p>
         </div>
       )}

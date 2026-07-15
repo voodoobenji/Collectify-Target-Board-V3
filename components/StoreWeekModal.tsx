@@ -455,8 +455,10 @@ export default function StoreWeekModal({
                         </p>
                       )}
                       {mergeAdminNotes(info) && (
-                        <div>
-                          <p className="text-[9px] uppercase tracking-wide text-textmuted font-mono mb-0.5">Admin Notes</p>
+                        <div className="pl-3 border-l-2 border-gold/60">
+                          <p className="text-[9px] uppercase tracking-wide text-gold font-mono mb-0.5">
+                            &#128221; Via Admin Notes
+                          </p>
                           <p className="text-xs text-textmuted whitespace-pre-line">{mergeAdminNotes(info)}</p>
                         </div>
                       )}
