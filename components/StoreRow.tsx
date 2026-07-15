@@ -725,6 +725,7 @@ export default function StoreRow({
       {isAdmin && entry.updatedAt && (
         <p className="text-[10px] text-textmuted/70 font-mono mt-2">
           updated {timeAgoShort(entry.updatedAt)}
+          {entry.updatedBy && !/^\d+$/.test(entry.updatedBy) ? ` by ${entry.updatedBy}` : ""}
         </p>
       )}
     </div>

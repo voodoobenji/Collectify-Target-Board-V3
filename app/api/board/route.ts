@@ -27,6 +27,6 @@ export async function PATCH(req: NextRequest) {
   for (const k of allowedKeys) {
     if (k in patch) safePatch[k] = patch[k];
   }
-  const board = await patchEntry(storeId, safePatch, session.discordId ?? "unknown");
+  const board = await patchEntry(storeId, safePatch, session.username ?? session.discordId ?? "unknown");
   return NextResponse.json(board);
 }
