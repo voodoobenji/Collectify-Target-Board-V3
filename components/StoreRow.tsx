@@ -20,7 +20,16 @@ interface Props {
   distanceMiles?: number;
   isAdmin?: boolean;
   onCarryFromTemplate?: (storeId: string) => void;
+  onReport?: (storeId: string, category: string, note: string) => Promise<boolean>;
+  onClearReport?: (storeId: string, reportId?: string) => void;
 }
+
+const reportCategoryLabels: Record<string, string> = {
+  address: "Wrong address",
+  hours: "Wrong hours/window",
+  duplicate: "Duplicate / closed",
+  other: "Other",
+};
 
 function timeAgoShort(iso: string | null): string {
   if (!iso) return "never";
@@ -217,11 +226,33 @@ export default function StoreRow({
   distanceMiles,
   isAdmin,
   onCarryFromTemplate,
+  onReport,
+  onClearReport,
 }: Props) {
   const chance = entry.chance;
   const adminNotes = cleanGuideNote(mergeAdminNotes(entry));
   const [flagInputOpen, setFlagInputOpen] = useState(false);
   const [flagReasonDraft, setFlagReasonDraft] = useState("");
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportCat, setReportCat] = useState("");
+  const [reportNote, setReportNote] = useState("");
+  const [reportStatus, setReportStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
+  const reports = entry.reports ?? [];
+
+  async function submitReport() {
+    if (!onReport || !reportCat) return;
+    if (reportCat === "other" && !reportNote.trim()) return;
+    setReportStatus("sending");
+    const ok = await onReport(store.id, reportCat, reportNote.trim());
+    if (ok) {
+      setReportStatus("done");
+      setReportOpen(false);
+      setReportCat("");
+      setReportNote("");
+    } else {
+      setReportStatus("error");
+    }
+  }
 
   function submitFlag() {
     if (!flagReasonDraft.trim()) return;
@@ -689,6 +720,43 @@ export default function StoreRow({
           </button>
         </div>
       )}
+      {isAdmin && reports.length > 0 && (
+        <div className="mt-2.5 border border-medium/50 rounded px-2 py-1.5 bg-medium/5">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[10px] font-mono uppercase text-medium">
+              &#9873; {reports.length} member report{reports.length > 1 ? "s" : ""}
+            </span>
+            {onClearReport && (
+              <button
+                onClick={() => onClearReport(store.id)}
+                className="text-[10px] font-mono uppercase text-textmuted hover:text-textprimary"
+              >
+                Clear all
+              </button>
+            )}
+          </div>
+          <div className="space-y-1">
+            {reports.map((r) => (
+              <div key={r.id} className="flex items-start justify-between gap-2">
+                <span className="text-xs text-textmuted">
+                  <span className="text-medium">{reportCategoryLabels[r.category] ?? r.category}</span>
+                  {r.note ? ` — ${r.note}` : ""}
+                  <span className="text-textmuted/60"> &middot; {r.reportedBy}</span>
+                </span>
+                {onClearReport && (
+                  <button
+                    onClick={() => onClearReport(store.id, r.id)}
+                    className="shrink-0 text-textmuted hover:text-high text-xs leading-none"
+                    aria-label="Dismiss report"
+                  >
+                    &#10005;
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       {adminNotes && (
         <div className="mt-2.5 pl-3 border-l-2 border-gold/60">
           <p className="text-[10px] uppercase tracking-wide text-gold font-mono mb-0.5">
@@ -724,11 +792,80 @@ export default function StoreRow({
           View full week &rsaquo;
         </button>
       )}
-      {isAdmin && entry.updatedAt && (
+      {(isAdmin || showStatus) && entry.updatedAt && (
         <p className="text-[10px] text-textmuted/70 font-mono mt-2">
           updated {timeAgoShort(entry.updatedAt)}
-          {entry.updatedBy && !/^\d+$/.test(entry.updatedBy) ? ` by ${entry.updatedBy}` : ""}
+          {isAdmin && entry.updatedBy && !/^\d+$/.test(entry.updatedBy) ? ` by ${entry.updatedBy}` : ""}
         </p>
+      )}
+      {onReport && showStatus && (
+        <div className="mt-2">
+          {reportStatus === "done" ? (
+            <p className="text-[10px] font-mono uppercase tracking-wide text-live">
+              &#10003; Thanks &mdash; sent to admins
+            </p>
+          ) : reportOpen ? (
+            <div className="border border-line rounded px-2 py-2">
+              <div className="text-[10px] uppercase tracking-wide text-textmuted mb-1.5">
+                What&apos;s wrong with this store?
+              </div>
+              <div className="flex flex-wrap gap-1.5 mb-1.5">
+                {(["address", "hours", "duplicate", "other"] as const).map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setReportCat(c)}
+                    className={`text-[10px] font-mono uppercase px-2 py-1 rounded border transition-colors ${
+                      reportCat === c ? "border-gold text-gold bg-gold/10" : "border-line text-textmuted"
+                    }`}
+                  >
+                    {reportCategoryLabels[c]}
+                  </button>
+                ))}
+              </div>
+              <textarea
+                value={reportNote}
+                onChange={(e) => setReportNote(e.target.value)}
+                rows={2}
+                placeholder="Add details (required for Other)..."
+                className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-1.5 placeholder:text-textmuted resize-none"
+              />
+              <div className="flex gap-1.5">
+                <button
+                  onClick={submitReport}
+                  disabled={
+                    reportStatus === "sending" ||
+                    !reportCat ||
+                    (reportCat === "other" && !reportNote.trim())
+                  }
+                  className="text-[10px] font-mono uppercase px-2 py-1 rounded border border-gold text-gold flex-1 disabled:opacity-40"
+                >
+                  {reportStatus === "sending" ? "Sending..." : "Submit"}
+                </button>
+                <button
+                  onClick={() => {
+                    setReportOpen(false);
+                    setReportCat("");
+                    setReportNote("");
+                    setReportStatus("idle");
+                  }}
+                  className="text-[10px] font-mono uppercase px-2 py-1 rounded border border-line text-textmuted flex-1"
+                >
+                  Cancel
+                </button>
+              </div>
+              {reportStatus === "error" && (
+                <p className="text-[10px] text-high mt-1">Couldn&apos;t send. Try again.</p>
+              )}
+            </div>
+          ) : (
+            <button
+              onClick={() => setReportOpen(true)}
+              className="text-[10px] font-mono uppercase tracking-wide text-textmuted/70 hover:text-medium transition-colors"
+            >
+              &#9873; Report an issue
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

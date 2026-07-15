@@ -21,6 +21,16 @@ export interface FlaggedInfo {
   flaggedAt: string;
 }
 
+export type ReportCategory = "address" | "hours" | "duplicate" | "other";
+
+export interface StoreReport {
+  id: string;
+  category: ReportCategory;
+  note: string;
+  reportedBy: string;
+  reportedAt: string;
+}
+
 export interface BoardEntry {
   chance: Chance;
   window: string;
@@ -38,6 +48,7 @@ export interface BoardEntry {
   lastSoldAt: string | null;
   lineForming: LineFormingInfo | null;
   externalGuide: ExternalGuideInfo | null;
+  reports: StoreReport[];
   updatedAt: string | null;
   updatedBy: string | null;
 }
@@ -65,6 +76,7 @@ export const EMPTY_ENTRY: BoardEntry = {
   lastSoldAt: null,
   lineForming: null,
   externalGuide: null,
+  reports: [],
   updatedAt: null,
   updatedBy: null,
 };

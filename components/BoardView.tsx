@@ -374,6 +374,40 @@ export default function BoardView({
     });
   }
 
+  async function handleReport(storeId: string, category: string, note: string): Promise<boolean> {
+    try {
+      const res = await fetch("/api/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ storeId, category, note }),
+      });
+      if (res.ok) {
+        const fresh: Board = await res.json();
+        setBoard(fresh);
+        return true;
+      }
+    } catch {
+      // ignore; the form shows a generic failure state
+    }
+    return false;
+  }
+
+  async function handleClearReport(storeId: string, reportId?: string) {
+    try {
+      const res = await fetch("/api/report", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ storeId, reportId }),
+      });
+      if (res.ok) {
+        const fresh: Board = await res.json();
+        setBoard(fresh);
+      }
+    } catch {
+      // ignore
+    }
+  }
+
   function handleEntryPatch(storeId: string, patch: Partial<BoardEntry>) {
     if (isLiveView) {
       handlePatch(storeId, patch);
@@ -896,6 +930,8 @@ export default function BoardView({
                       distanceMiles={distance}
                       isAdmin={isAdmin}
                       onCarryFromTemplate={isLiveView ? handleCarryFromTemplate : undefined}
+                      onReport={handleReport}
+                      onClearReport={isAdmin ? handleClearReport : undefined}
                     />
                   ))}
                 </div>

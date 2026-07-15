@@ -7,6 +7,7 @@ import {
   WeekdayTemplate,
   TemplateEntry,
   EMPTY_TEMPLATE_ENTRY,
+  StoreReport,
   Weekday,
   WEEKDAYS,
 } from "./types";
@@ -233,6 +234,30 @@ export async function applyTemplateToBoard(weekday: string, updatedBy: string): 
       updatedBy,
     };
   }
+  board.version += 1;
+  await kv.set(BOARD_KEY, board);
+  return board;
+}
+
+// Member-submitted reports about a store (wrong address, hours, duplicate, etc).
+// Deliberately does NOT touch updatedAt/updatedBy so it doesn't affect the
+// admin freshness stamp - a report isn't an admin edit of the guide.
+export async function addReport(storeId: string, report: StoreReport): Promise<Board> {
+  const board = await getBoard();
+  const current = board.entries[storeId] ?? { ...EMPTY_ENTRY };
+  const reports = [...(current.reports ?? []), report].slice(-30);
+  board.entries[storeId] = { ...current, reports };
+  board.version += 1;
+  await kv.set(BOARD_KEY, board);
+  return board;
+}
+
+export async function clearReports(storeId: string, reportId?: string): Promise<Board> {
+  const board = await getBoard();
+  const current = board.entries[storeId] ?? { ...EMPTY_ENTRY };
+  const existing = current.reports ?? [];
+  const reports = reportId ? existing.filter((r) => r.id !== reportId) : [];
+  board.entries[storeId] = { ...current, reports };
   board.version += 1;
   await kv.set(BOARD_KEY, board);
   return board;
