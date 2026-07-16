@@ -636,7 +636,10 @@ export default function StoreRow({
           <span className="text-xs text-textmuted">{entry.flagged.reason}</span>
         </div>
       )}
-      <div className="flex items-center justify-between gap-2">
+      <div
+        className={`flex items-center justify-between gap-2 ${compact ? "cursor-pointer" : ""}`}
+        onClick={compact ? () => setExpanded(false) : undefined}
+      >
         <div className="flex items-center gap-2 flex-wrap">
           <span
             className={`shrink-0 text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border ${
