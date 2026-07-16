@@ -1,12 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getBoard, patchEntry } from "@/lib/kv";
+import { getBoard, patchEntry, bumpRate, logSecurityEvent } from "@/lib/kv";
 
-export async function GET() {
+function clientIp(req: NextRequest): string {
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0].trim();
+  return req.headers.get("x-real-ip") ?? "unknown";
+}
+
+export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.isMember) {
     return NextResponse.json({ error: "Not authorized" }, { status: 403 });
+  }
+  // Rate-limit / scrape detection. Normal polling is ~5 requests/min; well
+  // above that suggests a scraper, so we flag it once and throttle hard cases.
+  const id = session.discordId ?? "unknown";
+  const n = await bumpRate(id);
+  if (n === 41) {
+    await logSecurityEvent({
+      type: "scrape",
+      discordId: id,
+      username: session.username ?? "member",
+      isAdmin: Boolean(session.isAdmin),
+      ip: clientIp(req),
+      detail: "40+ board requests in one minute",
+      at: new Date().toISOString(),
+    });
+  }
+  if (n > 150) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
   const board = await getBoard();
   return NextResponse.json(board);

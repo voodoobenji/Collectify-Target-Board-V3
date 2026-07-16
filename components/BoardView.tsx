@@ -77,11 +77,13 @@ export default function BoardView({
   initialBoard,
   isAdmin,
   username,
+  discordId,
   vendorMap,
 }: {
   initialBoard: Board;
   isAdmin: boolean;
   username: string;
+  discordId?: string;
   vendorMap: Record<string, string>;
 }) {
   const [board, setBoard] = useState<Board>(initialBoard);
@@ -258,6 +260,23 @@ export default function BoardView({
     } catch {
     }
   }
+
+  // Presence heartbeat so admins can see who's currently active.
+  useEffect(() => {
+    const ping = () => {
+      fetch("/api/presence", { method: "POST" }).catch(() => {});
+    };
+    ping();
+    const id = setInterval(ping, 60000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Light anti-copy deterrent: block the right-click / save-image menu.
+  useEffect(() => {
+    const block = (e: MouseEvent) => e.preventDefault();
+    document.addEventListener("contextmenu", block);
+    return () => document.removeEventListener("contextmenu", block);
+  }, []);
 
   // Poll for live updates from other viewers/admin (only matters on today's tab)
   useEffect(() => {
@@ -661,7 +680,7 @@ export default function BoardView({
 
   return (
     <main className="min-h-screen px-3 py-4 sm:px-8 sm:py-10 max-w-4xl mx-auto">
-      <Watermark username={username} date={board.date} />
+      <Watermark username={username} discordId={discordId} date={board.date} />
 
       {boardIsStale && isAdmin && (
         <div className="bg-high/10 border border-high/50 rounded-lg px-4 py-3 mb-4 text-xs text-high">
@@ -935,6 +954,12 @@ export default function BoardView({
               {startingNewDay ? "Starting..." : "Start New Day"}
             </button>
           </div>
+          <a
+            href="/admin/security"
+            className="text-center whitespace-nowrap text-xs font-mono uppercase tracking-wide px-3 py-2 rounded-lg border border-line text-textmuted hover:text-textprimary transition-colors"
+          >
+            &#128274; Security Dashboard
+          </a>
         </div>
       )}
 

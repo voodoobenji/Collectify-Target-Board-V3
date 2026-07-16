@@ -1,5 +1,6 @@
 import type { AuthOptions } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
+import { logSecurityEvent } from "./kv";
 
 const ADMIN_IDS = (process.env.ADMIN_DISCORD_IDS ?? "")
   .split(",")
@@ -47,6 +48,15 @@ export const authOptions: AuthOptions = {
         } catch {
           token.isMember = false;
         }
+
+        await logSecurityEvent({
+          type: token.isMember ? "login" : "denied",
+          discordId: p.id,
+          username: (token.username as string) ?? "member",
+          isAdmin: Boolean(token.isAdmin),
+          detail: token.isMember ? "signed in" : "not a server member",
+          at: new Date().toISOString(),
+        });
       }
       return token;
     },

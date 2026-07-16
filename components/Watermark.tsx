@@ -1,7 +1,15 @@
 "use client";
 
-export default function Watermark({ username, date }: { username: string; date: string }) {
-  const label = `@${username} \u00b7 ${date}`;
+export default function Watermark({
+  username,
+  discordId,
+  date,
+}: {
+  username: string;
+  discordId?: string;
+  date: string;
+}) {
+  const label = `@${username}${discordId ? ` \u00b7 ${discordId}` : ""} \u00b7 ${date}`;
   const tiles = Array.from({ length: 140 });
 
   return (

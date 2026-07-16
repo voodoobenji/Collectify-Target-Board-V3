@@ -263,6 +263,84 @@ export async function clearReports(storeId: string, reportId?: string): Promise<
   return board;
 }
 
+// ---------------------------------------------------------------------------
+// Security: auth audit log, active-user presence, and a simple rate limiter.
+// ---------------------------------------------------------------------------
+
+export interface SecurityEvent {
+  type: "login" | "denied" | "scrape";
+  discordId: string;
+  username: string;
+  isAdmin?: boolean;
+  ip?: string;
+  detail?: string;
+  at: string;
+}
+
+export interface PresenceRow {
+  discordId: string;
+  username: string;
+  isAdmin: boolean;
+  ip?: string;
+  at: string;
+}
+
+export async function logSecurityEvent(e: SecurityEvent): Promise<void> {
+  try {
+    await kv.lpush("security:log", JSON.stringify(e));
+    await kv.ltrim("security:log", 0, 999);
+  } catch {
+    // logging must never break the request it's attached to
+  }
+}
+
+export async function getSecurityLog(limit = 250): Promise<SecurityEvent[]> {
+  try {
+    const raw = await kv.lrange<string | SecurityEvent>("security:log", 0, limit - 1);
+    return (raw ?? []).map((r) => (typeof r === "string" ? (JSON.parse(r) as SecurityEvent) : r));
+  } catch {
+    return [];
+  }
+}
+
+export async function recordPresence(
+  discordId: string,
+  data: { username: string; isAdmin: boolean; ip?: string }
+): Promise<void> {
+  try {
+    const row: PresenceRow = { discordId, ...data, at: new Date().toISOString() };
+    await kv.hset("security:presence", { [discordId]: JSON.stringify(row) });
+  } catch {
+    // ignore
+  }
+}
+
+export async function getPresence(): Promise<PresenceRow[]> {
+  try {
+    const all = await kv.hgetall<Record<string, string | PresenceRow>>("security:presence");
+    if (!all) return [];
+    return Object.values(all)
+      .map((v) => (typeof v === "string" ? (JSON.parse(v) as PresenceRow) : v))
+      .sort((a, b) => (b.at > a.at ? 1 : -1));
+  } catch {
+    return [];
+  }
+}
+
+// Returns the request count for this user in the current minute. Callers can
+// decide what to do once it crosses a threshold (log + throttle).
+export async function bumpRate(discordId: string): Promise<number> {
+  try {
+    const bucket = Math.floor(Date.now() / 60000);
+    const key = `rl:${discordId}:${bucket}`;
+    const n = await kv.incr(key);
+    if (n === 1) await kv.expire(key, 120);
+    return n;
+  } catch {
+    return 0;
+  }
+}
+
 function favoritesKey(discordId: string): string {
   return `favorites:${discordId}`;
 }

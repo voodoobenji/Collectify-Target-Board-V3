@@ -26,6 +26,7 @@ export default async function HomePage() {
       initialBoard={board}
       isAdmin={isAdmin}
       username={session.username ?? "member"}
+      discordId={session.discordId ?? ""}
       vendorMap={vendorMap}
     />
   );
