@@ -122,6 +122,21 @@ export default function BoardView({
   }, [actualToday]);
   const boardWeekday = useMemo(() => weekdayFromDateStr(board.date), [board.date]);
   const boardIsStale = board.date !== actualToday;
+  // Only nag about a stale board once the auto-rollover has actually missed:
+  // past ~2am PT (the 1am cron had its window) or more than a day behind. Keeps
+  // the banner quiet during the normal midnight–1am pre-rollover gap.
+  const nowPtHour = Number(
+    new Date().toLocaleString("en-US", {
+      timeZone: "America/Los_Angeles",
+      hour: "2-digit",
+      hour12: false,
+    })
+  );
+  const staleDayGap = Math.round(
+    (new Date(`${actualToday}T00:00:00`).getTime() - new Date(`${board.date}T00:00:00`).getTime()) /
+      86400000
+  );
+  const boardStuck = boardIsStale && (staleDayGap > 1 || nowPtHour >= 2);
   const [selectedDay, setSelectedDay] = useState<string>(todayWeekday);
   const [template, setTemplate] = useState<WeekdayTemplate | null>(null);
   const [templateLoading, setTemplateLoading] = useState(false);
@@ -695,7 +710,7 @@ export default function BoardView({
     <main className="min-h-screen px-3 py-4 sm:px-8 sm:py-10 max-w-4xl mx-auto">
       <Watermark username={username} discordId={discordId} date={board.date} />
 
-      {boardIsStale && isAdmin && (
+      {boardStuck && isAdmin && (
         <div className="bg-high/10 border border-high/50 rounded-lg px-4 py-3 mb-4 text-xs text-high">
           This board is still showing {DAY_LABELS[boardWeekday] ?? board.date} ({board.date}), but today is{" "}
           {DAY_LABELS[todayWeekday] ?? actualToday}. Click <strong>Start New Day</strong> below to roll it forward.
