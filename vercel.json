@@ -4,6 +4,10 @@
     {
       "path": "/api/cron/sync-guides",
       "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/new-day",
+      "schedule": "0 8 * * *"
     }
   ]
 }
