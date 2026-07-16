@@ -687,14 +687,12 @@ export default function StoreRow({
             {sourceIcons[entry.sourceType]} {sourceLabels[entry.sourceType]}
           </span>
         )}
-        {entry.stockLocation && (
-          <span className="text-low">
-            &#128205; {stockLocationLabels[entry.stockLocation]}
-          </span>
-        )}
-        {entry.itemLimit && (
-          <span className="text-textmuted">Limit: {entry.itemLimit}</span>
-        )}
+        <span className={entry.stockLocation ? "text-low" : "text-textmuted/60"}>
+          &#128205; Stock: {entry.stockLocation ? stockLocationLabels[entry.stockLocation] : "Not set"}
+        </span>
+        <span className={entry.itemLimit ? "text-textmuted" : "text-textmuted/60"}>
+          Limit: {entry.itemLimit || "Not set"}
+        </span>
         {entry.multiSeller && (
           <span
             className="text-[10px] uppercase px-1.5 py-0.5 rounded border border-gold text-gold bg-gold/10"

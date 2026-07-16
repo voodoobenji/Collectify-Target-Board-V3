@@ -141,6 +141,7 @@ export default function BoardView({
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [collapsedRegions, setCollapsedRegions] = useState<Set<string>>(new Set());
   const [startingNewDay, setStartingNewDay] = useState(false);
+  const [settingStock, setSettingStock] = useState(false);
   const [importing, setImporting] = useState(false);
   const [weekModalStoreId, setWeekModalStoreId] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -262,8 +263,10 @@ export default function BoardView({
   }
 
   // Presence heartbeat so admins can see who's currently active.
+  // Skips while the tab is hidden to avoid pointless traffic from idle tabs.
   useEffect(() => {
     const ping = () => {
+      if (typeof document !== "undefined" && document.hidden) return;
       fetch("/api/presence", { method: "POST" }).catch(() => {});
     };
     ping();
@@ -278,9 +281,12 @@ export default function BoardView({
     return () => document.removeEventListener("contextmenu", block);
   }, []);
 
-  // Poll for live updates from other viewers/admin (only matters on today's tab)
+  // Poll for live updates from other viewers/admin. Pauses while the tab is
+  // hidden (huge traffic saver for backgrounded tabs) and refreshes instantly
+  // when the tab is brought back to the foreground.
   useEffect(() => {
-    const id = setInterval(async () => {
+    async function refresh() {
+      if (typeof document !== "undefined" && document.hidden) return;
       try {
         const res = await fetch("/api/board", { cache: "no-store" });
         if (!res.ok) return;
@@ -291,8 +297,16 @@ export default function BoardView({
       } catch {
         // silent - will retry next interval
       }
-    }, 12000);
-    return () => clearInterval(id);
+    }
+    const id = setInterval(refresh, 12000);
+    const onVisible = () => {
+      if (typeof document !== "undefined" && !document.hidden) refresh();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, []);
 
   // Fetch the typical pattern whenever a non-today weekday tab is selected
@@ -503,6 +517,26 @@ export default function BoardView({
       }
     } finally {
       setStartingNewDay(false);
+    }
+  }
+
+  async function handleSetStockDefaults() {
+    if (
+      !confirm(
+        "Set EVERY store to '1 per person' and 'TCG + GS' — on the live board and all weekday patterns? You can still edit individual stores afterward."
+      )
+    ) {
+      return;
+    }
+    setSettingStock(true);
+    try {
+      const res = await fetch("/api/admin/set-stock-defaults", { method: "POST" });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.board) setBoard(data.board);
+      }
+    } finally {
+      setSettingStock(false);
     }
   }
 
@@ -954,6 +988,13 @@ export default function BoardView({
               {startingNewDay ? "Starting..." : "Start New Day"}
             </button>
           </div>
+          <button
+            onClick={handleSetStockDefaults}
+            disabled={settingStock}
+            className="text-center whitespace-nowrap text-xs font-mono uppercase tracking-wide px-3 py-2 rounded-lg border border-line text-textmuted hover:text-textprimary transition-colors disabled:opacity-50"
+          >
+            {settingStock ? "Setting..." : "Set All Stores: 1 Per · TCG + GS"}
+          </button>
           <a
             href="/admin/security"
             className="text-center whitespace-nowrap text-xs font-mono uppercase tracking-wide px-3 py-2 rounded-lg border border-line text-textmuted hover:text-textprimary transition-colors"

@@ -263,6 +263,32 @@ export async function clearReports(storeId: string, reportId?: string): Promise<
   return board;
 }
 
+// One-time sweep: set stock location + item limit on every store, across both
+// the live board and all weekday templates (so it survives the daily rollover).
+export async function applyStockDefaults(
+  stockLocation: BoardEntry["stockLocation"],
+  itemLimit: string
+): Promise<Board> {
+  const board = await getBoard();
+  for (const s of STORES) {
+    const cur = board.entries[s.id] ?? { ...EMPTY_ENTRY };
+    board.entries[s.id] = { ...cur, stockLocation, itemLimit };
+  }
+  board.version += 1;
+  await kv.set(BOARD_KEY, board);
+
+  for (const wd of WEEKDAYS) {
+    const tpl = await getTemplate(wd);
+    if (!tpl) continue;
+    for (const sid of Object.keys(tpl.entries)) {
+      tpl.entries[sid] = { ...tpl.entries[sid], stockLocation, itemLimit };
+    }
+    tpl.updatedAt = new Date().toISOString();
+    await kv.set(templateKey(wd), tpl);
+  }
+  return board;
+}
+
 // ---------------------------------------------------------------------------
 // Security: auth audit log, active-user presence, and a simple rate limiter.
 // ---------------------------------------------------------------------------
