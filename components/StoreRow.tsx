@@ -88,7 +88,7 @@ const sourceIcons: Record<string, string> = {
 const stockLocationLabels: Record<string, string> = {
   tcg_section: "TCG Section",
   guest_services: "Guest Services",
-  both: "TCG + GS",
+  both: "TCG + Guest Services",
 };
 
 const WINDOW_PRESETS: [string, string][] = [
@@ -688,7 +688,7 @@ export default function StoreRow({
           </span>
         )}
         <span className={entry.stockLocation ? "text-low" : "text-textmuted/60"}>
-          &#128205; Stock: {entry.stockLocation ? stockLocationLabels[entry.stockLocation] : "Not set"}
+          &#128205; Stock Location: {entry.stockLocation ? stockLocationLabels[entry.stockLocation] : "Not set"}
         </span>
         <span className={entry.itemLimit ? "text-textmuted" : "text-textmuted/60"}>
           Limit: {entry.itemLimit || "Not set"}

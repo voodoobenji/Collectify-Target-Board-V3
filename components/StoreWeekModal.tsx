@@ -38,7 +38,7 @@ const sourceLabels: Record<string, string> = {
 const stockLocationLabels: Record<string, string> = {
   tcg_section: "TCG Section",
   guest_services: "Guest Services",
-  both: "TCG + GS",
+  both: "TCG + Guest Services",
 };
 
 const WINDOW_PRESETS = ["Opening", "7-9AM", "8-10AM", "11-1PM", "2-4PM", "5-7PM", "8-Close"];
