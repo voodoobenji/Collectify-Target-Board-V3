@@ -827,6 +827,7 @@ export default function BoardView({
           <span className="text-textmuted text-xs">{sortOpen ? "▾" : "▸"}</span>
         </button>
         {sortOpen && (
+        <>
         <div className="flex items-center gap-2 mt-2">
           <button
             onClick={() => setSortMode("priority")}
@@ -861,6 +862,7 @@ export default function BoardView({
           </button>
         </div>
         {locationError && <p className="text-high text-[11px] mt-1.5">{locationError}</p>}
+        </>
         )}
       </div>
 
