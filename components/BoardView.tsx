@@ -11,6 +11,7 @@ import StoreSearch from "./StoreSearch";
 import Filters from "./Filters";
 import StoreWeekModal from "./StoreWeekModal";
 import LegendModal from "./LegendModal";
+import ChangeLogModal from "./ChangeLogModal";
 import { parseWindowRanges, overlapsWindow, formatMinutes } from "@/lib/timeWindow";
 import { cleanGuideNote } from "@/lib/cleanNote";
 
@@ -181,6 +182,7 @@ export default function BoardView({
     });
   }
   const [showLegend, setShowLegend] = useState(false);
+  const [showChanges, setShowChanges] = useState(false);
   useEffect(() => {
     try {
       const seen = localStorage.getItem("collectify_seen_intro");
@@ -439,6 +441,15 @@ export default function BoardView({
       multiSeller: t.multiSeller ?? false,
       confirmedCount: t.confirmedCount ?? 0,
     });
+  }
+
+  async function handleUndoChange(e: {
+    storeId: string;
+    changes: { field: string; from: unknown }[];
+  }) {
+    const revert: Record<string, unknown> = {};
+    for (const c of e.changes) revert[c.field] = c.from;
+    await handlePatch(e.storeId, revert as Partial<BoardEntry>);
   }
 
   async function handleReport(storeId: string, category: string, note: string): Promise<boolean> {
@@ -982,6 +993,12 @@ export default function BoardView({
               {startingNewDay ? "Starting..." : "Start New Day"}
             </button>
           </div>
+          <button
+            onClick={() => setShowChanges(true)}
+            className="text-center whitespace-nowrap text-xs font-mono uppercase tracking-wide px-3 py-2 rounded-lg border border-line text-textmuted hover:text-textprimary transition-colors"
+          >
+            &#8617; Recent Changes / Undo
+          </button>
           <a
             href="/admin/security"
             className="text-center whitespace-nowrap text-xs font-mono uppercase tracking-wide px-3 py-2 rounded-lg border border-line text-textmuted hover:text-textprimary transition-colors"
@@ -1059,6 +1076,10 @@ export default function BoardView({
       </div>
 
       {showLegend && <LegendModal onClose={() => setShowLegend(false)} isAdmin={isAdmin} />}
+
+      {showChanges && (
+        <ChangeLogModal onClose={() => setShowChanges(false)} onUndo={handleUndoChange} />
+      )}
 
       {weekModalStoreId && (() => {
         const s = STORES.find((st) => st.id === weekModalStoreId);

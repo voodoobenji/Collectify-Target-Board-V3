@@ -1,0 +1,398 @@
+[
+  {
+    "id": "BB001",
+    "name": "Atwater Village",
+    "region": "LA",
+    "regionLabel": "Los Angeles Area"
+  },
+  {
+    "id": "BB002",
+    "name": "Culver City/Washington",
+    "region": "LA",
+    "regionLabel": "Los Angeles Area"
+  },
+  {
+    "id": "BB003",
+    "name": "Culver City/Westfield Mall",
+    "region": "LA",
+    "regionLabel": "Los Angeles Area"
+  },
+  {
+    "id": "BB004",
+    "name": "Hawthorne",
+    "region": "LA",
+    "regionLabel": "Los Angeles Area"
+  },
+  {
+    "id": "BB005",
+    "name": "Montebello",
+    "region": "LA",
+    "regionLabel": "Los Angeles Area"
+  },
+  {
+    "id": "BB006",
+    "name": "Torrance",
+    "region": "LA",
+    "regionLabel": "Los Angeles Area"
+  },
+  {
+    "id": "BB007",
+    "name": "West Hollywood",
+    "region": "LA",
+    "regionLabel": "Los Angeles Area"
+  },
+  {
+    "id": "BB008",
+    "name": "West LA/Sawtelle",
+    "region": "LA",
+    "regionLabel": "Los Angeles Area"
+  },
+  {
+    "id": "BB009",
+    "name": "Cerritos",
+    "region": "SOUTHLA",
+    "regionLabel": "South of LA"
+  },
+  {
+    "id": "BB010",
+    "name": "Compton",
+    "region": "SOUTHLA",
+    "regionLabel": "South of LA"
+  },
+  {
+    "id": "BB011",
+    "name": "Downey",
+    "region": "SOUTHLA",
+    "regionLabel": "South of LA"
+  },
+  {
+    "id": "BB012",
+    "name": "Lakewood",
+    "region": "SOUTHLA",
+    "regionLabel": "South of LA"
+  },
+  {
+    "id": "BB013",
+    "name": "Signal Hill",
+    "region": "SOUTHLA",
+    "regionLabel": "South of LA"
+  },
+  {
+    "id": "BB014",
+    "name": "Burbank",
+    "region": "SFV",
+    "regionLabel": "SFV/805/AV"
+  },
+  {
+    "id": "BB015",
+    "name": "Goleta",
+    "region": "SFV",
+    "regionLabel": "SFV/805/AV"
+  },
+  {
+    "id": "BB016",
+    "name": "Northridge",
+    "region": "SFV",
+    "regionLabel": "SFV/805/AV"
+  },
+  {
+    "id": "BB017",
+    "name": "Oxnard",
+    "region": "SFV",
+    "regionLabel": "SFV/805/AV"
+  },
+  {
+    "id": "BB018",
+    "name": "Pacoima",
+    "region": "SFV",
+    "regionLabel": "SFV/805/AV"
+  },
+  {
+    "id": "BB019",
+    "name": "Palmdale",
+    "region": "SFV",
+    "regionLabel": "SFV/805/AV"
+  },
+  {
+    "id": "BB020",
+    "name": "Porter Ranch",
+    "region": "SFV",
+    "regionLabel": "SFV/805/AV"
+  },
+  {
+    "id": "BB021",
+    "name": "Santa Clarita",
+    "region": "SFV",
+    "regionLabel": "SFV/805/AV"
+  },
+  {
+    "id": "BB022",
+    "name": "Sherman Oaks",
+    "region": "SFV",
+    "regionLabel": "SFV/805/AV"
+  },
+  {
+    "id": "BB023",
+    "name": "Simi Valley",
+    "region": "SFV",
+    "regionLabel": "SFV/805/AV"
+  },
+  {
+    "id": "BB024",
+    "name": "Thousand Oaks",
+    "region": "SFV",
+    "regionLabel": "SFV/805/AV"
+  },
+  {
+    "id": "BB025",
+    "name": "Woodland Hills",
+    "region": "SFV",
+    "regionLabel": "SFV/805/AV"
+  },
+  {
+    "id": "BB026",
+    "name": "City of Industry",
+    "region": "SGVIE",
+    "regionLabel": "SGV/IE"
+  },
+  {
+    "id": "BB027",
+    "name": "Corona",
+    "region": "SGVIE",
+    "regionLabel": "SGV/IE"
+  },
+  {
+    "id": "BB028",
+    "name": "Glendora",
+    "region": "SGVIE",
+    "regionLabel": "SGV/IE"
+  },
+  {
+    "id": "BB029",
+    "name": "Pasadena",
+    "region": "SGVIE",
+    "regionLabel": "SGV/IE"
+  },
+  {
+    "id": "BB030",
+    "name": "Riverside/Tyler",
+    "region": "SGVIE",
+    "regionLabel": "SGV/IE"
+  },
+  {
+    "id": "BB031",
+    "name": "San Bernardino",
+    "region": "SGVIE",
+    "regionLabel": "SGV/IE"
+  },
+  {
+    "id": "BB032",
+    "name": "West Covina",
+    "region": "SGVIE",
+    "regionLabel": "SGV/IE"
+  },
+  {
+    "id": "BB033",
+    "name": "Beaumont",
+    "region": "HIGHDESERT",
+    "regionLabel": "High Desert"
+  },
+  {
+    "id": "BB034",
+    "name": "La Quinta",
+    "region": "HIGHDESERT",
+    "regionLabel": "High Desert"
+  },
+  {
+    "id": "BB035",
+    "name": "Menifee",
+    "region": "HIGHDESERT",
+    "regionLabel": "High Desert"
+  },
+  {
+    "id": "BB036",
+    "name": "Moreno Valley",
+    "region": "HIGHDESERT",
+    "regionLabel": "High Desert"
+  },
+  {
+    "id": "BB037",
+    "name": "Murrieta",
+    "region": "HIGHDESERT",
+    "regionLabel": "High Desert"
+  },
+  {
+    "id": "BB038",
+    "name": "Palm Desert",
+    "region": "HIGHDESERT",
+    "regionLabel": "High Desert"
+  },
+  {
+    "id": "BB039",
+    "name": "Victorville",
+    "region": "HIGHDESERT",
+    "regionLabel": "High Desert"
+  },
+  {
+    "id": "BB040",
+    "name": "Anaheim",
+    "region": "OC",
+    "regionLabel": "Orange County"
+  },
+  {
+    "id": "BB041",
+    "name": "Costa Mesa",
+    "region": "OC",
+    "regionLabel": "Orange County"
+  },
+  {
+    "id": "BB042",
+    "name": "Fullerton/Imperial",
+    "region": "OC",
+    "regionLabel": "Orange County"
+  },
+  {
+    "id": "BB043",
+    "name": "Irvine/Lake Forest",
+    "region": "OC",
+    "regionLabel": "Orange County"
+  },
+  {
+    "id": "BB044",
+    "name": "Mission Viejo",
+    "region": "OC",
+    "regionLabel": "Orange County"
+  },
+  {
+    "id": "BB045",
+    "name": "Orange/West Chapman",
+    "region": "OC",
+    "regionLabel": "Orange County"
+  },
+  {
+    "id": "BB046",
+    "name": "Tustin Marketplace",
+    "region": "OC",
+    "regionLabel": "Orange County"
+  },
+  {
+    "id": "BB047",
+    "name": "Westminster Mall",
+    "region": "OC",
+    "regionLabel": "Orange County"
+  },
+  {
+    "id": "BB048",
+    "name": "Yorba Linda",
+    "region": "OC",
+    "regionLabel": "Orange County"
+  },
+  {
+    "id": "BB049",
+    "name": "El Cajon",
+    "region": "SD",
+    "regionLabel": "San Diego"
+  },
+  {
+    "id": "BB050",
+    "name": "Encinitas Ranch",
+    "region": "SD",
+    "regionLabel": "San Diego"
+  },
+  {
+    "id": "BB051",
+    "name": "Mira Mesa",
+    "region": "SD",
+    "regionLabel": "San Diego"
+  },
+  {
+    "id": "BB052",
+    "name": "Mission Valley",
+    "region": "SD",
+    "regionLabel": "San Diego"
+  },
+  {
+    "id": "BB053",
+    "name": "Oceanside",
+    "region": "SD",
+    "regionLabel": "San Diego"
+  },
+  {
+    "id": "BB054",
+    "name": "San Marcos",
+    "region": "SD",
+    "regionLabel": "San Diego"
+  },
+  {
+    "id": "BB055",
+    "name": "Bakersfield",
+    "region": "CENTRALCA",
+    "regionLabel": "Central California"
+  },
+  {
+    "id": "BB056",
+    "name": "Clovis",
+    "region": "CENTRALCA",
+    "regionLabel": "Central California"
+  },
+  {
+    "id": "BB057",
+    "name": "Fresno",
+    "region": "CENTRALCA",
+    "regionLabel": "Central California"
+  },
+  {
+    "id": "BB058",
+    "name": "San Luis Obispo",
+    "region": "CENTRALCA",
+    "regionLabel": "Central California"
+  },
+  {
+    "id": "BB059",
+    "name": "Santa Maria",
+    "region": "CENTRALCA",
+    "regionLabel": "Central California"
+  },
+  {
+    "id": "BB060",
+    "name": "Visalia",
+    "region": "CENTRALCA",
+    "regionLabel": "Central California"
+  },
+  {
+    "id": "BB061",
+    "name": "Colma",
+    "region": "NORCAL",
+    "regionLabel": "Northern California"
+  },
+  {
+    "id": "BB062",
+    "name": "Merced",
+    "region": "NORCAL",
+    "regionLabel": "Northern California"
+  },
+  {
+    "id": "BB063",
+    "name": "Modesto",
+    "region": "NORCAL",
+    "regionLabel": "Northern California"
+  },
+  {
+    "id": "BB064",
+    "name": "San Carlos",
+    "region": "NORCAL",
+    "regionLabel": "Northern California"
+  },
+  {
+    "id": "BB065",
+    "name": "San Francisco/Harrison St",
+    "region": "NORCAL",
+    "regionLabel": "Northern California"
+  },
+  {
+    "id": "BB066",
+    "name": "Stockton",
+    "region": "NORCAL",
+    "regionLabel": "Northern California"
+  }
+]

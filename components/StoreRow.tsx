@@ -234,6 +234,7 @@ export default function StoreRow({
   const chance = entry.chance;
   const adminNotes = cleanGuideNote(mergeAdminNotes(entry));
   const [expanded, setExpanded] = useState(false);
+  const [quickEdit, setQuickEdit] = useState(false);
   const [flagInputOpen, setFlagInputOpen] = useState(false);
   const [flagReasonDraft, setFlagReasonDraft] = useState("");
   const [reportOpen, setReportOpen] = useState(false);
@@ -767,6 +768,56 @@ export default function StoreRow({
             {statusLabels.hit}
             {entry.status === "hit" && entry.soldCount > 1 ? ` (${entry.soldCount}x)` : ""}
           </button>
+        </div>
+      )}
+      {isAdmin && (
+        <div className="mt-2">
+          <button
+            onClick={() => setQuickEdit((v) => !v)}
+            className="text-[10px] font-mono uppercase tracking-wide text-textmuted hover:text-gold transition-colors"
+          >
+            {quickEdit ? "▾ Close quick edit" : "✎ Quick edit"}
+          </button>
+          {quickEdit && (
+            <div className="mt-1.5 border border-line rounded px-2 py-2 flex flex-col gap-2">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[9px] font-mono uppercase text-textmuted w-14 shrink-0">Chance</span>
+                {(["High", "Medium", "Low"] as const).map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => onPatch(store.id, { chance: chance === c ? null : (c as Chance) })}
+                    className={`text-[10px] font-mono uppercase px-2 py-1 rounded border flex-1 transition-colors ${
+                      chance === c ? chanceStyles[c] : "border-line text-textmuted"
+                    }`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+              <div>
+                <div className="flex flex-wrap gap-1 mb-1">
+                  {WINDOW_PRESETS.map(([val, lbl]) => (
+                    <button
+                      key={val}
+                      onClick={() => onPatch(store.id, { window: val })}
+                      className={`text-[9px] font-mono uppercase px-1.5 py-0.5 rounded border transition-colors ${
+                        entry.window === val ? "border-gold text-gold bg-gold/10" : "border-line text-textmuted"
+                      }`}
+                    >
+                      {lbl}
+                    </button>
+                  ))}
+                </div>
+                <DebouncedInput
+                  type="text"
+                  value={entry.window}
+                  onCommit={(v) => onPatch(store.id, { window: v })}
+                  placeholder="Window, e.g. 7-9AM"
+                  className="w-full bg-panel2 border border-line rounded px-2 py-1 text-xs font-mono placeholder:text-textmuted"
+                />
+              </div>
+            </div>
+          )}
         </div>
       )}
       {isAdmin && reports.length > 0 && (

@@ -94,6 +94,20 @@ export async function patchEntry(
 ): Promise<Board> {
   const board = await getBoard();
   const current = board.entries[storeId] ?? { ...EMPTY_ENTRY };
+
+  const tracked = [
+    "chance", "window", "reason", "sourceType", "stockLocation",
+    "itemLimit", "multiSeller", "confirmedCount", "status", "flagged",
+  ];
+  const cur = current as unknown as Record<string, unknown>;
+  const pat = patch as unknown as Record<string, unknown>;
+  const changes: { field: string; from: unknown; to: unknown }[] = [];
+  for (const f of tracked) {
+    if (f in pat && JSON.stringify(pat[f]) !== JSON.stringify(cur[f])) {
+      changes.push({ field: f, from: cur[f] ?? null, to: pat[f] ?? null });
+    }
+  }
+
   board.entries[storeId] = {
     ...current,
     ...patch,
@@ -102,6 +116,18 @@ export async function patchEntry(
   };
   board.version += 1;
   await kv.set(BOARD_KEY, board);
+
+  if (changes.length) {
+    const store = STORES.find((s) => s.id === storeId);
+    await logChange({
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      storeId,
+      storeName: store?.name ?? storeId,
+      changes,
+      by: updatedBy,
+      at: new Date().toISOString(),
+    });
+  }
   return board;
 }
 
@@ -287,6 +313,36 @@ export async function applyStockDefaults(
     await kv.set(templateKey(wd), tpl);
   }
   return board;
+}
+
+// ---------------------------------------------------------------------------
+// Change log: records meaningful admin edits so they can be reviewed / undone.
+// ---------------------------------------------------------------------------
+export interface ChangeEvent {
+  id: string;
+  storeId: string;
+  storeName: string;
+  changes: { field: string; from: unknown; to: unknown }[];
+  by: string;
+  at: string;
+}
+
+export async function logChange(e: ChangeEvent): Promise<void> {
+  try {
+    await kv.lpush("changes:log", JSON.stringify(e));
+    await kv.ltrim("changes:log", 0, 299);
+  } catch {
+    // never break an edit over logging
+  }
+}
+
+export async function getChangeLog(limit = 100): Promise<ChangeEvent[]> {
+  try {
+    const raw = await kv.lrange<string | ChangeEvent>("changes:log", 0, limit - 1);
+    return (raw ?? []).map((r) => (typeof r === "string" ? (JSON.parse(r) as ChangeEvent) : r));
+  } catch {
+    return [];
+  }
 }
 
 // ---------------------------------------------------------------------------
