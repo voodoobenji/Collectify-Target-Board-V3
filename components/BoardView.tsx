@@ -197,6 +197,7 @@ export default function BoardView({
   }, []);
   const [rightNowOnly, setRightNowOnly] = useState(false);
   const [sortMode, setSortMode] = useState<SortMode>("priority");
+  const [sortOpen, setSortOpen] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
@@ -813,8 +814,20 @@ export default function BoardView({
       />
 
       <div className="mb-4">
-        <div className="text-sm font-mono uppercase tracking-[0.2em] text-gold mb-2">Sort By</div>
-        <div className="flex items-center gap-2">
+        <button
+          onClick={() => setSortOpen((v) => !v)}
+          className="w-full flex items-center justify-between"
+        >
+          <span className="text-sm font-mono uppercase tracking-[0.2em] text-gold">
+            Sort By{" "}
+            <span className="text-textmuted normal-case tracking-normal">
+              · {sortMode === "time" ? "Time" : sortMode === "nearMe" ? "Near Me" : "Priority"}
+            </span>
+          </span>
+          <span className="text-textmuted text-xs">{sortOpen ? "▾" : "▸"}</span>
+        </button>
+        {sortOpen && (
+        <div className="flex items-center gap-2 mt-2">
           <button
             onClick={() => setSortMode("priority")}
             className={`flex-1 text-[11px] sm:text-xs font-mono uppercase tracking-wide px-2.5 py-1.5 sm:py-2 rounded-full border transition-colors ${
@@ -848,6 +861,7 @@ export default function BoardView({
           </button>
         </div>
         {locationError && <p className="text-high text-[11px] mt-1.5">{locationError}</p>}
+        )}
       </div>
 
       <Filters
