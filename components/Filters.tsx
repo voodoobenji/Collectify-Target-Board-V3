@@ -33,8 +33,8 @@ export default function Filters({
   onStatusFilter,
   showStatusFilter = true,
 }: Props) {
-  const [priorityOpen, setPriorityOpen] = useState(false);
-  const [statusOpen, setStatusOpen] = useState(false);
+  const [priorityOpen, setPriorityOpen] = useState(true);
+  const [statusOpen, setStatusOpen] = useState(true);
 
   const chanceLabel = chanceOptions.find((o) => o.value === chanceFilter)?.label ?? "All";
   const statusLabel = statusOptions.find((o) => o.value === statusFilter)?.label ?? "All";

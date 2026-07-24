@@ -197,7 +197,7 @@ export default function BoardView({
   }, []);
   const [rightNowOnly, setRightNowOnly] = useState(false);
   const [sortMode, setSortMode] = useState<SortMode>("priority");
-  const [sortOpen, setSortOpen] = useState(false);
+  const [sortOpen, setSortOpen] = useState(true);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
