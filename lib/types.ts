@@ -81,7 +81,7 @@ export const EMPTY_ENTRY: BoardEntry = {
   updatedBy: null,
 };
 
-export const WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday"] as const;
+export const WEEKDAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] as const;
 export type Weekday = (typeof WEEKDAYS)[number];
 
 export interface TemplateEntry {
