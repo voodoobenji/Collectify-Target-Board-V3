@@ -21,6 +21,8 @@ const DAY_LABELS: Record<string, string> = {
   wednesday: "Wednesday",
   thursday: "Thursday",
   friday: "Friday",
+  saturday: "Saturday",
+  sunday: "Sunday",
 };
 
 const chanceStyles: Record<string, string> = {

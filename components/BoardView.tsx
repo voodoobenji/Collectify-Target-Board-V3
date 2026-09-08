@@ -40,6 +40,8 @@ const DAY_LABELS: Record<string, string> = {
   wednesday: "Wednesday",
   thursday: "Thursday",
   friday: "Friday",
+  saturday: "Saturday",
+  sunday: "Sunday",
 };
 
 const REGION_SHORT: Record<string, string> = {
