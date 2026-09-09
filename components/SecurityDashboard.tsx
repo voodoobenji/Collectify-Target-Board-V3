@@ -18,6 +18,20 @@ interface PresenceRow {
   ip?: string;
   at: string;
 }
+interface DeviceAggregate {
+  discordId: string;
+  username: string;
+  devices: { deviceId: string; ua?: string; city?: string; region?: string; firstSeen: string; lastSeen: string }[];
+  cities: string[];
+  lastSeen: string;
+}
+interface ReferralEdge {
+  referredId: string;
+  referredName: string;
+  referrerId: string;
+  referrerName: string;
+  at: string;
+}
 
 function timeAgo(iso: string): string {
   const mins = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
@@ -33,6 +47,8 @@ const ACTIVE_MS = 5 * 60 * 1000;
 export default function SecurityDashboard() {
   const [log, setLog] = useState<SecurityEvent[]>([]);
   const [presence, setPresence] = useState<PresenceRow[]>([]);
+  const [devices, setDevices] = useState<DeviceAggregate[]>([]);
+  const [referrals, setReferrals] = useState<ReferralEdge[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -45,6 +61,8 @@ export default function SecurityDashboard() {
         if (cancelled) return;
         setLog(data.log ?? []);
         setPresence(data.presence ?? []);
+        setDevices(data.devices ?? []);
+        setReferrals(data.referrals ?? []);
       } catch {
         // ignore
       } finally {
@@ -65,6 +83,9 @@ export default function SecurityDashboard() {
   const logins = log.filter((e) => e.type === "login").slice(0, 60);
   const denied = log.filter((e) => e.type === "denied").slice(0, 60);
   const scrapes = log.filter((e) => e.type === "scrape").slice(0, 60);
+  const sharingSuspects = devices.filter(
+    (d) => (d.devices?.length ?? 0) > 1 || (d.cities?.length ?? 0) > 1
+  );
 
   function Name({ name, admin }: { name: string; admin?: boolean }) {
     return (
@@ -88,6 +109,58 @@ export default function SecurityDashboard() {
         <p className="text-textmuted text-sm">Loading…</p>
       ) : (
         <div className="space-y-8">
+          <section>
+            <h2 className="font-mono text-sm uppercase tracking-[0.2em] text-gold mb-3">
+              Possible account sharing ({sharingSuspects.length})
+            </h2>
+            {sharingSuspects.length === 0 ? (
+              <p className="text-textmuted text-sm">
+                Nothing flagged — every account is on a single device and area.
+              </p>
+            ) : (
+              <div className="space-y-1.5">
+                {sharingSuspects.map((d) => (
+                  <div key={d.discordId} className="text-sm bg-panel border border-line rounded px-3 py-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <Name name={d.username} />
+                      <span className="font-mono text-xs text-high">
+                        {d.devices?.length ?? 0} device{(d.devices?.length ?? 0) === 1 ? "" : "s"} · {d.cities?.length ?? 0} area{(d.cities?.length ?? 0) === 1 ? "" : "s"}
+                      </span>
+                    </div>
+                    <div className="font-mono text-[11px] text-textmuted mt-1">
+                      {d.cities?.length ? d.cities.join(", ") : "unknown area"} · last seen {timeAgo(d.lastSeen)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          <section>
+            <h2 className="font-mono text-sm uppercase tracking-[0.2em] text-gold mb-3">
+              Shared-link arrivals ({referrals.length})
+            </h2>
+            {referrals.length === 0 ? (
+              <p className="text-textmuted text-sm">No tagged shares detected yet.</p>
+            ) : (
+              <div className="space-y-1.5">
+                {referrals.map((r, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between gap-2 text-sm bg-panel border border-line rounded px-3 py-2"
+                  >
+                    <span>
+                      <span className="text-textprimary">{r.referredName}</span>{" "}
+                      <span className="text-textmuted">arrived via</span>{" "}
+                      <span className="text-gold">{r.referrerName}</span>
+                    </span>
+                    <span className="font-mono text-xs text-textmuted">{timeAgo(r.at)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
           <section>
             <div className="flex items-center gap-2 mb-3">
               <span className="h-2 w-2 rounded-full bg-live pulse" />

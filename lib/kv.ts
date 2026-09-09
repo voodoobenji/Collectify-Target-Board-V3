@@ -364,6 +364,35 @@ export interface PresenceRow {
   username: string;
   isAdmin: boolean;
   ip?: string;
+  city?: string;
+  region?: string;
+  deviceId?: string;
+  at: string;
+}
+
+// Per-account device/location history, for spotting shared logins.
+export interface DeviceSighting {
+  deviceId: string;
+  ua?: string;
+  city?: string;
+  region?: string;
+  firstSeen: string;
+  lastSeen: string;
+}
+export interface DeviceAggregate {
+  discordId: string;
+  username: string;
+  devices: DeviceSighting[];
+  cities: string[];
+  lastSeen: string;
+}
+
+// A "who shared the link to whom" edge, captured covertly via the referral tag.
+export interface ReferralEdge {
+  referredId: string;
+  referredName: string;
+  referrerId: string;
+  referrerName: string;
   at: string;
 }
 
@@ -387,13 +416,109 @@ export async function getSecurityLog(limit = 250): Promise<SecurityEvent[]> {
 
 export async function recordPresence(
   discordId: string,
-  data: { username: string; isAdmin: boolean; ip?: string }
+  data: { username: string; isAdmin: boolean; ip?: string; city?: string; region?: string; deviceId?: string }
 ): Promise<void> {
   try {
     const row: PresenceRow = { discordId, ...data, at: new Date().toISOString() };
     await kv.hset("security:presence", { [discordId]: JSON.stringify(row) });
   } catch {
     // ignore
+  }
+}
+
+// Record one device/location sighting for an account, merged into its history.
+export async function recordDeviceSighting(
+  discordId: string,
+  username: string,
+  info: { deviceId?: string; ua?: string; city?: string; region?: string }
+): Promise<void> {
+  if (!info.deviceId) return;
+  try {
+    const now = new Date().toISOString();
+    const raw = await kv.hget<string | DeviceAggregate>("security:devices", discordId);
+    const agg: DeviceAggregate = raw
+      ? (typeof raw === "string" ? JSON.parse(raw) : raw)
+      : { discordId, username, devices: [], cities: [], lastSeen: now };
+    agg.username = username;
+    agg.lastSeen = now;
+    let dev = agg.devices.find((d) => d.deviceId === info.deviceId);
+    if (!dev) {
+      agg.devices.push({ deviceId: info.deviceId, ua: info.ua, city: info.city, region: info.region, firstSeen: now, lastSeen: now });
+    } else {
+      dev.lastSeen = now;
+      if (info.ua) dev.ua = info.ua;
+      if (info.city) dev.city = info.city;
+      if (info.region) dev.region = info.region;
+    }
+    if (info.city && !agg.cities.includes(info.city)) agg.cities.push(info.city);
+    agg.devices = agg.devices.slice(-25);
+    await kv.hset("security:devices", { [discordId]: JSON.stringify(agg) });
+  } catch {
+    // ignore
+  }
+}
+
+export async function getDeviceStats(): Promise<DeviceAggregate[]> {
+  try {
+    const all = await kv.hgetall<Record<string, string | DeviceAggregate>>("security:devices");
+    if (!all) return [];
+    return Object.values(all)
+      .map((v) => (typeof v === "string" ? (JSON.parse(v) as DeviceAggregate) : v))
+      .sort((a, b) => (b.devices.length + b.cities.length) - (a.devices.length + a.cities.length));
+  } catch {
+    return [];
+  }
+}
+
+// Referral tag: an opaque per-user code derived from the discord id.
+function refHash(id: string): string {
+  let h = 2166136261 >>> 0;
+  const s = id + "cfy-ref-v1";
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  return h.toString(36).padStart(6, "0").slice(0, 6);
+}
+
+export async function refcodeFor(discordId: string, username: string): Promise<string> {
+  const code = refHash(discordId);
+  try {
+    await kv.set(`refcode:${code}`, JSON.stringify({ id: discordId, name: username }));
+  } catch {
+    // ignore
+  }
+  return code;
+}
+
+export async function resolveRefcode(code: string): Promise<{ id: string; name: string } | null> {
+  try {
+    const raw = await kv.get<string | { id: string; name: string }>(`refcode:${code.toLowerCase()}`);
+    if (!raw) return null;
+    return typeof raw === "string" ? JSON.parse(raw) : raw;
+  } catch {
+    return null;
+  }
+}
+
+export async function recordReferral(edge: ReferralEdge): Promise<void> {
+  try {
+    const done = await kv.get<string>(`refdone:${edge.referredId}`);
+    if (done) return; // only attribute the first arrival per member
+    await kv.set(`refdone:${edge.referredId}`, edge.referrerId);
+    await kv.lpush("security:referrals", JSON.stringify(edge));
+    await kv.ltrim("security:referrals", 0, 499);
+  } catch {
+    // ignore
+  }
+}
+
+export async function getReferrals(limit = 250): Promise<ReferralEdge[]> {
+  try {
+    const raw = await kv.lrange<string | ReferralEdge>("security:referrals", 0, limit - 1);
+    return (raw ?? []).map((r) => (typeof r === "string" ? (JSON.parse(r) as ReferralEdge) : r));
+  } catch {
+    return [];
   }
 }
 

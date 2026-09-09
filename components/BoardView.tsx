@@ -284,9 +284,47 @@ export default function BoardView({
   // Presence heartbeat so admins can see who's currently active.
   // Skips while the tab is hidden to avoid pointless traffic from idle tabs.
   useEffect(() => {
+    let deviceId = "";
+    let ref: string | null = null;
+    try {
+      deviceId = localStorage.getItem("cfy_did") || "";
+      if (!deviceId) {
+        deviceId =
+          (typeof crypto !== "undefined" && crypto.randomUUID
+            ? crypto.randomUUID()
+            : String(Math.random()).slice(2)) + "";
+        localStorage.setItem("cfy_did", deviceId);
+      }
+      const incoming = new URL(window.location.href).searchParams.get("r");
+      if (incoming && !localStorage.getItem("cfy_ref_in")) {
+        localStorage.setItem("cfy_ref_in", incoming);
+      }
+      ref = incoming || localStorage.getItem("cfy_ref_in");
+    } catch {
+      // localStorage / URL unavailable - fall through with defaults
+    }
     const ping = () => {
       if (typeof document !== "undefined" && document.hidden) return;
-      fetch("/api/presence", { method: "POST" }).catch(() => {});
+      fetch("/api/presence", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ deviceId, ref }),
+      })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => {
+          try {
+            if (d && d.refcode) {
+              const u = new URL(window.location.href);
+              if (u.searchParams.get("r") !== d.refcode) {
+                u.searchParams.set("r", d.refcode);
+                window.history.replaceState({}, "", u.toString());
+              }
+            }
+          } catch {
+            // ignore
+          }
+        })
+        .catch(() => {});
     };
     ping();
     const id = setInterval(ping, 60000);
