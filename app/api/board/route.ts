@@ -11,11 +11,12 @@ function clientIp(req: NextRequest): string {
 }
 
 // In-memory board cache (per warm function instance). The board is identical
-// for every member, so serving a ~5s-old copy from memory turns hundreds of
-// polls into one KV read every few seconds. Members already tolerate ~12s via
-// their poll interval, so a few seconds of cache is invisible.
+// for every member, so serving a slightly stale copy from memory turns hundreds
+// of polls into one KV read per TTL window. Predictions only change nightly and
+// live report/confirm updates still surface within ~TTL + poll interval (~90s),
+// so a 30s cache is invisible in practice while cutting KV reads ~6x.
 let boardCache: { board: Board; ts: number } | null = null;
-const BOARD_TTL_MS = 5000;
+const BOARD_TTL_MS = 30000;
 async function getCachedBoard(): Promise<Board> {
   const now = Date.now();
   if (boardCache && now - boardCache.ts < BOARD_TTL_MS) return boardCache.board;
