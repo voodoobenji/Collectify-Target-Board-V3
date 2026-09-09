@@ -327,7 +327,9 @@ export default function BoardView({
         .catch(() => {});
     };
     ping();
-    const id = setInterval(ping, 60000);
+    // 150s heartbeat: "Active now" uses a 5-min window, so this stays accurate
+    // while cutting presence writes ~60% vs a 60s beat.
+    const id = setInterval(ping, 150000);
     return () => clearInterval(id);
   }, []);
 

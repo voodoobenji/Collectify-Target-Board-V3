@@ -426,6 +426,14 @@ export async function recordPresence(
   }
 }
 
+// Per-instance throttle: once we've seen an account's device+city recently,
+// its heartbeat is a no-op (no read, no write) until either something new
+// shows up or the refresh window elapses. Sharing detection only cares about
+// *new* devices/areas, and "Active now" already carries the live signal, so a
+// slightly stale lastSeen here is fine.
+const deviceSeen = new Map<string, { at: number; devices: Set<string>; cities: Set<string> }>();
+const DEVICE_REFRESH_MS = 10 * 60 * 1000;
+
 // Record one device/location sighting for an account, merged into its history.
 export async function recordDeviceSighting(
   discordId: string,
@@ -433,6 +441,14 @@ export async function recordDeviceSighting(
   info: { deviceId?: string; ua?: string; city?: string; region?: string }
 ): Promise<void> {
   if (!info.deviceId) return;
+
+  const seen = deviceSeen.get(discordId);
+  const nowMs = Date.now();
+  const knownDevice = seen?.devices.has(info.deviceId) ?? false;
+  const knownCity = !info.city || (seen?.cities.has(info.city) ?? false);
+  const fresh = seen ? nowMs - seen.at < DEVICE_REFRESH_MS : false;
+  if (seen && knownDevice && knownCity && fresh) return; // nothing new, skip KV
+
   try {
     const now = new Date().toISOString();
     const raw = await kv.hget<string | DeviceAggregate>("security:devices", discordId);
@@ -453,6 +469,11 @@ export async function recordDeviceSighting(
     if (info.city && !agg.cities.includes(info.city)) agg.cities.push(info.city);
     agg.devices = agg.devices.slice(-25);
     await kv.hset("security:devices", { [discordId]: JSON.stringify(agg) });
+    deviceSeen.set(discordId, {
+      at: nowMs,
+      devices: new Set(agg.devices.map((d) => d.deviceId)),
+      cities: new Set(agg.cities),
+    });
   } catch {
     // ignore
   }
@@ -481,10 +502,16 @@ function refHash(id: string): string {
   return h.toString(36).padStart(6, "0").slice(0, 6);
 }
 
+// The refcode is a deterministic hash of the discord id, so the KV mapping
+// never changes. Remember which ids we've already stored on this warm instance
+// so a member's every-few-minutes heartbeat costs 0 writes after the first.
+const refcodeWritten = new Set<string>();
 export async function refcodeFor(discordId: string, username: string): Promise<string> {
   const code = refHash(discordId);
+  if (refcodeWritten.has(discordId)) return code;
   try {
     await kv.set(`refcode:${code}`, JSON.stringify({ id: discordId, name: username }));
+    refcodeWritten.add(discordId);
   } catch {
     // ignore
   }
