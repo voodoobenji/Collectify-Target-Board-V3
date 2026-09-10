@@ -61,12 +61,12 @@ function analyzeMapNote(
   const mentioned = days.filter((d) => lower.includes(d));
   if (mentioned.length && !mentioned.includes(todayWeekday)) {
     conflicts.push(
-      `Map note points to ${mentioned.map((d) => DAY_LABELS[d]).join("/")}, but you're viewing ${DAY_LABELS[todayWeekday]}.`
+      `A note here points to ${mentioned.map((d) => DAY_LABELS[d]).join("/")}; you're viewing ${DAY_LABELS[todayWeekday]}.`
     );
   }
   const priorityWord = /\bhigh\b/.test(lower) ? "High" : /\bmedium\b/.test(lower) ? "Medium" : /\blow\b/.test(lower) ? "Low" : null;
   if (priorityWord && chance && priorityWord !== chance) {
-    conflicts.push(`Map note reads "${priorityWord}", board says "${chance}".`);
+    conflicts.push(`A note here reads "${priorityWord}"; board shows "${chance}".`);
   }
   return conflicts;
 }
@@ -371,7 +371,7 @@ export default function StoreWeekModal({
                     analyzeMapNote(todayEntry.externalGuide.text, todayWeekday, info.chance).length > 0 && (
                       <div className="mb-2 px-2 py-2 rounded border border-medium/50 bg-medium/5">
                         <div className="text-[10px] font-mono uppercase text-medium mb-1">
-                          &#9888; Map note may be stale
+                          &#9888; May need more data to be fully accurate
                         </div>
                         {analyzeMapNote(todayEntry.externalGuide.text, todayWeekday, info.chance).map(
                           (c, i) => (
@@ -381,7 +381,7 @@ export default function StoreWeekModal({
                           )
                         )}
                         <p className="text-[9px] text-textmuted mt-1">
-                          The board is the source of truth &mdash; the map doesn&apos;t override it.
+                          Signals disagree for this store &mdash; log a few outcomes to firm up its pattern.
                         </p>
                       </div>
                     )}
@@ -519,33 +519,6 @@ export default function StoreWeekModal({
                         <span>&#128257; Known Multi-Seller</span>
                         <span>{info.multiSeller ? "ON" : "off"}</span>
                       </button>
-                      <div className="flex items-center justify-between gap-2 mb-1 px-2 py-1.5 rounded border border-line">
-                        <span className="text-[10px] font-mono uppercase text-textmuted">
-                          &#10003; Confirmed Hits
-                        </span>
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            onClick={() =>
-                              patchDay(day, { confirmedCount: Math.max(0, (info.confirmedCount ?? 0) - 1) })
-                            }
-                            className="h-6 w-6 rounded border border-line text-textmuted hover:text-high hover:border-high text-xs font-mono"
-                          >
-                            &minus;
-                          </button>
-                          <span className="w-6 text-center text-xs font-mono text-gold">
-                            {info.confirmedCount ?? 0}
-                          </span>
-                          <button
-                            onClick={() => patchDay(day, { confirmedCount: (info.confirmedCount ?? 0) + 1 })}
-                            className="h-6 w-6 rounded border border-line text-textmuted hover:text-live hover:border-live text-xs font-mono"
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
-                      <p className="text-[9px] text-textmuted mb-2">
-                        Auto-mined from chat, sometimes miscounts. Adjust freely.
-                      </p>
                       <div className="text-[10px] uppercase tracking-wide text-textmuted mb-1">Admin Notes</div>
                       <DebouncedTextarea
                         value={adminNotes}
