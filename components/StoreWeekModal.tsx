@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import type { StoreRef } from "@/lib/stores";
-import type { BoardEntry, Chance, SourceType, StockLocation } from "@/lib/types";
+import type { BoardEntry, Chance, SourceType, StockLocation, Status, TrackRecord } from "@/lib/types";
 import { WEEKDAYS } from "@/lib/types";
 import { DebouncedInput, DebouncedTextarea } from "./StoreRow";
 import { appleMapsUrl, googleMapsUrl } from "@/lib/maps";
 import { cleanGuideNote } from "@/lib/cleanNote";
+import TrackRecordBadge from "./TrackRecordBadge";
 
 interface LogEntry {
   date: string;
@@ -44,6 +45,31 @@ const stockLocationLabels: Record<string, string> = {
 };
 
 const WINDOW_PRESETS = ["Opening", "7-9AM", "8-10AM", "11-1PM", "2-4PM", "5-7PM", "8-Close"];
+
+// Light heuristic: does a map/guide note contradict the board? Pulls any weekday
+// or priority words out of the free text and compares to what the board says for
+// today. We never auto-apply the map - we just flag the conflict so the board
+// stays the source of truth.
+function analyzeMapNote(
+  text: string,
+  todayWeekday: string,
+  chance: Chance
+): string[] {
+  const conflicts: string[] = [];
+  const lower = text.toLowerCase();
+  const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+  const mentioned = days.filter((d) => lower.includes(d));
+  if (mentioned.length && !mentioned.includes(todayWeekday)) {
+    conflicts.push(
+      `Map note points to ${mentioned.map((d) => DAY_LABELS[d]).join("/")}, but you're viewing ${DAY_LABELS[todayWeekday]}.`
+    );
+  }
+  const priorityWord = /\bhigh\b/.test(lower) ? "High" : /\bmedium\b/.test(lower) ? "Medium" : /\blow\b/.test(lower) ? "Low" : null;
+  if (priorityWord && chance && priorityWord !== chance) {
+    conflicts.push(`Map note reads "${priorityWord}", board says "${chance}".`);
+  }
+  return conflicts;
+}
 
 function mergeAdminNotes(info: { vendorNotes: string; randomNotes: string; reason: string }): string {
   return [info.vendorNotes, info.randomNotes, info.reason]
@@ -85,6 +111,9 @@ export default function StoreWeekModal({
   onClose,
   canEdit = false,
   onPatchToday,
+  trackByDay = {},
+  todayStatus = "pending",
+  onLogOutcome,
 }: {
   store: StoreRef;
   todayWeekday: string;
@@ -92,7 +121,19 @@ export default function StoreWeekModal({
   onClose: () => void;
   canEdit?: boolean;
   onPatchToday?: (storeId: string, patch: Partial<BoardEntry>) => void;
+  trackByDay?: Record<string, TrackRecord>;
+  todayStatus?: Status;
+  onLogOutcome?: (storeId: string, result: "hit" | "no_drop" | null) => void;
 }) {
+  // Optimistic local mirror of today's logged status so the buttons react
+  // instantly while the request round-trips.
+  const [localStatus, setLocalStatus] = useState<Status>(todayStatus);
+  useEffect(() => setLocalStatus(todayStatus), [todayStatus]);
+
+  function logOutcome(result: "hit" | "no_drop" | null) {
+    setLocalStatus(result === "hit" ? "hit" : result === "no_drop" ? "no_hit" : "pending");
+    onLogOutcome?.(store.id, result);
+  }
   const [data, setData] = useState<Record<string, DayInfo | null>>({});
   const [loading, setLoading] = useState(true);
   const [expandedLog, setExpandedLog] = useState<string | null>(null);
@@ -265,6 +306,85 @@ export default function StoreWeekModal({
                       )}
                     </div>
                   </div>
+
+                  {(trackByDay[day]?.total ?? 0) > 0 && (
+                    <div className="mb-2">
+                      <TrackRecordBadge record={trackByDay[day]} />
+                    </div>
+                  )}
+
+                  {canEdit &&
+                    trackByDay[day]?.suggestedChance &&
+                    trackByDay[day]!.suggestedChance !== info.chance && (
+                      <button
+                        onClick={() => patchDay(day, { chance: trackByDay[day]!.suggestedChance })}
+                        className="w-full mb-2 text-[10px] font-mono uppercase tracking-wide px-2 py-1.5 rounded border border-gold text-gold bg-gold/10 hover:bg-gold/20 transition-colors"
+                      >
+                        &#9889; Track record suggests {trackByDay[day]!.suggestedChance} &mdash; tap to apply
+                        {info.chance ? ` (now ${info.chance})` : ""}
+                      </button>
+                    )}
+
+                  {canEdit && isToday && (
+                    <div className="mb-2 px-2 py-2 rounded border border-line">
+                      <div className="text-[10px] font-mono uppercase text-textmuted mb-1.5">
+                        Log today&apos;s outcome
+                      </div>
+                      <div className="flex gap-1.5">
+                        <button
+                          onClick={() => logOutcome("hit")}
+                          className={`flex-1 text-[11px] font-mono uppercase px-2 py-1.5 rounded border transition-colors ${
+                            localStatus === "hit"
+                              ? "border-live text-live bg-live/10"
+                              : "border-line text-textmuted hover:text-live"
+                          }`}
+                        >
+                          &#10003; Dropped
+                        </button>
+                        <button
+                          onClick={() => logOutcome("no_drop")}
+                          className={`flex-1 text-[11px] font-mono uppercase px-2 py-1.5 rounded border transition-colors ${
+                            localStatus === "no_hit"
+                              ? "border-high text-high bg-high/10"
+                              : "border-line text-textmuted hover:text-high"
+                          }`}
+                        >
+                          &#10005; No drop
+                        </button>
+                        {localStatus !== "pending" && (
+                          <button
+                            onClick={() => logOutcome(null)}
+                            className="text-[11px] font-mono uppercase px-2 py-1.5 rounded border border-line text-textmuted hover:text-textprimary"
+                          >
+                            Clear
+                          </button>
+                        )}
+                      </div>
+                      <p className="text-[9px] text-textmuted mt-1">
+                        Builds the track record &amp; suggestions. Live alerts stay in Discord.
+                      </p>
+                    </div>
+                  )}
+
+                  {isToday &&
+                    todayEntry.externalGuide &&
+                    analyzeMapNote(todayEntry.externalGuide.text, todayWeekday, info.chance).length > 0 && (
+                      <div className="mb-2 px-2 py-2 rounded border border-medium/50 bg-medium/5">
+                        <div className="text-[10px] font-mono uppercase text-medium mb-1">
+                          &#9888; Map note may be stale
+                        </div>
+                        {analyzeMapNote(todayEntry.externalGuide.text, todayWeekday, info.chance).map(
+                          (c, i) => (
+                            <p key={i} className="text-[11px] text-textmuted">
+                              {c}
+                            </p>
+                          )
+                        )}
+                        <p className="text-[9px] text-textmuted mt-1">
+                          The board is the source of truth &mdash; the map doesn&apos;t override it.
+                        </p>
+                      </div>
+                    )}
 
                   {canEdit ? (
                     <>

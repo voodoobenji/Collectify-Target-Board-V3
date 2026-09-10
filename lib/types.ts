@@ -1,5 +1,28 @@
 export type Chance = "High" | "Medium" | "Low" | null;
 export type Status = "pending" | "hit" | "no_hit";
+
+// Outcome logging: what actually happened at a store on a given day. This is the
+// historical record that sharpens predictions over time (Discord handles the
+// live feed; the board is the memory). "hit" = it dropped, "no_drop" = checked,
+// nothing came.
+export type Outcome = "hit" | "no_drop";
+
+export interface OutcomeRecord {
+  date: string; // LA date string (YYYY-MM-DD)
+  weekday: string;
+  result: Outcome;
+  by: string;
+}
+
+// A store's track record for one weekday, computed from its outcome log.
+export interface TrackRecord {
+  weekday: string;
+  hits: number;
+  total: number;
+  recent: Outcome[]; // most-recent-first, up to 8
+  last: { date: string; result: Outcome } | null;
+  suggestedChance: Chance; // null when there isn't enough data to suggest
+}
 export type SourceType = "vendor" | "employee_push" | "both" | null;
 export type StockLocation = "tcg_section" | "guest_services" | "both" | null;
 

@@ -10,9 +10,14 @@ import {
   StoreReport,
   Weekday,
   WEEKDAYS,
+  Outcome,
+  OutcomeRecord,
+  TrackRecord,
+  Chance,
 } from "./types";
 
 const BOARD_KEY = "board";
+const OUTCOMES_KEY = "outcomes"; // hash: field = storeId -> OutcomeRecord[] (JSON), oldest first, capped
 
 function todayStr(): string {
   return new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
@@ -287,6 +292,89 @@ export async function clearReports(storeId: string, reportId?: string): Promise<
   board.version += 1;
   await kv.set(BOARD_KEY, board);
   return board;
+}
+
+// ---- Outcome logging + track records ------------------------------------
+// Admins log what actually happened (hit / no drop) per store per day. That log
+// builds each store's per-weekday track record, which both shows credibility on
+// the board and drives a suggested chance. Live "go now" alerts stay on Discord.
+
+const OUTCOME_CAP = 60;
+
+// Turn a store's raw outcome log into a track record for one weekday.
+export function computeTrackRecord(records: OutcomeRecord[], weekday: string): TrackRecord {
+  const forDay = records
+    .filter((r) => r.weekday === weekday)
+    .sort((a, b) => (a.date < b.date ? 1 : -1)); // most-recent-first
+  const recentWindow = forDay.slice(0, 8);
+  const hits = recentWindow.filter((r) => r.result === "hit").length;
+  const total = recentWindow.length;
+
+  let suggestedChance: Chance = null;
+  if (total >= 3) {
+    const rate = hits / total;
+    suggestedChance = rate >= 0.6 ? "High" : rate >= 0.3 ? "Medium" : "Low";
+  }
+
+  return {
+    weekday,
+    hits,
+    total,
+    recent: recentWindow.map((r) => r.result),
+    last: forDay[0] ? { date: forDay[0].date, result: forDay[0].result } : null,
+    suggestedChance,
+  };
+}
+
+export async function recordOutcome(
+  storeId: string,
+  result: Outcome | null,
+  by: string
+): Promise<void> {
+  try {
+    const date = todayStr();
+    const weekday = weekdayName(new Date());
+    const raw = await kv.hget<string | OutcomeRecord[]>(OUTCOMES_KEY, storeId);
+    const list: OutcomeRecord[] = raw ? (typeof raw === "string" ? JSON.parse(raw) : raw) : [];
+    // One record per store per day - re-logging replaces today's.
+    const without = list.filter((r) => r.date !== date);
+    const next = result === null
+      ? without
+      : [...without, { date, weekday, result, by }];
+    const capped = next.slice(-OUTCOME_CAP);
+    await kv.hset(OUTCOMES_KEY, { [storeId]: JSON.stringify(capped) });
+  } catch {
+    // ignore
+  }
+}
+
+export async function getOutcomeStats(): Promise<Record<string, OutcomeRecord[]>> {
+  try {
+    const all = await kv.hgetall<Record<string, string | OutcomeRecord[]>>(OUTCOMES_KEY);
+    if (!all) return {};
+    const out: Record<string, OutcomeRecord[]> = {};
+    for (const [sid, v] of Object.entries(all)) {
+      out[sid] = typeof v === "string" ? JSON.parse(v) : v;
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
+// Per-store, per-weekday track records for every store that has any outcomes.
+export async function getTrackRecords(): Promise<Record<string, Record<string, TrackRecord>>> {
+  const stats = await getOutcomeStats();
+  const out: Record<string, Record<string, TrackRecord>> = {};
+  for (const [sid, records] of Object.entries(stats)) {
+    const weekdays = new Set(records.map((r) => r.weekday));
+    const byDay: Record<string, TrackRecord> = {};
+    for (const wd of weekdays) {
+      byDay[wd] = computeTrackRecord(records, wd);
+    }
+    out[sid] = byDay;
+  }
+  return out;
 }
 
 // One-time sweep: set stock location + item limit on every store, across both

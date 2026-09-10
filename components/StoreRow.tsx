@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { StoreRef } from "@/lib/stores";
-import type { BoardEntry, Chance, SourceType, StockLocation, Status } from "@/lib/types";
+import type { BoardEntry, Chance, SourceType, StockLocation, Status, TrackRecord } from "@/lib/types";
 import { appleMapsUrl, googleMapsUrl } from "@/lib/maps";
 import { cleanGuideNote } from "@/lib/cleanNote";
+import TrackRecordBadge from "./TrackRecordBadge";
 
 interface Props {
   store: StoreRef;
@@ -23,6 +24,7 @@ interface Props {
   onReport?: (storeId: string, category: string, note: string) => Promise<boolean>;
   onClearReport?: (storeId: string, reportId?: string) => void;
   compact?: boolean;
+  trackRecord?: TrackRecord | null;
 }
 
 const reportCategoryLabels: Record<string, string> = {
@@ -230,6 +232,7 @@ export default function StoreRow({
   onReport,
   onClearReport,
   compact,
+  trackRecord,
 }: Props) {
   const chance = entry.chance;
   const adminNotes = cleanGuideNote(mergeAdminNotes(entry));
@@ -725,7 +728,9 @@ export default function StoreRow({
               &#128308; Line Forming
             </span>
           ))}
-        {entry.confirmedCount > 0 ? (
+        {trackRecord && trackRecord.total > 0 ? (
+          <TrackRecordBadge record={trackRecord} />
+        ) : entry.confirmedCount > 0 ? (
           <span
             className="text-[10px] uppercase px-1.5 py-0.5 rounded border border-gold text-gold bg-gold/10"
             title="Based on chat history, not today's status"

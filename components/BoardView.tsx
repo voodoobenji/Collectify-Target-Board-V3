@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { signOut } from "next-auth/react";
 import { STORES, REGION_ORDER, type StoreRef } from "@/lib/stores";
-import type { Board, BoardEntry, TemplateEntry, WeekdayTemplate } from "@/lib/types";
+import type { Board, BoardEntry, TemplateEntry, WeekdayTemplate, TrackRecord } from "@/lib/types";
 import { WEEKDAYS, EMPTY_TEMPLATE_ENTRY } from "@/lib/types";
 import StoreRow from "./StoreRow";
 import ThemeToggle from "./ThemeToggle";
@@ -161,6 +161,9 @@ export default function BoardView({
   const [startingNewDay, setStartingNewDay] = useState(false);
   const [importing, setImporting] = useState(false);
   const [weekModalStoreId, setWeekModalStoreId] = useState<string | null>(null);
+  // Per-store, per-weekday track records (from logged outcomes). Fetched
+  // separately from the board since they change only when an outcome is logged.
+  const [trackRecords, setTrackRecords] = useState<Record<string, Record<string, TrackRecord>>>({});
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [reportsOnly, setReportsOnly] = useState(false);
@@ -420,6 +423,46 @@ export default function BoardView({
       }
     } catch {
       // optimistic update stays; next poll will reconcile
+    }
+  }
+
+  async function refreshTrackRecords() {
+    try {
+      const res = await fetch("/api/track", { cache: "no-store" });
+      if (!res.ok) return;
+      const data = await res.json();
+      setTrackRecords(data?.records ?? {});
+    } catch {
+      // non-fatal - board still works without track records
+    }
+  }
+
+  useEffect(() => {
+    refreshTrackRecords();
+  }, []);
+
+  // Admin logs today's outcome for a store; refresh records + reconcile board.
+  async function handleLogOutcome(storeId: string, result: "hit" | "no_drop" | null) {
+    try {
+      const res = await fetch("/api/outcome", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ storeId, result }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.records) setTrackRecords(data.records);
+        const status = result === "hit" ? "hit" : result === "no_drop" ? "no_hit" : "pending";
+        setBoard((prev) => ({
+          ...prev,
+          entries: {
+            ...prev.entries,
+            [storeId]: { ...prev.entries[storeId], status },
+          },
+        }));
+      }
+    } catch {
+      // ignore
     }
   }
 
@@ -726,10 +769,24 @@ export default function BoardView({
     const entries = Object.values(activeEntries);
     return {
       high: entries.filter((e) => e.chance === "High").length,
-      hit: entries.filter((e) => e.status === "hit").length,
-      pending: entries.filter((e) => e.status === "pending").length,
+      logged: entries.filter((e) => e.status === "hit" || e.status === "no_hit").length,
     };
   }, [activeEntries]);
+
+  // Aggregate track-record hit rate for the weekday being viewed, across all
+  // stores that have logged outcomes. This is the board's credibility number.
+  const trackStats = useMemo(() => {
+    let hits = 0;
+    let total = 0;
+    for (const byDay of Object.values(trackRecords)) {
+      const r = byDay[selectedDay];
+      if (r) {
+        hits += r.hits;
+        total += r.total;
+      }
+    }
+    return { rate: total > 0 ? Math.round((hits / total) * 100) : null, total };
+  }, [trackRecords, selectedDay]);
 
   const storesWithReports = useMemo(
     () => Object.values(board.entries).filter((e) => (e.reports?.length ?? 0) > 0).length,
@@ -1009,18 +1066,20 @@ export default function BoardView({
         <div className="flex flex-col items-center">
           <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full border-2 border-live/70 flex items-center justify-center bg-panel card-fill">
             <span className="font-serif text-xl sm:text-2xl font-semibold text-live">
-              {isLiveView ? stats.hit : "\u2014"}
+              {trackStats.rate != null ? `${trackStats.rate}%` : "\u2014"}
             </span>
           </div>
-          <div className="text-[10px] uppercase tracking-wide text-textmuted mt-2 text-center">Confirmed Sold</div>
+          <div className="text-[10px] uppercase tracking-wide text-textmuted mt-2 text-center">
+            {DAY_LABELS[selectedDay]} Hit Rate
+          </div>
         </div>
         <div className="flex flex-col items-center">
           <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full border-2 border-gold/50 flex items-center justify-center bg-panel card-fill">
             <span className="font-serif text-xl sm:text-2xl font-semibold text-textmuted">
-              {isLiveView ? stats.pending : "\u2014"}
+              {isLiveView ? stats.logged : "\u2014"}
             </span>
           </div>
-          <div className="text-[10px] uppercase tracking-wide text-textmuted mt-2 text-center">No Update/Hasn't Sold</div>
+          <div className="text-[10px] uppercase tracking-wide text-textmuted mt-2 text-center">Logged Today</div>
         </div>
       </div>
 
@@ -1118,6 +1177,7 @@ export default function BoardView({
                       onReport={handleReport}
                       onClearReport={isAdmin ? handleClearReport : undefined}
                       compact={compact}
+                      trackRecord={trackRecords[store.id]?.[selectedDay]}
                     />
                   ))}
                 </div>
@@ -1164,6 +1224,9 @@ export default function BoardView({
             onClose={() => setWeekModalStoreId(null)}
             canEdit={isAdmin && editMode}
             onPatchToday={handlePatch}
+            trackByDay={trackRecords[s.id] ?? {}}
+            todayStatus={board.entries[s.id]?.status ?? "pending"}
+            onLogOutcome={isAdmin ? handleLogOutcome : undefined}
           />
         );
       })()}
