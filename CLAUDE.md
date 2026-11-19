@@ -63,6 +63,10 @@ Vercel team `collectify` (`team_vYTchJOc7S8N072ks2cQHxR7`), project `collectify-
   Admin setting chance/window by hand pins a card. Engine owns `reason`; admin notes live in vendorNotes/randomNotes.
   Explainer: docs/HOW_PREDICTIONS_WORK.md. Keep it updated when the math changes.
 
+## Sign-in
+- `middleware.ts` strips Discord's `iss` param from `/api/auth/callback/*` (otherwise NextAuth throws "issuer must be
+  configured on the issuer" → error=OAuthCallback → login loop). Don't remove it. The login page shows `?error=`.
+
 ## Local preview
 - No dev auth bypass (don't add one). To see the UI, add a temporary uncommitted page that renders
   `BoardView` with a board built from `SEED_TEMPLATES` + `EMPTY_ENTRY`, run `npx next dev`, screenshot with

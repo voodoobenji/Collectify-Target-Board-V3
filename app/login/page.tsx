@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import LoginButton from "@/components/LoginButton";
 
-export default async function LoginPage() {
+export default async function LoginPage({ searchParams }: { searchParams: { error?: string } }) {
   const session = await getServerSession(authOptions);
   if (session?.isMember) {
     redirect("/");
@@ -20,6 +20,12 @@ export default async function LoginPage() {
         <p className="text-textmuted text-sm mt-3 mb-6">
           Members only. Sign in with the Discord account that&apos;s in the Collectify server.
         </p>
+        {searchParams.error && (
+          <p className="mb-4 text-sm text-left border border-medium/60 rounded-lg px-3 py-2 text-textmuted">
+            <span className="text-medium font-semibold">Sign-in didn&apos;t finish ({searchParams.error}).</span> Try again. If you
+            opened this inside Discord, open it in Safari or Chrome instead.
+          </p>
+        )}
         <LoginButton />
         <p className="font-mono uppercase tracking-[0.08em] text-textmuted/70 text-[9px] mt-4">Access is members-only · no public view</p>
       </div>
