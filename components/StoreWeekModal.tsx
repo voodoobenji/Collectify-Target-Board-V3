@@ -71,8 +71,8 @@ function analyzeMapNote(
   return conflicts;
 }
 
-function mergeAdminNotes(info: { vendorNotes: string; randomNotes: string; reason: string }): string {
-  return [info.vendorNotes, info.randomNotes, info.reason]
+function mergeAdminNotes(info: { vendorNotes: string; randomNotes: string; reason: string; engineAt?: string | null; pinned?: boolean }): string {
+  return [info.vendorNotes, info.randomNotes, info.engineAt && !info.pinned ? "" : info.reason]
     .map((s) => (s ?? "").trim())
     .filter(Boolean)
     .join("\n\n");
@@ -89,7 +89,13 @@ interface DayInfo {
   itemLimit: string;
   multiSeller: boolean;
   confirmedCount: number;
+  // Prediction engine fields (lib/engine.ts): the engine owns `reason` unless an admin pinned the card.
+  weekNote?: string;
+  engineAt?: string | null;
+  pinned?: boolean;
 }
+
+const engineOwned = (info: DayInfo) => !!info.engineAt && !info.pinned;
 
 const EMPTY_DAY_INFO: DayInfo = {
   chance: null,
@@ -175,6 +181,9 @@ export default function StoreWeekModal({
         itemLimit: todayEntry.itemLimit,
         multiSeller: todayEntry.multiSeller,
         confirmedCount: todayEntry.confirmedCount,
+        weekNote: todayEntry.weekNote,
+        engineAt: todayEntry.engineAt,
+        pinned: todayEntry.pinned,
       },
     };
     const others = WEEKDAYS.filter((d) => d !== todayWeekday);
@@ -522,7 +531,9 @@ export default function StoreWeekModal({
                       <div className="text-[10px] uppercase tracking-wide text-textmuted mb-1">Admin Notes</div>
                       <DebouncedTextarea
                         value={adminNotes}
-                        onCommit={(v) => patchDay(day, { reason: v, vendorNotes: "", randomNotes: "" })}
+                        onCommit={(v) =>
+                          patchDay(day, engineOwned(info) ? { vendorNotes: "", randomNotes: v } : { reason: v, vendorNotes: "", randomNotes: "" })
+                        }
                         placeholder="Notes about this store..."
                         rows={3}
                         className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs placeholder:text-textmuted resize-none"
@@ -550,6 +561,13 @@ export default function StoreWeekModal({
                         <p className="text-xs text-gold mb-1">
                           &#128257; Sells Multiple Times
                         </p>
+                      )}
+                      {engineOwned(info) && (info.reason || info.weekNote) && (
+                        <div className="pl-3 border-l-2 border-line mb-1.5">
+                          <p className="text-[9px] uppercase tracking-[0.08em] text-textmuted font-mono mb-0.5">&#128200; Prediction</p>
+                          {info.reason && <p className="text-xs text-textmuted">{info.reason}</p>}
+                          {info.weekNote && <p className="text-xs text-medium mt-0.5">{info.weekNote}</p>}
+                        </div>
                       )}
                       {adminNotes && (
                         <div className="pl-3 border-l-2 border-gold/60">
