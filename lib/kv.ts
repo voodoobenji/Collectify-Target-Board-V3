@@ -194,17 +194,21 @@ export async function startNewDay(updatedBy: string): Promise<Board> {
   for (const s of STORES) {
     const fromTpl = tpl?.entries[s.id];
     const prev = board.entries[s.id];
+    // The weekday plan wins whenever it has an entry for the store, INCLUDING blank values ("not expected").
+    // (Bug before Nov 2026: `fromTpl?.chance ?? prev?.chance` let yesterday's chance leak into a blank day, and the
+    // nightly save then copied it into that weekday's plan, e.g. a Friday-only store showing HIGH every day.)
+    const src = fromTpl ?? prev;
     carried[s.id] = {
-      chance: fromTpl?.chance ?? prev?.chance ?? null,
-      window: fromTpl?.window ?? prev?.window ?? "",
-      reason: fromTpl?.reason ?? prev?.reason ?? "",
-      vendorNotes: fromTpl?.vendorNotes ?? prev?.vendorNotes ?? "",
-      randomNotes: fromTpl?.randomNotes ?? prev?.randomNotes ?? "",
-      sourceType: fromTpl?.sourceType ?? prev?.sourceType ?? null,
+      chance: src?.chance ?? null,
+      window: src?.window ?? "",
+      reason: src?.reason ?? "",
+      vendorNotes: src?.vendorNotes ?? "",
+      randomNotes: src?.randomNotes ?? "",
+      sourceType: src?.sourceType ?? null,
       stockLocation: fromTpl?.stockLocation ?? prev?.stockLocation ?? null,
-      itemLimit: fromTpl?.itemLimit ?? prev?.itemLimit ?? "",
-      multiSeller: fromTpl?.multiSeller ?? prev?.multiSeller ?? false,
-      confirmedCount: fromTpl?.confirmedCount ?? prev?.confirmedCount ?? 0,
+      itemLimit: fromTpl?.itemLimit || prev?.itemLimit || "",
+      multiSeller: src?.multiSeller ?? false,
+      confirmedCount: src?.confirmedCount ?? 0,
       weekNote: fromTpl?.weekNote ?? "",
       basis: fromTpl?.basis ?? "",
       pinned: fromTpl?.pinned ?? false,

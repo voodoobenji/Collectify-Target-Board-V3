@@ -111,5 +111,6 @@ export async function rebuildPredictions(trigger: string, by: string): Promise<E
     samples,
   };
   await logEngineRun(entry);
+  console.log("[engine] rebuild", JSON.stringify({ trigger, by, daysUsed: entry.daysUsed, today: entry.today, changedToday, pinned: entry.pinned }));
   return entry;
 }
