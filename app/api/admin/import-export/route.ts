@@ -57,7 +57,9 @@ interface InMsg { time: string; author: string; text: string; forwarded?: boolea
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session?.isMember || !session?.isAdmin) return NextResponse.json({ error: "Not authorized" }, { status: 403 });
-  if (!process.env.ANTHROPIC_API_KEY) {
+  // The owner saved it as "anthropic_api_key" in Vercel; accept either spelling.
+  const apiKey = process.env.ANTHROPIC_API_KEY || process.env.anthropic_api_key;
+  if (!apiKey) {
     return NextResponse.json({ error: "ANTHROPIC_API_KEY is not set in Vercel yet." }, { status: 400 });
   }
   const body = (await req.json().catch(() => ({}))) as { date?: string; messages?: InMsg[] };
@@ -71,7 +73,7 @@ export async function POST(req: NextRequest) {
     return `[#${i + 1} ${m.time}${m.forwarded ? " fwd" : ""}${m.images ? ` +${m.images} photo` : ""}] ${String(m.author ?? "").slice(0, 40)}: ${text}`;
   });
 
-  const client = new Anthropic();
+  const client = new Anthropic({ apiKey });
   try {
     const res = await client.beta.messages.parse({
       model: "claude-opus-5-5",
