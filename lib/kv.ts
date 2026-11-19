@@ -1,5 +1,6 @@
 import { kv } from "@vercel/kv";
 import { STORES } from "./stores";
+import type { DropRecord } from "./drops";
 import {
   Board,
   BoardEntry,
@@ -684,4 +685,30 @@ export async function toggleFavorite(discordId: string, storeId: string): Promis
   }
   await kv.set(favoritesKey(discordId), favs);
   return favs;
+}
+
+
+// ---- drops log: one small key per day + a tiny index of days (never a big blob) ----
+const DROP_DAYS_KEY = "drops:days";
+const dropDayKey = (date: string) => `drops:${date}`;
+
+export async function getDropDays(): Promise<string[]> {
+  return ((await kv.get<string[]>(DROP_DAYS_KEY)) ?? []).sort();
+}
+
+export async function getDropsForDay(date: string): Promise<DropRecord[]> {
+  return (await kv.get<DropRecord[]>(dropDayKey(date))) ?? [];
+}
+
+/** Replace one day's drops (empty list deletes the day). */
+export async function setDropsForDay(date: string, drops: DropRecord[]): Promise<void> {
+  const days = new Set(await getDropDays());
+  if (drops.length) {
+    await kv.set(dropDayKey(date), drops);
+    days.add(date);
+  } else {
+    await kv.del(dropDayKey(date));
+    days.delete(date);
+  }
+  await kv.set(DROP_DAYS_KEY, [...days].sort());
 }

@@ -45,6 +45,17 @@ Vercel team `collectify` (`team_vYTchJOc7S8N072ks2cQHxR7`), project `collectify-
   that file shadows the real `next-auth` package for TypeScript.
 - `bestbuy-shipments-kit*`, `*-plan.md`, `guide-rebuild-review.md` are old planning docs, not app code.
 
+## Guide engine (Nov 2026) — see docs/GUIDE_ENGINE_PLAN.md
+- Goal: the site replaces the hand-posted Discord guides and updates itself from the daily export the owner imports.
+  Engine rules: `docs/COLLECTIFY_GUIDE_ENGINE.md` (wording rules §5, prediction logic §6, day locks §10, traps §11).
+- `lib/store-profiles.ts` = engine data per board store id + aliases; `lib/drops.ts` = drops log types, name resolver,
+  light-stock check; `lib/exportParse.ts` = reads both Discord export formats in the browser (fflate for zips).
+- `/admin/import` (`components/ImportClient.tsx`): export → `/api/admin/import-export` (Claude Opus 5.5, structured
+  output, server-side fallback, needs `ANTHROPIC_API_KEY` set by the owner in Vercel) → review → `/api/admin/drops`.
+  Drops are stored one key per day (`drops:<YYYY-MM-DD>`) + `drops:days` index. Kinds: drop / light / dry.
+- Light stock (sleeves, blisters, Needoh, singles...) is never a drop; the store stays owed.
+- Predictions must adapt: weekday baseline + last week's same weekday + this week so far (see the plan).
+
 ## Local preview
 - No dev auth bypass (don't add one). To see the UI, add a temporary uncommitted page that renders
   `BoardView` with a board built from `SEED_TEMPLATES` + `EMPTY_ENTRY`, run `npx next dev`, screenshot with

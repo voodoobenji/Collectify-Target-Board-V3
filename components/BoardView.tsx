@@ -1119,6 +1119,12 @@ export default function BoardView({
           >
             &#128274; Security Dashboard
           </a>
+          <a
+            href="/admin/import"
+            className="text-center whitespace-nowrap text-xs font-mono uppercase tracking-wide px-3 py-2 rounded-lg border border-line text-textmuted hover:text-textprimary transition-colors"
+          >
+            &#128229; Import drops
+          </a>
         </div>
       )}
 
