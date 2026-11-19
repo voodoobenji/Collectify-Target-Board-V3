@@ -247,7 +247,7 @@ export default function BoardView({
     return () => clearInterval(id);
   }, []);
   const boardRef = useRef(board);
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
   const [currentRegion, setCurrentRegion] = useState<string | null>(null);
   const scrollTickingRef = useRef(false);
   boardRef.current = board;
@@ -649,6 +649,7 @@ export default function BoardView({
         multiSeller: t?.multiSeller ?? false,
         confirmedCount: t?.confirmedCount ?? 0,
         flagged: null,
+        reports: [],
         status: "pending",
         soldCount: 0,
         lastSoldAt: null,

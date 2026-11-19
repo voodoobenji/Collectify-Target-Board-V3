@@ -204,6 +204,8 @@ export async function startNewDay(updatedBy: string): Promise<Board> {
       // explicitly persistent across day rollover until an admin clears them -
       // carry forward from the previous board entry, nothing else has this data.
       flagged: prev?.flagged ?? null,
+      // Member reports (wrong address, hours...) stay until an admin clears them, like flags.
+      reports: prev?.reports ?? [],
       status: "pending",
       soldCount: 0,
       lastSoldAt: null,
