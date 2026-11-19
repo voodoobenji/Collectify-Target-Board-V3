@@ -27,6 +27,8 @@ Vercel team `collectify` (`team_vYTchJOc7S8N072ks2cQHxR7`), project `collectify-
 - Every card shows Stock Location (`both` reads "TCG + Guest Services") and Item Limit ("Not set" if unset).
 - Auto-rollover cron at 08:00 UTC (`/api/cron/new-day`, ~1am PT). Flags and member reports carry over
   the rollover until an admin clears them.
+- Dark mode by default, same palette/fonts as the Shipment Board (cohesive Collectify look). Light mode only
+  when a member picks it with the toggle; don't follow the device setting.
 - Watermark is covert on purpose (tiled name + OCR canary lines, `components/Watermark.tsx`).
 - No "live" / auto-refresh hype; Discord owns live calls, this board is predictions + outcome log.
 

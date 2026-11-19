@@ -12,21 +12,6 @@ export default function ThemeToggle() {
     setMounted(true);
     const current = (document.documentElement.getAttribute("data-theme") as Theme) || "dark";
     setTheme(current);
-
-    // Follow the device setting until the user makes an explicit choice.
-    const mq = window.matchMedia("(prefers-color-scheme: light)");
-    const handler = (e: MediaQueryListEvent) => {
-      try {
-        if (localStorage.getItem("collectify_theme")) return;
-      } catch {
-        return;
-      }
-      const t: Theme = e.matches ? "light" : "dark";
-      document.documentElement.setAttribute("data-theme", t);
-      setTheme(t);
-    };
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
   }, []);
 
   function toggle() {
