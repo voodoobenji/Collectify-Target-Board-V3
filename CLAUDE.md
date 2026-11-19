@@ -61,6 +61,7 @@ Vercel team `collectify` (`team_vYTchJOc7S8N072ks2cQHxR7`), project `collectify-
   weekday templates, skips `pinned` cards, logs to `engine:log`, writes `engine:recent` for the week view).
   Runs after drops are saved, after the nightly rollover, on "Rebuild predictions now", and on un-pin.
   Admin setting chance/window by hand pins a card. Engine owns `reason`; admin notes live in vendorNotes/randomNotes.
+  Notes = general tips only: `cleanGuideNote` drops dated/history/product sentences (owner, Nov 2026: no dates in notes).
   Explainer: docs/HOW_PREDICTIONS_WORK.md. Keep it updated when the math changes.
 
 ## Sign-in

@@ -48,8 +48,10 @@ Typical time before 9AM = "Opening" (with "7AM"/"8AM" when known); later = a 3-h
 ## What admins also see / can do
 - **Why:** the numbers behind the call (e.g. "3/4 recent Mons · dropped last Mon · 1.5 drops/wk · score 0.71").
 - Setting a card's chance or window by hand **pins** it: the engine stops changing it. "Use engine" un-pins.
-- Admin notes are kept separately and never overwritten. On the first engine run, any hand-written text in the
-  old note field was moved to the admin notes; old auto-mined seed text was replaced.
+- Admin notes are kept separately and never overwritten by predictions. Notes read like the guides: any sentence
+  tied to a specific time (dates, "since July", "last week", "today", "overdue"), history phrasing ("Has sold …
+  before") or product names is dropped (`lib/cleanNote.ts`), on display and whenever the engine writes a card.
+  Lasting tips ("Holds back stock, check 8AM then circle back") stay.
 
 ## Tuning
 All numbers live at the top of the functions in `lib/predict.ts` (weights, boosts, thresholds, day locks).

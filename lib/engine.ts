@@ -21,19 +21,18 @@ import { predictAll, addDays, type Prediction } from "./predict";
 import { STORES } from "./stores";
 import { EMPTY_TEMPLATE_ENTRY, WEEKDAYS, type BoardEntry, type TemplateEntry, type WeekdayTemplate } from "./types";
 import type { DropRecord } from "./drops";
+import { cleanGuideNote } from "./cleanNote";
 
 const todayLA = () => new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
 const weekdayOf = (date: string) => WEEKDAYS[(new Date(`${date}T12:00:00Z`).getUTCDay() + 6) % 7];
 
-// Old auto-mined seed text ("Real drops (ETB/EX/boxes) confirmed 1x ... Data-driven") is replaced by the
-// engine; anything else an admin typed into `reason` is moved into the notes field on first engine write.
-const SEED_TEXT = /data-driven|confirmed \d+\s*[x×]|confirmed real drop|auto-mined/i;
-
+// The engine owns `reason`. On its first write to a card, any lasting tip in the old reason is moved to the
+// admin notes; dated / history / product text is dropped (cleanGuideNote). Notes are kept clean on every run.
 function applyPrediction<T extends TemplateEntry | BoardEntry>(e: T, p: Prediction, now: string): T {
   const next = { ...e };
-  if (!e.engineAt && e.reason?.trim() && !SEED_TEXT.test(e.reason)) {
-    next.randomNotes = [e.randomNotes, e.reason].filter((x) => x?.trim()).join("\n\n");
-  }
+  const oldTip = !e.engineAt ? cleanGuideNote(e.reason ?? "") : "";
+  next.vendorNotes = cleanGuideNote(e.vendorNotes ?? "");
+  next.randomNotes = [cleanGuideNote(e.randomNotes ?? ""), oldTip].filter(Boolean).join("\n\n");
   next.chance = p.chance;
   next.window = p.window;
   next.reason = p.reason;
