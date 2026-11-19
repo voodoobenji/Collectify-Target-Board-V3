@@ -10,27 +10,18 @@ export default async function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-4">
-      <div className="max-w-sm w-full text-center">
-        <img
-          src="/COLLECTIFY_LOGO.png"
-          alt="Collectify"
-          className="h-20 w-20 rounded-full border border-gold/60 mx-auto mb-5"
-          style={{ boxShadow: "0 0 22px rgba(201,168,118,0.4)" }}
-        />
-        <div className="flex items-center justify-center gap-2 mb-1">
-          <span className="font-brand uppercase text-4xl sm:text-5xl font-extrabold tracking-wide text-textprimary">
-            Collectify
-          </span>
-          <span className="inline-flex h-2 w-2 rounded-full bg-live pulse" />
-        </div>
-        <span className="block font-mono text-xs uppercase tracking-[0.35em] text-gold mb-6">
-          Target Guide
-        </span>
-        <p className="text-textmuted text-sm mb-8">
-          Sign in with Discord to view today&apos;s guide. Access is limited to members of the server.
+    <main className="min-h-screen flex items-center justify-center px-6">
+      {/* Same card as the Shipment Board's sign-in page. */}
+      <div className="max-w-sm w-full bg-panel border border-line rounded-2xl p-8 text-center">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/COLLECTIFY_LOGO.png" alt="Collectify" width={72} height={72} className="mx-auto mb-3 h-[72px] w-[72px] rounded-full" />
+        <div className="font-brand font-extrabold tracking-widest text-gold text-sm">COLLECTIFY</div>
+        <h1 className="font-serif text-2xl mt-2 text-textprimary">Collectify Target Guide</h1>
+        <p className="text-textmuted text-sm mt-3 mb-6">
+          Members only. Sign in with the Discord account that&apos;s in the Collectify server.
         </p>
         <LoginButton />
+        <p className="font-mono uppercase tracking-[0.08em] text-textmuted/70 text-[9px] mt-4">Access is members-only · no public view</p>
       </div>
     </main>
   );

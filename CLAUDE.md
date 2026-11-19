@@ -29,6 +29,10 @@ Vercel team `collectify` (`team_vYTchJOc7S8N072ks2cQHxR7`), project `collectify-
   the rollover until an admin clears them.
 - Dark mode by default, same palette/fonts as the Shipment Board (cohesive Collectify look). Light mode only
   when a member picks it with the toggle; don't follow the device setting.
+- Design language = the Shipment Board's: left-aligned header (logo, gold COLLECTIFY, serif "Collectify <gold>Target
+  Guide</gold>", small mono subtitle), max-w-3xl single-column cards (rounded-xl, 3px colored left edge), small
+  mono uppercase buttons/labels (10px, tracking 0.08em, rounded-lg), GOLD = selected, GREEN only means hit/live
+  status, flat background (no scanline/glow), sign-in page = the same card. Keep new UI in this style.
 - Watermark is covert on purpose (tiled name + OCR canary lines, `components/Watermark.tsx`).
 - No "live" / auto-refresh hype; Discord owns live calls, this board is predictions + outcome log.
 

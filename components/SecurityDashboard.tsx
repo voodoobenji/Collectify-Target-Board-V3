@@ -110,7 +110,7 @@ export default function SecurityDashboard() {
       ) : (
         <div className="space-y-8">
           <section>
-            <h2 className="font-mono text-sm uppercase tracking-[0.2em] text-gold mb-3">
+            <h2 className="font-mono text-[11px] uppercase tracking-[0.08em] text-gold mb-3">
               Possible account sharing ({sharingSuspects.length})
             </h2>
             {sharingSuspects.length === 0 ? (
@@ -137,7 +137,7 @@ export default function SecurityDashboard() {
           </section>
 
           <section>
-            <h2 className="font-mono text-sm uppercase tracking-[0.2em] text-gold mb-3">
+            <h2 className="font-mono text-[11px] uppercase tracking-[0.08em] text-gold mb-3">
               Shared-link arrivals ({referrals.length})
             </h2>
             {referrals.length === 0 ? (
@@ -164,7 +164,7 @@ export default function SecurityDashboard() {
           <section>
             <div className="flex items-center gap-2 mb-3">
               <span className="h-2 w-2 rounded-full bg-live pulse" />
-              <h2 className="font-mono text-sm uppercase tracking-[0.2em] text-gold">
+              <h2 className="font-mono text-[11px] uppercase tracking-[0.08em] text-gold">
                 Active now ({active.length})
               </h2>
             </div>
@@ -189,7 +189,7 @@ export default function SecurityDashboard() {
 
           {recent.length > 0 && (
             <section>
-              <h2 className="font-mono text-sm uppercase tracking-[0.2em] text-gold mb-3">
+              <h2 className="font-mono text-[11px] uppercase tracking-[0.08em] text-gold mb-3">
                 Recently seen
               </h2>
               <div className="space-y-1.5">
@@ -251,7 +251,7 @@ export default function SecurityDashboard() {
           </section>
 
           <section>
-            <h2 className="font-mono text-sm uppercase tracking-[0.2em] text-gold mb-3">
+            <h2 className="font-mono text-[11px] uppercase tracking-[0.08em] text-gold mb-3">
               Recent logins ({logins.length})
             </h2>
             {logins.length === 0 ? (

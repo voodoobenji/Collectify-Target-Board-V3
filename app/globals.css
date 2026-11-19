@@ -28,7 +28,7 @@
   --body-glow:
     radial-gradient(circle at 50% -10%, rgba(47, 190, 143, 0.10), transparent 40%),
     radial-gradient(circle at 100% 20%, rgba(201, 168, 118, 0.06), transparent 35%);
-  --card-fill: linear-gradient(155deg, rgba(255, 255, 255, 0.035), transparent 60%);
+  --card-fill: none; /* flat cards, like the Shipment Board */
   --selection-bg: #2fbe8f;
   --selection-fg: #0b1220;
 }
@@ -50,14 +50,13 @@
   --body-glow:
     radial-gradient(circle at 50% -10%, rgba(18, 133, 95, 0.06), transparent 40%),
     radial-gradient(circle at 100% 20%, rgba(201, 168, 118, 0.10), transparent 35%);
-  --card-fill: linear-gradient(155deg, rgba(0, 0, 0, 0.02), transparent 60%);
+  --card-fill: none;
   --selection-bg: #12855f;
   --selection-fg: #ffffff;
 }
 
 body {
   background-color: rgb(var(--ink));
-  background-image: var(--body-glow);
   color: rgb(var(--textprimary));
   font-family: var(--font-body);
 }

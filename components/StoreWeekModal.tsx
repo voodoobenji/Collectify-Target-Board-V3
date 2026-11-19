@@ -288,7 +288,7 @@ export default function StoreWeekModal({
                     </span>
                     <div className="flex items-center gap-1.5">
                       {info.confirmedCount > 0 && (
-                        <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border border-live text-live bg-live/10">
+                        <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border border-gold text-gold bg-panel2">
                           &#10003; {info.confirmedCount}x confirmed
                         </span>
                       )}
@@ -335,7 +335,7 @@ export default function StoreWeekModal({
                           onClick={() => logOutcome("hit")}
                           className={`flex-1 text-[11px] font-mono uppercase px-2 py-1.5 rounded border transition-colors ${
                             localStatus === "hit"
-                              ? "border-live text-live bg-live/10"
+                              ? "border-gold text-gold bg-panel2"
                               : "border-line text-textmuted hover:text-live"
                           }`}
                         >

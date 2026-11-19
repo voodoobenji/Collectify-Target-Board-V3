@@ -36,16 +36,16 @@ export default function LegendModal({
         <div className="flex gap-1.5 mb-4">
           <button
             onClick={() => setTab("legend")}
-            className={`text-[11px] font-mono uppercase tracking-wide px-3 py-1.5 rounded-full border flex-1 transition-colors ${
-              tab === "legend" ? "border-live text-live bg-live/10" : "border-line text-textmuted"
+            className={`text-[10px] font-mono uppercase tracking-[0.08em] px-3 py-1.5 rounded-lg border flex-1 transition-colors ${
+              tab === "legend" ? "border-gold text-gold bg-panel2" : "border-line text-textmuted"
             }`}
           >
             Legend
           </button>
           <button
             onClick={() => setTab("howto")}
-            className={`text-[11px] font-mono uppercase tracking-wide px-3 py-1.5 rounded-full border flex-1 transition-colors ${
-              tab === "howto" ? "border-live text-live bg-live/10" : "border-line text-textmuted"
+            className={`text-[10px] font-mono uppercase tracking-[0.08em] px-3 py-1.5 rounded-lg border flex-1 transition-colors ${
+              tab === "howto" ? "border-gold text-gold bg-panel2" : "border-line text-textmuted"
             }`}
           >
             How It Works
@@ -157,7 +157,7 @@ export default function LegendModal({
             </div>
 
             <div className="pt-2 border-t border-line">
-              <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border border-live text-live bg-live/10">
+              <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border border-gold text-gold bg-panel2">
                 Sold
               </span>
               <p className="mt-1.5">
@@ -173,7 +173,7 @@ export default function LegendModal({
               <div className="flex gap-1.5 mb-4">
                 <button
                   onClick={() => setAudience("member")}
-                  className={`text-[11px] font-mono uppercase tracking-wide px-3 py-1.5 rounded-full border flex-1 transition-colors ${
+                  className={`text-[10px] font-mono uppercase tracking-[0.08em] px-3 py-1.5 rounded-lg border flex-1 transition-colors ${
                     audience === "member"
                       ? "border-gold text-gold bg-gold/10"
                       : "border-line text-textmuted"
@@ -183,7 +183,7 @@ export default function LegendModal({
                 </button>
                 <button
                   onClick={() => setAudience("admin")}
-                  className={`text-[11px] font-mono uppercase tracking-wide px-3 py-1.5 rounded-full border flex-1 transition-colors ${
+                  className={`text-[10px] font-mono uppercase tracking-[0.08em] px-3 py-1.5 rounded-lg border flex-1 transition-colors ${
                     audience === "admin"
                       ? "border-gold text-gold bg-gold/10"
                       : "border-line text-textmuted"

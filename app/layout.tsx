@@ -33,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
-      <body className="scanline min-h-screen">
+      <body className="min-h-screen antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>

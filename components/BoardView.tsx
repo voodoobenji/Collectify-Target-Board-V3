@@ -819,7 +819,7 @@ export default function BoardView({
   }
 
   return (
-    <main className="min-h-screen px-3 py-4 sm:px-8 sm:py-10 max-w-4xl mx-auto">
+    <main className="min-h-screen max-w-3xl mx-auto px-4 pt-4 pb-24">
       <Watermark username={username} discordId={discordId} date={board.date} />
 
       {boardStuck && isAdmin && (
@@ -829,40 +829,36 @@ export default function BoardView({
         </div>
       )}
 
-      <div className="flex items-center justify-between mb-3">
-        <ThemeToggle />
-        <button
-          onClick={() => signOut({ callbackUrl: "/login" })}
-          className="text-xs lg:text-sm text-textmuted hover:text-textprimary"
-        >
-          Sign out
-        </button>
-      </div>
-      <div className="flex flex-col items-center text-center mb-4 lg:mb-8">
-        <div className="flex items-center gap-2.5 lg:gap-4">
-          <img
-            src="/COLLECTIFY_LOGO.png"
-            alt="Collectify"
-            className="h-10 w-10 sm:h-12 sm:w-12 lg:h-16 lg:w-16 rounded-full border border-gold/60 shrink-0"
-            style={{ boxShadow: "0 0 16px rgba(201,168,118,0.4)" }}
-          />
-          <span className="font-brand uppercase text-2xl sm:text-3xl lg:text-5xl font-extrabold tracking-wide text-textprimary leading-none">
-            Collectify
-          </span>
-          <span className="h-1.5 w-1.5 lg:h-2 lg:w-2 rounded-full bg-live pulse shrink-0" />
+      {/* Header: same layout as the Shipment Board (logo, COLLECTIFY, serif title with gold second word). */}
+      <header className="pt-4 sm:pt-4 pb-4 mb-2">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/COLLECTIFY_LOGO.png" alt="Collectify" width={40} height={40} className="mb-2 h-10 w-10 rounded-full" />
+            <div className="font-brand font-extrabold tracking-[0.25em] text-gold text-[11px]">COLLECTIFY</div>
+            <h1 className="font-serif text-[26px] leading-tight mt-1 text-textprimary">
+              Collectify <span className="text-gold">Target Guide</span>
+            </h1>
+            <p className="font-mono uppercase tracking-[0.08em] text-textmuted text-[10px] mt-1">
+              {board.date} &middot; updated {timeAgo(lastUpdated)}
+            </p>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <ThemeToggle />
+            <button
+              onClick={() => signOut({ callbackUrl: "/login" })}
+              className="font-mono uppercase tracking-[0.08em] text-[10px] px-2 py-1 rounded border border-line text-textmuted hover:text-textprimary hover:bg-panel2"
+            >
+              Sign out
+            </button>
+          </div>
         </div>
-        <span className="font-mono text-xs lg:text-sm uppercase tracking-[0.35em] text-gold mt-2 lg:mt-3">
-          Target Guide
-        </span>
-        <p className="text-textmuted text-sm lg:text-base mt-1.5 font-mono">
-          {board.date} &middot; updated {timeAgo(lastUpdated)}
-        </p>
-      </div>
+      </header>
 
       <div className="flex items-center gap-2 sm:gap-3 mb-4">
         <button
           onClick={() => setFavoritesOnly((v) => !v)}
-          className={`flex-1 text-[11px] sm:text-xs font-mono uppercase tracking-wide px-2.5 py-1.5 sm:py-2 rounded-full border transition-colors ${
+          className={`flex-1 text-[10px] font-mono uppercase tracking-[0.08em] px-2.5 py-1.5 sm:py-2 rounded-lg border transition-colors ${
             favoritesOnly
               ? "border-gold text-gold bg-gold/10"
               : "border-line text-textmuted hover:text-gold hover:border-gold"
@@ -873,10 +869,10 @@ export default function BoardView({
         {isLiveView && (
           <button
             onClick={() => setRightNowOnly((v) => !v)}
-            className={`flex-1 text-[11px] sm:text-xs font-mono uppercase tracking-wide px-2.5 py-1.5 sm:py-2 rounded-full border transition-colors ${
+            className={`flex-1 text-[10px] font-mono uppercase tracking-[0.08em] px-2.5 py-1.5 sm:py-2 rounded-lg border transition-colors ${
               rightNowOnly
-                ? "border-live text-live bg-live/10"
-                : "border-line text-textmuted hover:text-live hover:border-live"
+                ? "border-gold text-gold bg-panel2"
+                : "border-line text-textmuted hover:text-gold hover:border-gold"
             }`}
           >
             &#128336; Right Now
@@ -884,7 +880,7 @@ export default function BoardView({
         )}
         <button
           onClick={() => setShowLegend(true)}
-          className="shrink-0 flex items-center gap-1.5 text-[11px] sm:text-xs font-mono uppercase tracking-wide px-3 py-1.5 sm:py-2 rounded-full border border-gold text-gold bg-gold/10 hover:bg-gold/20 transition-colors"
+          className="shrink-0 flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.08em] px-3 py-1.5 sm:py-2 rounded-lg border border-gold text-gold bg-gold/10 hover:bg-gold/20 transition-colors"
           aria-label="New here? Tap for a quick walkthrough"
         >
           &#128075; First Time?
@@ -894,7 +890,7 @@ export default function BoardView({
       {isAdmin && isLiveView && storesWithReports > 0 && (
         <button
           onClick={() => setReportsOnly((v) => !v)}
-          className={`w-full mb-4 flex items-center justify-center gap-2 text-xs font-mono uppercase tracking-wide px-3 py-2 rounded-full border transition-colors ${
+          className={`w-full mb-4 flex items-center justify-center gap-2 text-xs font-mono uppercase tracking-wide px-3 py-2 rounded-lg border transition-colors ${
             reportsOnly
               ? "border-medium text-medium bg-medium/10"
               : "border-medium/60 text-medium hover:bg-medium/10"
@@ -918,7 +914,7 @@ export default function BoardView({
           onClick={() => setSortOpen((v) => !v)}
           className="w-full flex items-center justify-between"
         >
-          <span className="text-sm font-mono uppercase tracking-[0.2em] text-gold">
+          <span className="text-[10px] font-mono uppercase tracking-[0.08em] text-textmuted">
             Sort By{" "}
             <span className="text-textmuted normal-case tracking-normal">
               · {sortMode === "time" ? "Time" : sortMode === "nearMe" ? "Near Me" : "Priority"}
@@ -931,9 +927,9 @@ export default function BoardView({
         <div className="flex items-center gap-2 mt-2">
           <button
             onClick={() => setSortMode("priority")}
-            className={`flex-1 text-[11px] sm:text-xs font-mono uppercase tracking-wide px-2.5 py-1.5 sm:py-2 rounded-full border transition-colors ${
+            className={`flex-1 text-[10px] font-mono uppercase tracking-[0.08em] px-2.5 py-1.5 sm:py-2 rounded-lg border transition-colors ${
               sortMode === "priority"
-                ? "bg-live/15 border-live text-live"
+                ? "bg-panel2 border-gold text-gold"
                 : "bg-panel border-line text-textmuted hover:text-textprimary"
             }`}
           >
@@ -941,9 +937,9 @@ export default function BoardView({
           </button>
           <button
             onClick={() => setSortMode("time")}
-            className={`flex-1 text-[11px] sm:text-xs font-mono uppercase tracking-wide px-2.5 py-1.5 sm:py-2 rounded-full border transition-colors ${
+            className={`flex-1 text-[10px] font-mono uppercase tracking-[0.08em] px-2.5 py-1.5 sm:py-2 rounded-lg border transition-colors ${
               sortMode === "time"
-                ? "bg-live/15 border-live text-live"
+                ? "bg-panel2 border-gold text-gold"
                 : "bg-panel border-line text-textmuted hover:text-textprimary"
             }`}
           >
@@ -952,9 +948,9 @@ export default function BoardView({
           <button
             onClick={requestNearMe}
             disabled={locationLoading}
-            className={`flex-1 text-[11px] sm:text-xs font-mono uppercase tracking-wide px-2.5 py-1.5 sm:py-2 rounded-full border transition-colors disabled:opacity-50 ${
+            className={`flex-1 text-[10px] font-mono uppercase tracking-[0.08em] px-2.5 py-1.5 sm:py-2 rounded-lg border transition-colors disabled:opacity-50 ${
               sortMode === "nearMe"
-                ? "bg-live/15 border-live text-live"
+                ? "bg-panel2 border-gold text-gold"
                 : "bg-panel border-line text-textmuted hover:text-textprimary"
             }`}
           >
@@ -974,7 +970,7 @@ export default function BoardView({
         showStatusFilter={isLiveView}
       />
 
-      <div className="sticky top-0 z-20 bg-ink pt-3 pb-3 mb-3 -mx-4 px-4 sm:-mx-8 sm:px-8 border-b border-line">
+      <div className="sticky top-0 z-20 bg-ink pt-3 pb-3 mb-3 -mx-4 px-4 border-b border-line">
         <div className="flex gap-1.5 sm:gap-2 mb-3">
           {WEEKDAYS.map((day) => {
             const active = selectedDay === day;
@@ -983,9 +979,9 @@ export default function BoardView({
               <button
                 key={day}
                 onClick={() => setSelectedDay(day)}
-                className={`flex-1 flex flex-col items-center px-1.5 sm:px-3 py-2 sm:py-2.5 rounded-lg border text-xs sm:text-sm font-mono uppercase tracking-wide transition-colors ${
+                className={`flex-1 flex flex-col items-center px-1.5 sm:px-3 py-2 sm:py-2.5 rounded-lg border text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.08em] transition-colors ${
                   active
-                    ? "bg-live/15 border-live text-live"
+                    ? "bg-panel2 border-gold text-gold"
                     : "bg-panel border-line text-textmuted hover:text-textprimary"
                 }`}
               >
@@ -1004,10 +1000,10 @@ export default function BoardView({
               <button
                 key={region}
                 onClick={() => jumpToRegion(region)}
-                className={`text-[11px] font-mono uppercase tracking-wide px-2.5 py-1.5 rounded-full border transition-colors ${
+                className={`text-[10px] font-mono uppercase tracking-[0.08em] px-2.5 py-1.5 rounded-lg border transition-colors ${
                   currentRegion === region
-                    ? "border-live text-live bg-live/10"
-                    : "border-line text-textmuted hover:text-live hover:border-live"
+                    ? "border-gold text-gold bg-panel2"
+                    : "border-line text-textmuted hover:text-gold hover:border-gold"
                 }`}
               >
                 {REGION_SHORT[region] ?? region} <span className="text-textmuted/60">({items.length})</span>
@@ -1018,9 +1014,9 @@ export default function BoardView({
         <div className="flex justify-end mt-2">
           <button
             onClick={toggleCompact}
-            className={`text-[10px] font-mono uppercase tracking-wide px-2.5 py-1 rounded-full border transition-colors ${
+            className={`text-[10px] font-mono uppercase tracking-wide px-2.5 py-1 rounded-lg border transition-colors ${
               compact
-                ? "border-live text-live bg-live/10"
+                ? "border-gold text-gold bg-panel2"
                 : "border-line text-textmuted hover:text-textprimary"
             }`}
           >
@@ -1158,7 +1154,7 @@ export default function BoardView({
               </button>
               <div className="h-px gold-rule mb-3 -mt-2" />
               {!collapsed && (
-                <div className="grid gap-2 sm:grid-cols-2">
+                <div className="grid gap-2">
                   {items.map(({ store, entry, distance }) => (
                     <StoreRow
                       key={store.id}

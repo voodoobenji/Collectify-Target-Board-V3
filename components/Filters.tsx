@@ -46,7 +46,7 @@ export default function Filters({
           onClick={() => setPriorityOpen((v) => !v)}
           className="w-full flex items-center justify-between"
         >
-          <span className="text-sm font-mono uppercase tracking-[0.2em] text-gold">
+          <span className="text-[10px] font-mono uppercase tracking-[0.08em] text-textmuted">
             Priority{" "}
             <span className="text-textmuted normal-case tracking-normal">· {chanceLabel}</span>
           </span>
@@ -58,9 +58,9 @@ export default function Filters({
               <button
                 key={opt.value}
                 onClick={() => onChanceFilter(opt.value)}
-                className={`text-xs sm:text-sm font-mono uppercase tracking-wide px-3 py-1.5 sm:py-2 rounded-full border transition-colors ${
+                className={`text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.08em] px-3 py-1.5 sm:py-2 rounded-lg border transition-colors ${
                   chanceFilter === opt.value
-                    ? "bg-live/15 border-live text-live"
+                    ? "bg-panel2 border-gold text-gold"
                     : "bg-panel border-line text-textmuted hover:text-textprimary"
                 }`}
               >
@@ -77,7 +77,7 @@ export default function Filters({
             onClick={() => setStatusOpen((v) => !v)}
             className="w-full flex items-center justify-between"
           >
-            <span className="text-sm font-mono uppercase tracking-[0.2em] text-gold">
+            <span className="text-[10px] font-mono uppercase tracking-[0.08em] text-textmuted">
               Status{" "}
               <span className="text-textmuted normal-case tracking-normal">· {statusLabel}</span>
             </span>
@@ -89,9 +89,9 @@ export default function Filters({
                 <button
                   key={opt.value}
                   onClick={() => onStatusFilter(opt.value)}
-                  className={`text-xs sm:text-sm font-mono uppercase tracking-wide px-3 py-1.5 sm:py-2 rounded-full border transition-colors ${
+                  className={`text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.08em] px-3 py-1.5 sm:py-2 rounded-lg border transition-colors ${
                     statusFilter === opt.value
-                      ? "bg-live/15 border-live text-live"
+                      ? "bg-panel2 border-gold text-gold"
                       : "bg-panel border-line text-textmuted hover:text-textprimary"
                   }`}
                 >

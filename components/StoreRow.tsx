@@ -58,9 +58,9 @@ const chanceStyles: Record<string, string> = {
 };
 
 const chanceBorderLeft: Record<string, string> = {
-  High: "border-l-4 border-l-high",
-  Medium: "border-l-4 border-l-medium",
-  Low: "border-l-4 border-l-low",
+  High: "border-l-[3px] border-l-high",
+  Medium: "border-l-[3px] border-l-medium",
+  Low: "border-l-[3px] border-l-low",
 };
 
 const statusStyles: Record<Status, string> = {
@@ -475,7 +475,7 @@ export default function StoreRow({
             <span className="w-6 text-center text-xs font-mono text-gold">{entry.confirmedCount ?? 0}</span>
             <button
               onClick={() => onPatch(store.id, { confirmedCount: (entry.confirmedCount ?? 0) + 1 })}
-              className="h-6 w-6 rounded border border-line text-textmuted hover:text-live hover:border-live text-xs font-mono"
+              className="h-6 w-6 rounded border border-line text-textmuted hover:text-gold hover:border-gold text-xs font-mono"
             >
               +
             </button>
@@ -596,7 +596,7 @@ export default function StoreRow({
     return (
       <div
         onClick={() => setExpanded(true)}
-        className={`w-full cursor-pointer border rounded-lg px-3 py-2 bg-panel card-fill flex items-center gap-2 ${
+        className={`w-full cursor-pointer border rounded-xl px-3 py-2 bg-panel card-fill flex items-center gap-2 ${
           entry.flagged ? "border-medium" : "border-line"
         } ${chance && !entry.flagged ? chanceBorderLeft[chance] : ""}`}
       >
@@ -628,7 +628,7 @@ export default function StoreRow({
 
   return (
     <div
-      className={`w-full border rounded-lg p-4 bg-panel card-fill ${
+      className={`w-full border rounded-xl p-4 bg-panel card-fill ${
         entry.flagged ? "border-medium" : "border-line"
       } ${chance && !entry.flagged ? chanceBorderLeft[chance] : ""}`}
     >
@@ -653,7 +653,7 @@ export default function StoreRow({
             {chance ?? "Not Expected/Sells Other Day(s)"}
           </span>
           <FavoriteStar isFavorite={isFavorite} onToggle={() => onToggleFavorite?.(store.id)} />
-          <span className="font-serif text-base sm:text-lg text-textprimary">{store.name}</span>
+          <span className="font-serif text-[16px] text-textprimary">{store.name}</span>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {showStatus && (
@@ -675,7 +675,7 @@ export default function StoreRow({
           )}
         </div>
       </div>
-      <div className="flex items-center gap-2 mt-2 text-sm font-mono text-textmuted flex-wrap">
+      <div className="flex items-center gap-x-3 gap-y-1 mt-2 text-[12px] font-mono text-textmuted flex-wrap">
         <MapLink store={store} small />
         {distanceMiles != null && (
           <span className="text-gold">{distanceMiles.toFixed(1)} mi</span>
@@ -867,7 +867,7 @@ export default function StoreRow({
           <p className="text-[10px] uppercase tracking-wide text-gold font-mono mb-0.5">
             &#128221; Via Admin Notes
           </p>
-          <p className="text-base text-textmuted leading-relaxed whitespace-pre-line">{adminNotes}</p>
+          <p className="text-[13.5px] text-textmuted leading-relaxed whitespace-pre-line">{adminNotes}</p>
         </div>
       )}
       {entry.externalGuide && (
@@ -875,7 +875,7 @@ export default function StoreRow({
           <p className="text-[10px] uppercase tracking-wide text-purple font-mono mb-0.5">
             &#128506; Via Collectify Map
           </p>
-          <p className="text-base text-textmuted leading-relaxed">{entry.externalGuide.text}</p>
+          <p className="text-[13.5px] text-textmuted leading-relaxed">{entry.externalGuide.text}</p>
           {entry.externalGuide.storeUrl && (
             <a
               href={entry.externalGuide.storeUrl}
@@ -892,7 +892,7 @@ export default function StoreRow({
       {onViewWeek && (
         <button
           onClick={() => onViewWeek(store.id)}
-          className="mt-2 text-[11px] font-mono uppercase tracking-wide text-textmuted hover:text-live transition-colors"
+          className="mt-2 text-[10px] font-mono uppercase tracking-[0.08em] text-textmuted hover:text-live transition-colors"
         >
           View full week &rsaquo;
         </button>
@@ -900,7 +900,7 @@ export default function StoreRow({
       {compact && (
         <button
           onClick={() => setExpanded(false)}
-          className="mt-2 ml-4 text-[11px] font-mono uppercase tracking-wide text-textmuted hover:text-textprimary transition-colors"
+          className="mt-2 ml-4 text-[10px] font-mono uppercase tracking-[0.08em] text-textmuted hover:text-textprimary transition-colors"
         >
           &#9652; Show less
         </button>
