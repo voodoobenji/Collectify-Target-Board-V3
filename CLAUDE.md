@@ -54,6 +54,8 @@ Vercel team `collectify` (`team_vYTchJOc7S8N072ks2cQHxR7`), project `collectify-
   output, server-side fallback, needs `ANTHROPIC_API_KEY` set by the owner in Vercel) → review → `/api/admin/drops`.
   Drops are stored one key per day (`drops:<YYYY-MM-DD>`) + `drops:days` index. Kinds: drop / light / dry.
 - Light stock (sleeves, blisters, Needoh, singles...) is never a drop; the store stays owed.
+- Store list: `STORES` = what members see (no San Diego, no hidden duplicates); `ALL_STORES` = everything.
+  Store decisions are in docs/GUIDE_ENGINE_PLAN.md.
 - Predictions must adapt: weekday baseline + last week's same weekday + this week so far (see the plan).
 
 ## Local preview

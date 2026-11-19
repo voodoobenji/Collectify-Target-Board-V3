@@ -19,6 +19,25 @@ export interface StoreProfile {
 }
 
 export const STORE_PROFILES: Record<string, StoreProfile> = {
+  "T087": {
+    "engineName": "Oxnard Collection (RiverPark)",
+    "region": "SFV",
+    "cadence": "Wednesday-morning opener + Friday (owner: the only Oxnard store)",
+    "window": "AM(7-9)",
+    "weekdayHits": {
+      "Fri": 3
+    },
+    "dayLock": "Wednesday morning opener; Friday store"
+  },
+  "T196": {
+    "engineName": "Perris",
+    "region": "IE",
+    "cadence": "rare",
+    "window": "AM(7-9)",
+    "weekdayHits": {
+      "Thu": 1
+    }
+  },
   "T002": {
     "engineName": "3121 Pasadena",
     "region": "SGV",
@@ -452,7 +471,7 @@ export const STORE_PROFILES: Record<string, StoreProfile> = {
       "Fri": 3
     }
   },
-  "T136": {
+  "T135": {
     "engineName": "Ontario 4th/Baker",
     "region": "IE",
     "cadence": "Thu-heavy",
@@ -1841,27 +1860,7 @@ export const STORE_PROFILES: Record<string, StoreProfile> = {
 };
 
 // Engine stores that are not on the board yet (need an address before they can be added).
-export const UNPLACED_ENGINE_STORES: StoreProfile[] = [
-  {
-    "engineName": "Perris",
-    "region": "IE",
-    "cadence": "rare",
-    "window": "AM(7-9)",
-    "weekdayHits": {
-      "Thu": 1
-    }
-  },
-  {
-    "engineName": "Oxnard",
-    "region": "SFV",
-    "cadence": "FRIDAY ONLY",
-    "window": "AM(7-9)",
-    "weekdayHits": {
-      "Fri": 3
-    },
-    "fridayOnly": true
-  }
-];
+export const UNPLACED_ENGINE_STORES: StoreProfile[] = [];
 
 // Stores that drop near-daily: a drop the day before does NOT make them lighter (engine §6).
 // Brea Birch, Culver City Mall, Whittier Whitwood, 3121 Pasadena, Pico Rivera, Eagle Rock, Costa Mesa Harbor, Gardena, Manhattan Beach.
@@ -1975,8 +1974,12 @@ export const STORE_ALIASES: Record<string, string> = {
   "3121 pasadena": "T002",
   "777 pasadena": "T001",
   "irvine spectrum": "T089",
+  "oxnard": "T087",
+  "riverpark": "T087",
+  "oxnard collection": "T087",
+  "perris": "T196",
   "tustin marketplace": "T100",
   "the district": "T100",
-  "ontario baker": "T136",
-  "ontario 4th": "T136"
+  "ontario baker": "T135",
+  "ontario 4th": "T135"
 };

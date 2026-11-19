@@ -26,13 +26,18 @@ from the day's activity export that the owner imports. The engine rules live in 
 ## Costs (estimated from the example exports, 120–580 messages/day)
 AI read of one day's export ≈ $0.15–0.40 on Claude Opus 5.5 → ~$5–12/month. The import page shows the real cost.
 
-## Open questions for the owner
-- Confirm address-based store matches: Bonnie Brae = Westlake LA (330 N Westlake), Silverlake = Dillon St,
-  Koreatown = Virgil Ave, Glassell Park = Eagle Rock Blvd store (T189), Beverly Center = Beverly Blvd,
-  UC Irvine = Irvine Campus Dr, USC Village = USC Hoover, Moreno Valley Nason = Moreno Valley East,
-  Ontario 4th/Baker = 1670 E 4th Ontario, Apple Valley Jess Ranch = Bear Valley Rd store.
-- Board store list issues: two "Carson Mall" (T033 has Carson Sepulveda's address), two "Westminster Beach"
-  (T095 has the mall's address), two "Eagle Rock", Ontario Mills/Ontario Baker share an address,
-  Santa Ana 17th/Grand and 17th/Bristol share an address.
+## Store list decisions (owner, Nov 2026)
+- Address-based matches confirmed (Bonnie Brae = Westlake LA, Silverlake = Dillon St, Koreatown = Virgil Ave,
+  Glassell Park = T189 on Eagle Rock Blvd, Beverly Center = Beverly Blvd, UC Irvine = Campus Dr, USC Village = Hoover).
+- Oxnard: one store, Oxnard Collection / RiverPark (T087, 2850 N Oxnard Blvd), Wednesday opener + Friday.
+- Perris: new store T196, 1688 N Perris Blvd (opened July 2026). Coordinates approximate.
+- Carson Mall (T179, Avalon) and Carson Sepulveda (T034) are two stores; T033 was a duplicate (hidden).
+- Westminster Beach (T176, Beach Blvd) and Westminster Mall (T094); T095 was a duplicate (hidden).
+- Eagle Rock = T003 on Colorado Blvd; T189 renamed Glassell Park.
+- Ontario Mills (T134, 4200 E 4th) and Ontario Baker (T135, 1670 E 4th, 4th & Baker) are two stores; T136 hidden dup.
+- San Diego stores are hidden for now (`STORES` filters region SD; `ALL_STORES` keeps them).
+
+## Still open
+- Redondo Beach (T031) and Rolling Hills (T032) share one address (43 Peninsula Center); Santa Ana 17th/Grand (T120)
+  and 17th/Bristol (T167) share one address. Check which are real.
 - Engine regions: USC Village listed as OC (it's LA); Chino Grand/Montclair as SGV.
-- San Diego stores are on the board, but the engine calls SD out of area: keep, hide, or leave without predictions?

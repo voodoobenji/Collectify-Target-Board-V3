@@ -16,10 +16,9 @@ export const REGION_ORDER = [
   "CULVERINGSB",
   "SOUTHOFLA",
   "OC",
-  "SD",
 ];
 
-export const STORES: StoreRef[] = [
+export const ALL_STORES: StoreRef[] = [
   {
     "id": "T001",
     "name": "777 Pasadena",
@@ -1267,9 +1266,9 @@ export const STORES: StoreRef[] = [
     "name": "Ontario Baker",
     "region": "SGV/IE",
     "regionLabel": "San Gabriel Valley / Inland Empire",
-    "address": "4200 E 4th St, Ontario, CA 91764, USA",
-    "lat": 34.0756168,
-    "lng": -117.561722
+    "address": "1670 E 4th St Ste D, Ontario, CA 91764, USA",
+    "lat": 34.0763368,
+    "lng": -117.6183634
   },
   {
     "id": "T136",
@@ -1705,7 +1704,7 @@ export const STORES: StoreRef[] = [
   },
   {
     "id": "T189",
-    "name": "Eagle Rock",
+    "name": "Glassell Park",
     "region": "LOSANGELES",
     "regionLabel": "Los Angeles Central",
     "address": "4211 Eagle Rock Blvd, Los Angeles, CA 90065, USA",
@@ -1765,5 +1764,22 @@ export const STORES: StoreRef[] = [
     "address": "990 Avenida Vista Hermosa, San Clemente, CA 92673, USA",
     "lat": 33.463380374597,
     "lng": -117.605786701398
+  },
+  {
+    "id": "T196",
+    "name": "Perris",
+    "region": "SGV/IE",
+    "regionLabel": "San Gabriel Valley / Inland Empire",
+    "address": "1688 N Perris Blvd, Perris, CA 92571, USA",
+    "lat": 33.8045,
+    "lng": -117.2262
   }
 ];
+
+// Stores kept in the data but not shown (Nov 2026, owner):
+// - duplicates with a wrong address: T033 "Carson Mall" (had Carson Sepulveda's address; real Carson Mall = T179),
+//   T095 "Westminster Beach" (had the mall's address; real one = T176), T136 (same store as T135 Ontario Baker)
+// - San Diego is out of area for now ("leave the SD stores off").
+// Perris (T196) coordinates are approximate (~0.5 mi) until checked on a map.
+export const HIDDEN_STORE_IDS = new Set(["T033", "T095", "T136"]);
+export const STORES: StoreRef[] = ALL_STORES.filter((s) => s.region !== "SD" && !HIDDEN_STORE_IDS.has(s.id));
