@@ -38,6 +38,8 @@ AI read of one day's export ≈ $0.15–0.40 on Claude Opus 5.5 → ~$5–12/mon
 - Redondo Beach = Kingsdale (T175); T031 was a duplicate (hidden). Rolling Hills (T032, 43 Peninsula Center) is right.
 - Santa Ana: 17th/Grand T120 = 1330 E 17th St, College T119 = 1441 W 17th St, Bristol T186 = 3300 S Bristol St;
   T167 "17th/Bristol" was a duplicate (hidden).
+- Fullerton Yorba Linda (T106) = 2920 Yorba Linda Blvd, Fullerton; Yorba Linda Blvd / Yorba Linda City (T117) =
+  17506 Yorba Linda Blvd, Yorba Linda (owner, Nov 2026). Two separate stores.
 - San Diego stores are hidden for now (`STORES` filters region SD; `ALL_STORES` keeps them).
 
 ## Still open

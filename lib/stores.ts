@@ -996,9 +996,9 @@ export const ALL_STORES: StoreRef[] = [
     "name": "Fullerton Yorba Linda",
     "region": "OC",
     "regionLabel": "Orange County",
-    "address": "17506 Yorba Linda Blvd, Yorba Linda, CA 92886, USA",
-    "lat": 33.8874213,
-    "lng": -117.8281205
+    "address": "2920 Yorba Linda Blvd, Fullerton, CA 92831, USA",
+    "lat": 33.888258,
+    "lng": -117.877448
   },
   {
     "id": "T107",
