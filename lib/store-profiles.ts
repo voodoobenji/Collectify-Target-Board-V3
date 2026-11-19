@@ -2027,7 +2027,8 @@ export const STORE_ALIASES: Record<string, string> = {
   "oxnard collection": "T087",
   "perris": "T196",
   "tustin marketplace": "T100",
-  "the district": "T100",
+  "the district": "T099",
+  "district": "T099",
   "ontario baker": "T135",
   "ontario 4th": "T135"
 };
