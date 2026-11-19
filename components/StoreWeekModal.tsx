@@ -11,7 +11,7 @@ import TrackRecordBadge from "./TrackRecordBadge";
 
 interface LogEntry {
   date: string;
-  type: "guide" | "confirmed";
+  type: "guide" | "confirmed" | "light" | "dry";
   snippet: string;
   url: string | null;
 }
@@ -589,10 +589,12 @@ export default function StoreWeekModal({
                               className={`shrink-0 uppercase text-[9px] px-1 rounded border ${
                                 entry.type === "confirmed"
                                   ? "border-live text-live"
-                                  : "border-line text-textmuted"
+                                  : entry.type === "light"
+                                    ? "border-medium text-medium"
+                                    : "border-line text-textmuted"
                               }`}
                             >
-                              {entry.type === "confirmed" ? "confirmed" : "guide"}
+                              {entry.type === "confirmed" ? "drop" : entry.type}
                             </span>
                             <span className="text-textmuted flex-1">{entry.snippet}</span>
                             {entry.url && (

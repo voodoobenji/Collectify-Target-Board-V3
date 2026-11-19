@@ -54,6 +54,19 @@ function parseCsv(text: string): string[][] {
   return rows;
 }
 
+interface EngineRun {
+  at: string;
+  trigger: string;
+  by: string;
+  daysUsed: number;
+  firstDay: string | null;
+  lastDay: string | null;
+  today: { high: number; medium: number; low: number };
+  changedToday: number;
+  pinned: number;
+  samples: { store: string; from: string | null; to: string | null; note: string }[];
+}
+
 const fmtDay = (d: string) =>
   new Date(`${d}T12:00:00`).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 
@@ -65,12 +78,33 @@ export default function ImportClient() {
   const [busy, setBusy] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [engineLog, setEngineLog] = useState<EngineRun[]>([]);
+  const [openRun, setOpenRun] = useState<string | null>(null);
 
   async function loadDays() {
     const r = await fetch("/api/admin/drops", { cache: "no-store" });
     if (r.ok) setDays((await r.json()).days);
   }
-  useEffect(() => { loadDays(); }, []);
+  async function loadEngine() {
+    const r = await fetch("/api/admin/engine", { cache: "no-store" });
+    if (r.ok) setEngineLog((await r.json()).log);
+  }
+  useEffect(() => { loadDays(); loadEngine(); }, []);
+
+  async function rebuild() {
+    setErr(null); setMsg(null);
+    setBusy("Rebuilding predictions…");
+    try {
+      const r = await fetch("/api/admin/engine", { method: "POST" });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(d.error ?? `HTTP ${r.status}`);
+      setEngineLog(d.log);
+      setOpenRun(d.run.at);
+      setMsg(`Predictions rebuilt from ${d.run.daysUsed} imported days. Today: ${d.run.today.high} high · ${d.run.today.medium} medium · ${d.run.today.low} low.`);
+    } catch (e) {
+      setErr(String(e instanceof Error ? e.message : e));
+    } finally { setBusy(null); }
+  }
 
   const exportDays = useMemo(() => {
     const m = new Map<string, number>();
@@ -180,9 +214,10 @@ export default function ImportClient() {
       const d = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(d.error ?? `HTTP ${r.status}`);
       const total = Object.values(d.saved as Record<string, number>).reduce((t, n) => t + n, 0);
-      setMsg(`Saved ${total} entries for ${Object.keys(d.saved).length} day(s).`);
+      setMsg(`Saved ${total} entries for ${Object.keys(d.saved).length} day(s). Predictions rebuilt: today ${d.run?.today.high ?? 0} high · ${d.run?.today.medium ?? 0} medium · ${d.run?.today.low ?? 0} low (${d.run?.changedToday ?? 0} cards changed).`);
       setRows([]); setMessages([]);
-      loadDays();
+      if (d.run) setOpenRun(d.run.at);
+      loadDays(); loadEngine();
     } catch (e) {
       setErr(String(e instanceof Error ? e.message : e));
     } finally { setBusy(null); }
@@ -281,6 +316,45 @@ export default function ImportClient() {
           </div>
         </section>
       )}
+
+      <section className="mb-6">
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <div className="font-mono uppercase tracking-[0.08em] text-[10px] text-textmuted">Predictions engine</div>
+          <button onClick={rebuild} disabled={!!busy} className={`${btn} border-gold text-gold hover:bg-panel2`}>Rebuild predictions now</button>
+        </div>
+        <p className="text-textmuted text-xs mb-2">
+          Runs by itself after every save here and after the nightly rollover. Cards you set by hand (chance or
+          window) are pinned and left alone. How it works: docs/HOW_PREDICTIONS_WORK.md in the guide repo.
+        </p>
+        {engineLog.length === 0 ? (
+          <p className="text-sm text-textmuted">No runs yet.</p>
+        ) : (
+          <div className="space-y-1.5">
+            {engineLog.map((r) => (
+              <div key={r.at} className="rounded-xl border border-line bg-panel px-3 py-2">
+                <button onClick={() => setOpenRun(openRun === r.at ? null : r.at)} className="w-full flex flex-wrap items-center gap-x-3 gap-y-1 text-left text-[12px]">
+                  <span className="font-mono text-textmuted">
+                    {new Date(r.at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                  </span>
+                  <span className="font-mono uppercase text-[10px] text-gold">{r.trigger}</span>
+                  <span className="text-textmuted">
+                    {r.daysUsed} days{r.firstDay ? ` (${r.firstDay} → ${r.lastDay})` : ""} · today {r.today.high}H {r.today.medium}M {r.today.low}L · {r.changedToday} changed{r.pinned ? ` · ${r.pinned} pinned` : ""}
+                  </span>
+                </button>
+                {openRun === r.at && r.samples.length > 0 && (
+                  <div className="mt-2 space-y-0.5">
+                    {r.samples.map((x, i) => (
+                      <p key={i} className="text-[11px] text-textmuted">
+                        <span className="text-textprimary">{x.store}</span>: {x.from ?? "none"} → {x.to ?? "none"} <span className="text-textmuted/70">· {x.note}</span>
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
 
       <section>
         <div className="font-mono uppercase tracking-[0.08em] text-[10px] text-textmuted mb-2">Saved days</div>

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getDropDays, getDropsForDay, setDropsForDay } from "@/lib/kv";
+import { rebuildPredictions } from "@/lib/engine";
 import { DROP_KINDS, storeNameOf, windowFor, type DropKind, type DropRecord } from "@/lib/drops";
 import { STORES } from "@/lib/stores";
 
@@ -50,8 +51,11 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ days: days.reverse() });
 }
 
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
-  if (!(await guard())) return NextResponse.json({ error: "Not authorized" }, { status: 403 });
+  const session = await guard();
+  if (!session) return NextResponse.json({ error: "Not authorized" }, { status: 403 });
   const body = (await req.json().catch(() => ({}))) as { days?: Record<string, Partial<DropRecord>[]> };
   const entries = Object.entries(body.days ?? {}).filter(([d, rows]) => isDate(d) && Array.isArray(rows));
   if (!entries.length || entries.length > 120) return NextResponse.json({ error: "nothing to save" }, { status: 400 });
@@ -62,5 +66,7 @@ export async function POST(req: NextRequest) {
     await setDropsForDay(date, drops);
     saved[date] = drops.length;
   }
-  return NextResponse.json({ ok: true, saved });
+  // New data -> predictions rebuild right away.
+  const run = await rebuildPredictions("import", session.username ?? "admin");
+  return NextResponse.json({ ok: true, saved, run });
 }

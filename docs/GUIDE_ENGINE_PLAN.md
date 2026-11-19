@@ -11,7 +11,7 @@ from the day's activity export that the owner imports. The engine rules live in 
    (.zip/.html, Discrub layout or the compact exporter, all parts) → browser extracts messages → Claude Opus 5.5
    lists each store report as drop / light / dry → admin reviews → saved per day (`drops:<date>` + `drops:days`).
    Also imports the old drops-log CSV. Light stock is never a drop (engine §6).
-3. **Predictions rebuild themselves (next).** Per store per weekday:
+3. **Predictions rebuild themselves (done, see docs/HOW_PREDICTIONS_WORK.md).** Per store per weekday:
    - baseline: long-run hit rate on that weekday + usual window/open time (frozen tally only fills gaps);
    - last week's same weekday ("Mondays follow Mondays"): dropped → leans up; missed its usual day → owed;
    - this week so far: big drop the day before → lighter (unless NEAR_DAILY); went early in the week → lighter later;

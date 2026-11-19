@@ -20,8 +20,9 @@ Vercel team `collectify` (`team_vYTchJOc7S8N072ks2cQHxR7`), project `collectify-
 - After pushing, check the deploy is READY with the Vercel MCP (`list_deployments`).
 
 ## Conventions (from the owner)
-- Predictions are **general per weekday**, never tied to a specific day's events. No "hit last week" /
-  "sold today" wording on cards.
+- Card predictions come from the engine (docs/HOW_PREDICTIONS_WORK.md): a general per-weekday note + a short
+  "this week" line only when something shifted (owed / lighter after a drop the day before). Engine wording rules:
+  no product names, hedged, no "today/yesterday", no time range for openings, never "didn't sell".
 - Chances are hit-driven (`Chance = High | Medium | Low | null`). `Status = pending | hit | no_hit` only
   (no sold / late / locked states).
 - Every card shows Stock Location (`both` reads "TCG + Guest Services") and Item Limit ("Not set" if unset).
@@ -56,7 +57,11 @@ Vercel team `collectify` (`team_vYTchJOc7S8N072ks2cQHxR7`), project `collectify-
 - Light stock (sleeves, blisters, Needoh, singles...) is never a drop; the store stays owed.
 - Store list: `STORES` = what members see (no San Diego, no hidden duplicates); `ALL_STORES` = everything.
   Store decisions are in docs/GUIDE_ENGINE_PLAN.md.
-- Predictions must adapt: weekday baseline + last week's same weekday + this week so far (see the plan).
+- Predictions: `lib/predict.ts` (pure math) + `lib/engine.ts` (`rebuildPredictions`: writes today's board + the 7
+  weekday templates, skips `pinned` cards, logs to `engine:log`, writes `engine:recent` for the week view).
+  Runs after drops are saved, after the nightly rollover, on "Rebuild predictions now", and on un-pin.
+  Admin setting chance/window by hand pins a card. Engine owns `reason`; admin notes live in vendorNotes/randomNotes.
+  Explainer: docs/HOW_PREDICTIONS_WORK.md. Keep it updated when the math changes.
 
 ## Local preview
 - No dev auth bypass (don't add one). To see the UI, add a temporary uncommitted page that renders

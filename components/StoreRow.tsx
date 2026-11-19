@@ -44,8 +44,12 @@ function timeAgoShort(iso: string | null): string {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
+// Once the prediction engine owns a card (engineAt set, not pinned), `reason` is the engine's note and the
+// admin's own notes live in vendorNotes/randomNotes.
+const engineOwned = (entry: BoardEntry) => !!entry.engineAt && !entry.pinned;
+
 function mergeAdminNotes(entry: BoardEntry): string {
-  return [entry.vendorNotes, entry.randomNotes, entry.reason]
+  return [entry.vendorNotes, entry.randomNotes, engineOwned(entry) ? "" : entry.reason]
     .map((s) => (s ?? "").trim())
     .filter(Boolean)
     .join("\n\n");
@@ -489,7 +493,9 @@ export default function StoreRow({
         <div className="text-[10px] uppercase tracking-wide text-textmuted mb-1">Admin Notes</div>
         <DebouncedTextarea
           value={adminNotes}
-          onCommit={(v) => onPatch(store.id, { reason: v, vendorNotes: "", randomNotes: "" })}
+          onCommit={(v) =>
+            onPatch(store.id, engineOwned(entry) ? { vendorNotes: "", randomNotes: v } : { reason: v, vendorNotes: "", randomNotes: "" })
+          }
           placeholder="Notes about this store..."
           rows={3}
           className="w-full bg-panel2 border border-line rounded px-2 py-1.5 text-xs mb-2 placeholder:text-textmuted resize-none"
@@ -860,6 +866,33 @@ export default function StoreRow({
               </div>
             ))}
           </div>
+        </div>
+      )}
+      {engineOwned(entry) && (entry.reason || entry.weekNote) && (
+        <div className="mt-2.5 pl-3 border-l-2 border-line">
+          <p className="text-[10px] uppercase tracking-[0.08em] text-textmuted font-mono mb-0.5">&#128200; Prediction</p>
+          {entry.reason && <p className="text-[13.5px] text-textmuted leading-relaxed">{entry.reason}</p>}
+          {entry.weekNote && <p className="text-[12.5px] text-medium leading-relaxed mt-0.5">{entry.weekNote}</p>}
+        </div>
+      )}
+      {isAdmin && (entry.pinned || entry.basis) && (
+        <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[10px] font-mono text-textmuted/80">
+          {entry.pinned ? (
+            <>
+              <span className="uppercase tracking-[0.08em] text-gold">Pinned · set by hand</span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPatch(store.id, { pinned: false });
+                }}
+                className="uppercase tracking-[0.08em] px-1.5 py-0.5 rounded border border-line hover:text-gold hover:border-gold"
+              >
+                Use engine
+              </button>
+            </>
+          ) : (
+            <span title="Why the engine picked this (admins only)">Why: {entry.basis}</span>
+          )}
         </div>
       )}
       {adminNotes && (

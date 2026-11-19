@@ -83,6 +83,10 @@ async function saveTemplateFromBoard(board: Board): Promise<void> {
       multiSeller: e.multiSeller,
       confirmedCount: e.confirmedCount,
       updatedAt: e.updatedAt,
+      weekNote: e.weekNote,
+      basis: e.basis,
+      pinned: e.pinned,
+      engineAt: e.engineAt ?? null,
     };
   }
   const tpl: WeekdayTemplate = {
@@ -201,6 +205,10 @@ export async function startNewDay(updatedBy: string): Promise<Board> {
       itemLimit: fromTpl?.itemLimit ?? prev?.itemLimit ?? "",
       multiSeller: fromTpl?.multiSeller ?? prev?.multiSeller ?? false,
       confirmedCount: fromTpl?.confirmedCount ?? prev?.confirmedCount ?? 0,
+      weekNote: fromTpl?.weekNote ?? "",
+      basis: fromTpl?.basis ?? "",
+      pinned: fromTpl?.pinned ?? false,
+      engineAt: fromTpl?.engineAt ?? null,
       // Flags are live-board-only (not part of the weekday template) and are
       // explicitly persistent across day rollover until an admin clears them -
       // carry forward from the previous board entry, nothing else has this data.
@@ -264,6 +272,10 @@ export async function applyTemplateToBoard(weekday: string, updatedBy: string): 
       itemLimit: info.itemLimit ?? "",
       multiSeller: info.multiSeller ?? false,
       confirmedCount: info.confirmedCount ?? 0,
+      weekNote: info.weekNote ?? "",
+      basis: info.basis ?? "",
+      pinned: info.pinned ?? false,
+      engineAt: info.engineAt ?? null,
       updatedAt: new Date().toISOString(),
       updatedBy,
     };
@@ -711,4 +723,45 @@ export async function setDropsForDay(date: string, drops: DropRecord[]): Promise
     days.delete(date);
   }
   await kv.set(DROP_DAYS_KEY, [...days].sort());
+}
+
+
+// ---- prediction engine storage (lib/engine.ts) ----
+export async function saveBoard(board: Board): Promise<void> {
+  await kv.set(BOARD_KEY, board);
+}
+export async function saveTemplate(tpl: WeekdayTemplate): Promise<void> {
+  await kv.set(templateKey(tpl.weekday), tpl);
+}
+
+export interface EngineLogEntry {
+  at: string;
+  trigger: string; // "import" | "rollover" | "manual" | "unpin"
+  by: string;
+  daysUsed: number; // imported days the engine read
+  firstDay: string | null;
+  lastDay: string | null;
+  today: { high: number; medium: number; low: number };
+  changedToday: number;
+  pinned: number;
+  samples: { store: string; from: string | null; to: string | null; note: string }[];
+}
+const ENGINE_LOG_KEY = "engine:log";
+export async function logEngineRun(e: EngineLogEntry): Promise<void> {
+  await kv.lpush(ENGINE_LOG_KEY, e);
+  await kv.ltrim(ENGINE_LOG_KEY, 0, 59);
+}
+export async function getEngineLog(limit = 30): Promise<EngineLogEntry[]> {
+  return (await kv.lrange<EngineLogEntry>(ENGINE_LOG_KEY, 0, limit - 1)) ?? [];
+}
+
+// Compact recent drops per store (written on each rebuild) so the week view can show real dated drops
+// with ONE small read, instead of reading every day key per member request.
+export type RecentDrop = { d: string; t: string; k: "drop" | "light" | "dry" };
+const RECENT_KEY = "engine:recent";
+export async function saveRecentDrops(v: Record<string, RecentDrop[]>): Promise<void> {
+  await kv.set(RECENT_KEY, v);
+}
+export async function getRecentDrops(): Promise<Record<string, RecentDrop[]>> {
+  return (await kv.get<Record<string, RecentDrop[]>>(RECENT_KEY)) ?? {};
 }

@@ -74,6 +74,12 @@ export interface BoardEntry {
   reports: StoreReport[];
   updatedAt: string | null;
   updatedBy: string | null;
+  // Prediction engine (lib/engine.ts). weekNote = "this week" line; basis = admin-only why; pinned = an admin set
+  // chance/window by hand, so the engine leaves this card alone; engineAt = last time the engine wrote it.
+  weekNote?: string;
+  basis?: string;
+  pinned?: boolean;
+  engineAt?: string | null;
 }
 
 export interface Board {
@@ -119,6 +125,12 @@ export interface TemplateEntry {
   multiSeller: boolean;
   confirmedCount: number;
   updatedAt: string | null;
+  // Prediction engine (lib/engine.ts). weekNote = "this week" line; basis = admin-only why; pinned = an admin set
+  // chance/window by hand, so the engine leaves this card alone; engineAt = last time the engine wrote it.
+  weekNote?: string;
+  basis?: string;
+  pinned?: boolean;
+  engineAt?: string | null;
 }
 
 export const EMPTY_TEMPLATE_ENTRY: TemplateEntry = {

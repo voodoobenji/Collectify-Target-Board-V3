@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import type { Board } from "@/lib/types";
 import { getBoard, patchEntry, logSecurityEvent } from "@/lib/kv";
+import { rebuildPredictions } from "@/lib/engine";
+
+// Runs the prediction engine on some requests (a few seconds).
+export const maxDuration = 60;
 
 function clientIp(req: NextRequest): string {
   const xff = req.headers.get("x-forwarded-for");
@@ -76,12 +81,21 @@ export async function PATCH(req: NextRequest) {
   if (!storeId || !patch) {
     return NextResponse.json({ error: "Missing storeId or patch" }, { status: 400 });
   }
-  const allowedKeys = ["chance", "window", "reason", "vendorNotes", "randomNotes", "sourceType", "stockLocation", "itemLimit", "multiSeller", "confirmedCount", "flagged", "status", "soldCount", "lastSoldAt"];
+  const allowedKeys = ["chance", "window", "reason", "vendorNotes", "randomNotes", "sourceType", "stockLocation", "itemLimit", "multiSeller", "confirmedCount", "flagged", "status", "soldCount", "lastSoldAt", "pinned"];
   const safePatch: Record<string, unknown> = {};
   for (const k of allowedKeys) {
     if (k in patch) safePatch[k] = patch[k];
   }
-  const board = await patchEntry(storeId, safePatch, session.username ?? session.discordId ?? "unknown");
+  // Setting chance or window by hand pins the card: the prediction engine stops overwriting it.
+  if ("chance" in safePatch || "window" in safePatch) safePatch.pinned = true;
+  if ("pinned" in safePatch) safePatch.pinned = safePatch.pinned === true;
+  const unpinned = safePatch.pinned === false;
+  let board = await patchEntry(storeId, safePatch, session.username ?? session.discordId ?? "unknown");
+  if (unpinned) {
+    // Handed back to the engine: re-run it so the card gets its prediction right away.
+    await rebuildPredictions("unpin", session.username ?? "admin");
+    board = await getBoard();
+  }
   boardCache = { board, ts: Date.now() };
   return NextResponse.json(board);
 }
