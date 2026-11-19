@@ -1122,7 +1122,7 @@ export const ALL_STORES: StoreRef[] = [
     "name": "Santa Ana 17th/Grand",
     "region": "OC",
     "regionLabel": "Orange County",
-    "address": "1330 17th St, Santa Ana, CA 92705, USA",
+    "address": "1330 E 17th St, Santa Ana, CA 92705, USA",
     "lat": 33.7590832,
     "lng": -117.8500105
   },
@@ -1781,5 +1781,7 @@ export const ALL_STORES: StoreRef[] = [
 //   T095 "Westminster Beach" (had the mall's address; real one = T176), T136 (same store as T135 Ontario Baker)
 // - San Diego is out of area for now ("leave the SD stores off").
 // Perris (T196) coordinates are approximate (~0.5 mi) until checked on a map.
-export const HIDDEN_STORE_IDS = new Set(["T033", "T095", "T136"]);
+// - T031 "Redondo Beach" = Redondo Beach Kingsdale (T175); T167 "Santa Ana 17th/Bristol" = duplicate (the real
+//   Santa Ana stores: 17th/Grand T120 1330 E 17th, College T119 1441 W 17th, Bristol T186 3300 S Bristol).
+export const HIDDEN_STORE_IDS = new Set(["T033", "T095", "T136", "T031", "T167"]);
 export const STORES: StoreRef[] = ALL_STORES.filter((s) => s.region !== "SD" && !HIDDEN_STORE_IDS.has(s.id));

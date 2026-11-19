@@ -3918,7 +3918,7 @@ export const HISTORY_LOG: Record<string, Record<string, LogEntry[]>> = {
   },
 };
 // Hidden duplicate store ids (see HIDDEN_STORE_IDS in lib/stores.ts): their history belongs to the real store.
-const MERGE_INTO: Record<string, string> = { T033: "T179", T095: "T176", T136: "T135" };
+const MERGE_INTO: Record<string, string> = { T033: "T179", T095: "T176", T136: "T135", T031: "T175", T167: "T120" };
 for (const byStore of Object.values(HISTORY_LOG)) {
   for (const [from, to] of Object.entries(MERGE_INTO)) {
     if (!byStore[from]) continue;

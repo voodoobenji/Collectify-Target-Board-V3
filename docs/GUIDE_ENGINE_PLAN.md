@@ -35,9 +35,10 @@ AI read of one day's export ≈ $0.15–0.40 on Claude Opus 5.5 → ~$5–12/mon
 - Westminster Beach (T176, Beach Blvd) and Westminster Mall (T094); T095 was a duplicate (hidden).
 - Eagle Rock = T003 on Colorado Blvd; T189 renamed Glassell Park.
 - Ontario Mills (T134, 4200 E 4th) and Ontario Baker (T135, 1670 E 4th, 4th & Baker) are two stores; T136 hidden dup.
+- Redondo Beach = Kingsdale (T175); T031 was a duplicate (hidden). Rolling Hills (T032, 43 Peninsula Center) is right.
+- Santa Ana: 17th/Grand T120 = 1330 E 17th St, College T119 = 1441 W 17th St, Bristol T186 = 3300 S Bristol St;
+  T167 "17th/Bristol" was a duplicate (hidden).
 - San Diego stores are hidden for now (`STORES` filters region SD; `ALL_STORES` keeps them).
 
 ## Still open
-- Redondo Beach (T031) and Rolling Hills (T032) share one address (43 Peninsula Center); Santa Ana 17th/Grand (T120)
-  and 17th/Bristol (T167) share one address. Check which are real.
 - Engine regions: USC Village listed as OC (it's LA); Chino Grand/Montclair as SGV.

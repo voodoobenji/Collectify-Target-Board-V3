@@ -675,5 +675,14 @@ export const VENDOR_MAP: Record<string, VendorInfo> = {
   "T163": {
     "vendorId": null,
     "vendorNickname": null
+  },
+  // Real stores behind hidden duplicates (lib/stores.ts HIDDEN_STORE_IDS) keep the duplicate's vendor.
+  "T179": {
+    "vendorId": "V009",
+    "vendorNickname": "Carson/Seal/Signal"
+  },
+  "T176": {
+    "vendorId": "V007",
+    "vendorNickname": "Michelle"
   }
 };

@@ -1904,6 +1904,8 @@ export const STORE_ALIASES: Record<string, string> = {
   "south azusa": "T016",
   "cpt": "T037",
   "kingsdale": "T175",
+  "redondo beach": "T175",
+  "redondo": "T175",
   "redondo kingsdale": "T175",
   "del amo": "T030",
   "bellflower": "T044",
