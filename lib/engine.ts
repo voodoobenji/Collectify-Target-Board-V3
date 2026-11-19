@@ -4,7 +4,7 @@
 //   - skips cards an admin pinned (they set chance/window by hand)
 //   - logs every run (engine:log) and refreshes the compact per-store drop history (engine:recent)
 // Triggered after a drops import is saved, after the nightly rollover, and by the admin "Rebuild" button.
-// KV cost per run: ~1 read per imported day in the last 7 weeks + 8 reads/writes for board + templates.
+// KV cost per run: ~1 read per imported day in the last 14 weeks + 8 reads/writes for board + templates.
 import {
   getBoard,
   getDropDays,
@@ -44,7 +44,7 @@ function applyPrediction<T extends TemplateEntry | BoardEntry>(e: T, p: Predicti
 
 export async function rebuildPredictions(trigger: string, by: string): Promise<EngineLogEntry> {
   const today = todayLA();
-  const since = addDays(today, -49);
+  const since = addDays(today, -98); // predict.ts looks back 13 weeks
   const days = (await getDropDays()).filter((d) => d >= since && d <= today);
   const drops: DropRecord[] = (await Promise.all(days.map((d) => getDropsForDay(d)))).flat();
   const covered = new Set(days);

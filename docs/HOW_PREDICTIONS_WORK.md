@@ -32,7 +32,7 @@ To refresh with a newer export: `python3 -I scripts/extract-guides.py <export in
 ## How one store's chance is worked out (for one date)
 1. **Baseline for that weekday:** the guide baseline above (stores never in the guides fall back to the old
    June–Sept tally). It counts like 4 weeks of evidence.
-2. **Imported drops for that weekday:** the recent same weekdays with imports (up to 6, newest count most) move it
+2. **Imported drops for that weekday:** the same weekdays with imports in the last 13 weeks (newest count most) move it
    up or down. A store nobody posted about on a thinly imported day isn't proof it didn't drop: its "no" counts
    in proportion to how well that day was covered (60+ entries = full weight).
 3. **Last week's same weekday** ("Mondays follow Mondays"). A regular counts as **owed** only with evidence:

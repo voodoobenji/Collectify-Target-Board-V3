@@ -140,15 +140,15 @@ export interface PredictInput {
 
 export function predictAll({ targetDate, drops, coveredDates }: PredictInput): Prediction[] {
   const wd = wdOf(targetDate);
-  const lookbackStart = addDays(targetDate, -42);
+  const lookbackStart = addDays(targetDate, -91); // up to 13 weeks of imported drops
   const byStore = new Map<string, DropRecord[]>();
   for (const d of drops) {
     if (d.date >= targetDate || d.date < lookbackStart) continue;
     (byStore.get(d.storeId) ?? byStore.set(d.storeId, []).get(d.storeId)!).push(d);
   }
-  // Same weekday dates we actually have data for, most recent first (up to 6).
+  // Same weekday dates we actually have data for, most recent first (up to 13).
   const sameDays: string[] = [];
-  for (let i = 1; i <= 6; i++) {
+  for (let i = 1; i <= 13; i++) {
     const d = addDays(targetDate, -7 * i);
     if (coveredDates.has(d)) sameDays.push(d);
   }
@@ -170,7 +170,8 @@ export function predictAll({ targetDate, drops, coveredDates }: PredictInput): P
     const why: string[] = [];
 
     // 1. baseline
-    const weights = [2, 2, 1.5, 1, 1, 1];
+    // Newer weeks count more ("Mondays follow Mondays"); 2-3 months back still counts, less.
+    const weights = [2, 2, 1.5, 1.25, 1, 1, 0.8, 0.8, 0.7, 0.7, 0.6, 0.6, 0.5];
     let num = 0;
     let den = 0;
     sameDays.forEach((d, i) => {

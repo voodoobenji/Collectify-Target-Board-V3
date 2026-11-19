@@ -80,6 +80,7 @@ export default function ImportClient() {
   const [err, setErr] = useState<string | null>(null);
   const [engineLog, setEngineLog] = useState<EngineRun[]>([]);
   const [openRun, setOpenRun] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
   async function loadDays() {
     const r = await fetch("/api/admin/drops", { cache: "no-store" });
@@ -178,7 +179,12 @@ export default function ImportClient() {
         time: col("time") >= 0 && c[col("time")] ? to24h(c[col("time")]) : "00:00",
         storeId: id,
         storeText: c[col("store")] ?? "",
-        kind: !id ? "ignore" : looksLight(items) ? "light" : "drop",
+        // A "kind" column (drop / light / dry) wins; otherwise guess light stock from the items.
+        kind: !id
+          ? "ignore"
+          : col("kind") >= 0 && ["drop", "light", "dry"].includes((c[col("kind")] ?? "").trim().toLowerCase())
+            ? ((c[col("kind")] ?? "").trim().toLowerCase() as RowKind)
+            : looksLight(items) ? "light" : "drop",
         items,
         notes: col("notes") >= 0 ? c[col("notes")] ?? "" : "",
         source: "csv",
@@ -187,7 +193,7 @@ export default function ImportClient() {
     setRows(out);
     const light = out.filter((r) => r.kind === "light").length;
     const missing = out.filter((r) => !r.storeId).length;
-    setMsg(`${out.length} rows across ${new Set(out.map((r) => r.date)).size} days. ${light} look like light stock only (marked LIGHT)${missing ? `, ${missing} store names not matched (pick the store or leave as ignore)` : ""}. Check, then save.`);
+    setMsg(`${out.length} rows across ${new Set(out.map((r) => r.date)).size} days. ${light} marked LIGHT (light stock only)${missing ? `, ${missing} store names not matched (pick the store or leave as ignore)` : ""}. Check, then save.`);
   }
 
   async function openDay(date: string) {
@@ -223,6 +229,10 @@ export default function ImportClient() {
     } finally { setBusy(null); }
   }
 
+  // Big files (a whole export / months of CSV): only show the rows worth a look unless "show all".
+  const BIG = 250;
+  const visibleRows =
+    rows.length > BIG && !showAll ? rows.filter((r) => !r.storeId || r.kind !== "drop" || (r.confidence && r.confidence !== "high")) : rows;
   const set = (key: string, patch: Partial<Row>) => setRows((rs) => rs.map((r) => (r.key === key ? { ...r, ...patch } : r)));
   const counts = { drop: 0, light: 0, dry: 0, ignore: 0 } as Record<RowKind, number>;
   for (const r of rows) counts[r.kind]++;
@@ -262,7 +272,7 @@ export default function ImportClient() {
       </section>
 
       <section className="rounded-xl border border-line bg-panel p-4 mb-3">
-        <div className="font-mono uppercase tracking-[0.08em] text-[10px] text-textmuted mb-2">Drops log CSV (date,weekday,store,region,window,time,items,notes)</div>
+        <div className="font-mono uppercase tracking-[0.08em] text-[10px] text-textmuted mb-2">Drops log CSV (date, store, time, items, notes; optional kind = drop / light / dry)</div>
         <input type="file" accept=".csv,text/csv" onChange={(e) => onCsv(e.target.files?.[0] ?? null)} className="text-sm text-textmuted" />
       </section>
 
@@ -277,8 +287,18 @@ export default function ImportClient() {
               <button onClick={save} disabled={!!busy} className={`${btn} border-gold text-gold bg-panel2`}>Save</button>
             </div>
           </div>
+          {rows.length > BIG && (
+            <p className="text-xs text-textmuted mb-2">
+              {showAll
+                ? `Showing all ${rows.length} rows.`
+                : `Showing the ${visibleRows.length} rows worth a look (not matched, light, dry, unsure). ${rows.length - visibleRows.length} matched drops are hidden but will be saved.`}{" "}
+              <button onClick={() => setShowAll((v) => !v)} className="underline hover:text-gold">
+                {showAll ? "Show only these" : "Show all"}
+              </button>
+            </p>
+          )}
           <div className="space-y-2">
-            {rows.map((r) => (
+            {visibleRows.map((r) => (
               <div key={r.key} className={`rounded-xl border bg-panel p-3 ${r.confidence === "low" || !r.storeId ? "border-medium/70" : "border-line"}`}>
                 <div className="flex flex-wrap items-center gap-2">
                   {new Set(rows.map((x) => x.date)).size > 1 && <span className="font-mono text-[11px] text-textmuted">{r.date}</span>}
