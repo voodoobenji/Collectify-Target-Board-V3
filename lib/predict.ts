@@ -11,6 +11,25 @@ import type { Chance } from "./types";
 import type { DropRecord } from "./drops";
 import { STORES } from "./stores";
 import { NEAR_DAILY, STORE_PROFILES, type Wd } from "./store-profiles";
+import { GUIDE_BASELINE } from "./guide-baseline";
+
+// Guide baseline -> starting chance. The posted guides list most stores most days ("a check"), so the score is
+// stretched: on weekdays roughly the top ~10-15% of stores land High (more on Fridays), the next band Medium.
+// Weekend guides only list weekend-proven stores, so being on them counts for more.
+function guidePrior(score: number, wd: Wd): number {
+  const v = wd === "Sat" || wd === "Sun" ? 1.4 * (score - 0.12) : 1.5 * (score - 0.41);
+  return Math.max(0, Math.min(0.9, v));
+}
+
+const TIP_TEXT: Record<string, string> = {
+  "Check guest services": "Check guest services.",
+  "Can go in more than one wave": "Can go in more than one wave.",
+  "Lines form early": "Lines form early.",
+  "Limits are common": "Limits are common.",
+  "Stocks the TCG aisle": "Stocks the TCG aisle.",
+  "Can run a VQ or tickets": "Can run a VQ or tickets.",
+  "Can hold stock back": "Can hold stock back, worth asking.",
+};
 
 export const WD: Wd[] = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const DAY_NAME: Record<Wd, string> = { Mon: "Monday", Tue: "Tuesday", Wed: "Wednesday", Thu: "Thursday", Fri: "Friday", Sat: "Saturday", Sun: "Sunday" };
@@ -35,8 +54,8 @@ const DAY_RULES: Record<string, DayRule> = {
   T108: { days: ["Mon"], cap: 0.4, label: "Monday store, erratic lately" },
   T012: { days: ["Fri", "Wed"], soft: true, cap: 0.2, label: "leans Friday, can go at open on Wednesdays" },
   T140: { days: ["Tue", "Thu"], label: "Tuesday/Thursday store, random lately" },
-  T079: { days: ["Tue"], label: "Tuesday morning opener" },
-  T078: { days: ["Tue"], label: "Tuesday store" },
+  T079: { days: ["Tue", "Fri"], label: "Tuesday morning opener, also a Friday store" },
+  T078: { days: ["Tue", "Fri"], label: "Tuesday and Friday store" },
   T087: { days: ["Wed", "Fri"], label: "Wednesday morning opener, also a Friday store" },
   T190: { days: ["Mon"], soft: true, cap: 0.15, label: "Monday store" },
   T184: { days: ["Mon"], soft: true, cap: 0.15, label: "Monday store" },
@@ -136,6 +155,9 @@ export function predictAll({ targetDate, drops, coveredDates }: PredictInput): P
   const weekStart = mondayOf(targetDate);
   const coveredWeeks = Math.max(1, Math.round([...coveredDates].filter((d) => d >= lookbackStart && d < targetDate).length / 5));
   const lastWeek = addDays(targetDate, -7);
+  // How well each imported day is covered: a thin day (few posts) can't prove a store "missed".
+  const rowsPerDate = new Map<string, number>();
+  for (const d of drops) rowsPerDate.set(d.date, (rowsPerDate.get(d.date) ?? 0) + 1);
   const dayBefore = addDays(targetDate, -1);
 
   return STORES.map((s) => {
@@ -152,25 +174,38 @@ export function predictAll({ targetDate, drops, coveredDates }: PredictInput): P
     let num = 0;
     let den = 0;
     sameDays.forEach((d, i) => {
-      den += weights[i];
-      if (realDates.has(d)) num += weights[i];
+      // A store nobody posted about on a thinly covered day isn't proof it didn't drop: its "no" counts in
+      // proportion to how well that day was covered (60+ log entries = full weight).
+      const posted = rows.some((r) => r.date === d);
+      const w = posted ? weights[i] : weights[i] * Math.min(1, (rowsPerDate.get(d) ?? 0) / 60);
+      den += w;
+      if (realDates.has(d)) num += w;
     });
     const tally = p?.weekdayHits?.[wd] ?? 0;
-    const prior = Math.min(0.7, tally / 10);
-    // Few imported weeks = lean on the old tally more, so one lucky day doesn't make a store High.
-    const k = sameDays.length >= 4 ? 1 : sameDays.length >= 2 ? 1.5 : 2.5;
+    const guide = GUIDE_BASELINE[id];
+    const gDay = guide?.days[wd];
+    // Baseline: the posted guides (3 months, the owner's own calls) when we have them, else the old tally.
+    const prior = guide ? (gDay ? guidePrior(gDay.score, wd) : 0) : Math.min(0.7, tally / 10) * 0.8;
+    // Weight of the baseline vs imported drops (in "weeks"): guides are strong evidence; the old tally is weak.
+    const k = guide ? 4 : sameDays.length >= 4 ? 1 : sameDays.length >= 2 ? 1.5 : 2.5;
     let score = den + k > 0 ? (num + k * prior) / (den + k) : prior;
-    if (!sameDays.length) score = prior * 0.8;
+    if (!sameDays.length) score = prior;
     const hitsSame = sameDays.filter((d) => realDates.has(d)).length;
     why.push(sameDays.length ? `${hitsSame}/${sameDays.length} recent ${wd}s` : `no ${wd} imports yet`);
-    if (tally) why.push(`old tally ${tally}`);
+    if (gDay) why.push(`guides ${gDay.listed}/${gDay.of} ${wd}s (${gDay.score.toFixed(2)})`);
+    else if (guide) why.push(`not in ${wd} guides`);
+    else if (tally) why.push(`old tally ${tally}`);
 
     // 2. last week's same weekday
     let weekNote = "";
-    const regular = prior >= 0.4 || (sameDays.length >= 2 && hitsSame / sameDays.length >= 0.5);
+    const regular = prior >= 0.35 || (sameDays.length >= 2 && hitsSame / sameDays.length >= 0.5);
     if (coveredDates.has(lastWeek)) {
       if (realDates.has(lastWeek)) why.push(`dropped last ${wd}`);
-      else if (regular) {
+      else if (
+        regular &&
+        (rows.some((r) => r.date === lastWeek && (r.kind === "dry" || r.kind === "light")) ||
+          ((rowsPerDate.get(lastWeek) ?? 0) >= 45 && prior >= 0.5))
+      ) {
         score += 0.08;
         weekNote = `Owed: missed its usual ${DAY_NAME[wd]} last week.`;
         why.push(`missed last ${wd} (owed)`);
@@ -182,6 +217,9 @@ export function predictAll({ targetDate, drops, coveredDates }: PredictInput): P
     const perWeek = real.length / coveredWeeks;
     const thisWeek = rows.filter((r) => r.date >= weekStart && r.date < targetDate);
     const realThisWeek = thisWeek.filter((r) => r.kind === "drop");
+    // "Nothing yet this week" is only true if every earlier day this week was imported.
+    let weekFullyImported = true;
+    for (let d = weekStart; d < targetDate; d = addDays(d, 1)) if (!coveredDates.has(d)) weekFullyImported = false;
     if (!nearDaily && realDates.has(dayBefore)) {
       score *= 0.55;
       weekNote = "Lighter: had a real drop the day before.";
@@ -194,7 +232,7 @@ export function predictAll({ targetDate, drops, coveredDates }: PredictInput): P
       score += 0.05;
       weekNote = "Owed: only light stock so far this week.";
       why.push("only light stock this week (owed)");
-    } else if (!rule && !realThisWeek.length && (wd === "Thu" || wd === "Fri") && perWeek >= 0.8 && coveredDates.has(weekStart)) {
+    } else if (!rule && !realThisWeek.length && (wd === "Thu" || wd === "Fri") && perWeek >= 0.8 && weekFullyImported) {
       score += 0.05;
       weekNote ||= "Owed: no real drop yet this week.";
       why.push("nothing yet this week (owed)");
@@ -205,30 +243,59 @@ export function predictAll({ targetDate, drops, coveredDates }: PredictInput): P
     if (rule && !rule.days.includes(wd)) {
       if (!rule.soft) {
         const label = rule.label.charAt(0).toUpperCase() + rule.label.slice(1);
-        return { storeId: id, chance: null, window: "", reason: `${label}.`, weekNote: "", basis: [...why, `day lock: ${rule.days.join("/")}`].join(" · "), score: 0 };
+        return { storeId: id, chance: null, window: "", reason: `${label}. Not expected on ${DAY_NAME[wd]}s.`, weekNote: "", basis: [...why, `day lock: ${rule.days.join("/")}`].join(" · "), score: 0 };
       }
       score = Math.min(score, rule.cap ?? 0.15);
       why.push(`soft lock ${rule.days.join("/")}`);
     } else if (rule?.cap && rule.days.includes(wd) && !rule.soft) {
       score = Math.min(score, rule.cap);
     }
+    // A day-locked store on its own day is at least worth a check.
+    if (rule && rule.days.includes(wd) && !rule.soft && gDay) {
+      if (score < 0.3) why.push("lock-day floor");
+      score = Math.max(score, 0.3);
+    }
+    // Owner: Valley stores drop big on Fridays. On the Friday guides most weeks -> High on Friday.
+    if (p?.region === "SFV" && wd === "Fri" && gDay && gDay.listed / gDay.of >= 0.75) {
+      if (score < 0.55) why.push("SFV Friday floor");
+      score = Math.max(score, 0.55);
+    }
+    // Owner: Valley stores drop big on Fridays; on other days they can be a check (Medium at most), never High.
+    if (p?.region === "SFV" && wd !== "Fri" && !rule?.days.includes(wd)) {
+      if (score > 0.45) why.push("SFV non-Friday cap");
+      score = Math.min(score, 0.45);
+    }
     score = Math.max(0, Math.min(1, score));
 
     const chance: Chance = score >= 0.5 ? "High" : score >= 0.28 ? "Medium" : score >= 0.12 ? "Low" : null;
     // window: this weekday's real drop times, else any day's, else the engine's cadence window
     const sameTimes = real.filter((r) => wdOf(r.date) === wd).map((r) => r.time);
+    const guideWin = gDay?.window ? (gDay.window === "Opening" ? openLabel(id) : gDay.window) : "";
+    const anyGuideWin = Object.values(guide?.days ?? {}).find((d) => d?.window)?.window ?? "";
     const window = chance
-      ? sameTimes.length >= 1
+      ? sameTimes.length >= 2
         ? windowFromTimes(id, sameTimes)
-        : real.length >= 2
-          ? windowFromTimes(id, real.map((r) => r.time))
-          : profileWindow(id)
+        : guideWin ||
+          (sameTimes.length === 1
+            ? windowFromTimes(id, sameTimes)
+            : anyGuideWin
+              ? anyGuideWin === "Opening" ? openLabel(id) : anyGuideWin
+              : real.length >= 2
+                ? windowFromTimes(id, real.map((r) => r.time))
+                : profileWindow(id))
       : "";
     return {
       storeId: id,
       chance,
       window,
-      reason: reasonText(id, wd, chance, window, nearDaily),
+      reason: chance
+        ? (() => {
+            const main = reasonText(id, wd, chance, window, nearDaily);
+            // Don't repeat what the main sentence already says ("line can form early" + "Lines form early").
+            const tips = (guide?.tips ?? []).filter((t) => !(t === "Lines form early" && /line/i.test(main))).map((t) => TIP_TEXT[t]);
+            return [main, ...tips].filter(Boolean).join(" ");
+          })()
+        : "",
       weekNote: chance ? weekNote : "",
       basis: `${why.join(" · ")} · score ${score.toFixed(2)}`,
       score,

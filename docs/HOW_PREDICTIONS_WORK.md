@@ -13,29 +13,50 @@ Plain-English explainer for the owner and for future sessions. Code: `lib/predic
 
 Days that were never imported count as **unknown**, not as "no drop".
 
+## Where the baseline comes from: your posted guides
+Most stores don't get a post every day, so the baseline comes from the guides themselves. `lib/guide-baseline.ts`
+is generated from 3 months of posted guides (8/21–11/18/2026: 50 daily-guide days + weekend guides, 6,247 store
+lines). For every store and weekday it records:
+- how often the store was in that weekday's guide and how strongly it was called (0–1). "Heavy / strong / one of
+  the best / expect a line / its day" counts full, "a check" 0.7, "random / can / possible" 0.55, "lighter /
+  leftover / if it runs" 0.45. The last 4 weeks count 1.5x.
+- the usual window the guides gave ("opening", "11 to 1", "midday", "evening 5 to 7"…).
+- habits mentioned in 2+ guides: check guest services, goes in waves, lines form early, limits, TCG aisle, VQ /
+  tickets, holds stock back. These are added to the card note.
+
+The guides list most stores most days, so the score is stretched: on weekdays roughly the top ~10–15% land High
+(more on Fridays); weekend guides only list weekend stores, so being on them counts for more.
+To refresh with a newer export: `python3 -I scripts/extract-guides.py <export index.html> guides.json` then
+`npx tsx scripts/build-guide-baseline.ts guides.json`, check, commit, push, then "Rebuild predictions now".
+
 ## How one store's chance is worked out (for one date)
-1. **Baseline for that weekday.** Of the recent same weekdays we have imports for (up to 6), how many had a real
-   drop. Newer weeks count more. The old June–Sept tally from the engine files is blended in as a weak starting
-   point (it over-counts); with only 1 week of data it counts more, with 4+ weeks it barely matters.
-2. **Last week's same weekday** ("Mondays follow Mondays"). Last week counts the most. If a store that usually
-   drops on this weekday missed last week, it's **owed** (small boost, note: "Owed: missed its usual Monday
-   last week.").
-3. **This week so far.**
+1. **Baseline for that weekday:** the guide baseline above (stores never in the guides fall back to the old
+   June–Sept tally). It counts like 4 weeks of evidence.
+2. **Imported drops for that weekday:** the recent same weekdays with imports (up to 6, newest count most) move it
+   up or down. A store nobody posted about on a thinly imported day isn't proof it didn't drop: its "no" counts
+   in proportion to how well that day was covered (60+ entries = full weight).
+3. **Last week's same weekday** ("Mondays follow Mondays"). A regular counts as **owed** only with evidence:
+   someone posted it was dry / light stock, or that day was well covered (45+ entries).
+4. **This week so far.**
    - Real drop the day before → **lighter** (×0.55), unless it's a near-daily store (Brea Birch, Culver City
      Mall, Whittier Whitwood, 3121 Pasadena, Pico Rivera, Eagle Rock, Costa Mesa Harbor, Gardena, Manhattan Beach).
    - Already had its real drop earlier this week and it's a once-a-week store → lighter (×0.75).
    - Only light stock so far this week → owed (small boost).
-   - Thursday/Friday and no real drop yet this week from a weekly store → owed (small boost).
-4. **Day locks** (engine §10) override everything: Tustin Marketplace Wed only; San Pedro Wed/Fri; Irvine
-   Barranca Fri; Fullerton Malvern Mon (capped, erratic); Rosemead leans Fri + Wed open (capped other days);
-   Murrieta Cal Oaks Tue/Thu; Camarillo & Newbury Park Tue; Oxnard Wed + Fri; UC Irvine & USC Village Mon
-   (soft); Friday-only stores; SFV stores hold for Friday except Van Nuys Sepulveda, Simi Madera, Glendale
-   Galleria, Burbank, Woodland Hills, Camarillo, Newbury Park, Oxnard, 12121 NoHo, Van Nuys Raymer.
+   - Thursday/Friday, nothing yet this week from a weekly store, and every earlier day this week imported → owed.
+5. **Day locks** (engine §10) override everything: Tustin Marketplace Wed only; San Pedro Wed/Fri; Irvine
+   Barranca Fri; Fullerton Malvern Mon (capped); Rosemead leans Fri + Wed open (capped other days); Murrieta Cal
+   Oaks Tue/Thu; Camarillo & Newbury Park Tue + Fri; Oxnard Wed + Fri; UC Irvine & USC Village Mon (soft);
+   Friday-only stores. A locked store on its own day is at least Medium.
+6. **Valley (SFV/805) rule (owner):** Valley stores drop big on Fridays. On the Friday guides most weeks → High on
+   Friday. Other days: at most Medium. Valley stores other than Van Nuys Sepulveda, Simi Madera, Glendale
+   Galleria, Burbank, Woodland Hills, Camarillo, Newbury Park, Oxnard, 12121 NoHo, Van Nuys Raymer are Friday-only.
 
 Score → chance: **High** ≥ 0.50, **Medium** ≥ 0.28, **Low** ≥ 0.12, below that "Not expected".
+Typical result: ~12–25 High on Mon–Thu, ~45 on Friday (about half Valley), ~13 on Saturday.
 
 ## Window
-That weekday's real drop times if there are any, else all its drop times, else the engine's cadence window.
+Two or more real drops on that weekday → their usual time; else the window the guides gave for that weekday;
+else one real drop's time; else the guides' window on any day; else the engine's cadence window.
 Typical time before 9AM = "Opening" (with "7AM"/"8AM" when known); later = a 3-hour range around the usual time.
 
 ## What members see on a card
